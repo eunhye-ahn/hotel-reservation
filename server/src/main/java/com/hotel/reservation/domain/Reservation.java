@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @Table(name="reservation")
 @Getter
 @NoArgsConstructor
-public class Reservation {
+public class Reservation extends BaseTime{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,6 +22,7 @@ public class Reservation {
     private LocalDate endDate;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private ReservationStatus status;
 
     /**
@@ -38,10 +39,10 @@ public class Reservation {
     private Room room;
 
     @ManyToOne
-    @JoinColumn(name = "room_id", nullable = false)
+    @JoinColumn(name = "hotel_id", nullable = false)
     private Hotel hotel;
 
     @ManyToOne
-    @JoinColumn(name="guest_id", nullable = false)
-    private Guest guest;
+    @JoinColumn(name="user_id", nullable = false)
+    private User user;
 }

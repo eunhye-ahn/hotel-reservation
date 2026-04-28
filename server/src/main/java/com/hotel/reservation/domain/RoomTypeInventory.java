@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @Table(name="room_type_inventory")
 @Getter
 @NoArgsConstructor
-public class RoomTypeInventory {
+public class RoomTypeInventory extends BaseTime{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

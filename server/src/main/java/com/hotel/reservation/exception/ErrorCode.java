@@ -5,6 +5,14 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public enum ErrorCode {
+    //jwt
+    EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "토큰이 만료되었습니다"),
+    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다"),
+    LOGOUT_TOKEN(HttpStatus.UNAUTHORIZED, "로그아웃된 토큰입니다."),
+
+    //valid
+    INVALID_INPUT(HttpStatus.BAD_REQUEST, "잘못된 입력입니다"),
+
     //user
     INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "이메일/비밀번호가 틀렸습니다"),
     DUPLICATE_EMAIL(HttpStatus.CONFLICT, "중복된 이메일 입니다"),

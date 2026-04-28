@@ -1,16 +1,18 @@
 package com.hotel.reservation.domain;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalTime;
-
 @Entity
-@Table(name = "hotel")
+@Table(name="users")
 @Getter
 @NoArgsConstructor
-public class Hotel extends BaseTime{
+@Builder
+@AllArgsConstructor
+public class User extends BaseTime{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,17 +21,16 @@ public class Hotel extends BaseTime{
     private String name;
 
     @Column(nullable = false)
-    private String address;
+    private String email;
 
     @Column
-    private String location;
-
-    @Column
-    private String imageUrl;
+    private String password;
 
     @Column(nullable = false)
-    private LocalTime checkInTime;
+    private String phone;
 
     @Column(nullable = false)
-    private LocalTime checkOutTime;
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private Role role = Role.ROLE_USER;
 }

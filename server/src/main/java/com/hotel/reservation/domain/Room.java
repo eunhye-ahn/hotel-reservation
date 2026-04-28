@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Table(name="room")
 @Getter
 @NoArgsConstructor
-public class Room {
+public class Room extends BaseTime{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
