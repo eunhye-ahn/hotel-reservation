@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useAuthStore } from "../store/useAuthStore";
+import { useAuthStore } from "../../../client/src/store/useAuthStore";
 import { reissue } from "./api";
 
 export const api = axios.create({
@@ -15,15 +15,15 @@ export const api = axios.create({
  */
 
 api.interceptors.request.use(
-    (config)=>{
+    (config) => {
         const token = useAuthStore.getState().accessToken;
 
-        if(token){
+        if (token) {
             config.headers.Authorization = `Bearer ${token}`
         }
         return config;
     },
-    (error)=> Promise.reject(error)
+    (error) => Promise.reject(error)
 )
 /**
  * response : 서버 성공 응답 객체 - data, status, headers, config
@@ -32,10 +32,10 @@ api.interceptors.request.use(
 api.interceptors.response.use(
     (response) => response,
 
-    async (error)=>{
-        if(error.response.status == 401 && !error.config._retry){
+    async (error) => {
+        if (error.response.status == 401 && !error.config._retry) {
             error.config._retry = true;
-            try{
+            try {
                 const res = await reissue();
                 useAuthStore.getState().setAccessToken(res.data.accessToken)
                 return api(error.config)

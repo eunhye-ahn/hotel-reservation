@@ -70,7 +70,7 @@ public class AuthController {
     }
 
     @PostMapping("/signUp")
-    ResponseEntity<AccessTokenResponse> signUp(@Valid SignUpRequest request,
+    ResponseEntity<AccessTokenResponse> signUp(@RequestBody @Valid SignUpRequest request,
                                                HttpServletResponse servletResponse){
         TokenResponse tokens = authService.saveUser(request);
 

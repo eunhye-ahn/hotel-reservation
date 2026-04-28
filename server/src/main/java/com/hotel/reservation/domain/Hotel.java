@@ -22,7 +22,10 @@ public class Hotel extends BaseTime{
     private String address;
 
     @Column
-    private String location;
+    private Double latitude;   // 위도 (37.5665)
+
+    @Column
+    private Double longitude;  // 경도 (126.9780)
 
     @Column
     private String imageUrl;
