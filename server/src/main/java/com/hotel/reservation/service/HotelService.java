@@ -31,11 +31,12 @@ public class HotelService {
     private final RoomTypeRepository roomTypeRepository;
     private final RoomTypeInventoryRepository roomTypeInventoryRepository;
 
+    LocalDate today = LocalDate.now();
+
     //호텔조회
     public Page<HotelResponse> getHotels(int page){
-        LocalDate today = LocalDate.now();
-        Pageable pageable = PageRequest.of(page,PAGE_SIZE);
 
+        Pageable pageable = PageRequest.of(page,PAGE_SIZE);
         return hotelRepository.findAllWithRate(today, pageable)
                 .map(hotel -> {
                     Rate cheapestRate = rateRepository.findCheapestRate(hotel.getId(), today)
@@ -48,8 +49,6 @@ public class HotelService {
     public HotelDetailResponse getHotelDetail(Long hotelId) {
         Hotel hotel = hotelRepository.findById(hotelId)
                 .orElseThrow(()->new CustomException(ErrorCode.HOTEL_NOT_FOUND));
-
-        LocalDate today = LocalDate.now();
 
         List<RoomTypeResponse> roomTypes = roomTypeRepository.findByHotelId(hotelId)
                 .stream().map(rt -> {

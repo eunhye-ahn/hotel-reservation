@@ -1,5 +1,7 @@
 package com.hotel.reservation.domain;
 
+import com.hotel.reservation.exception.CustomException;
+import com.hotel.reservation.exception.ErrorCode;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,6 +42,15 @@ public class RoomTypeInventory{
     }
 
     //예약가능여부(10프로 초과예약포함)
+    public boolean isAvailable(int numberOfRoomsToReserve){
+        return (totalReserved + numberOfRoomsToReserve) <= (int)(totalInventory*1.1);
+    }
 
-    //예약 시 호출 ?
+    //예약 유효성검사 + 동기화? 라고하나
+    public void reserve(int numberOfRoomsToReserve){
+        if(!isAvailable(numberOfRoomsToReserve)){
+            throw new CustomException(ErrorCode.RESERVATION_UNAVAILABLE);
+        }
+        this.totalReserved += numberOfRoomsToReserve;
+    }
 }

@@ -7,8 +7,32 @@ Content-Type: application/json
   "password": "asd798852"
 }
 
-### 호텔 목록 조회
+### 호텔 목록 조회(정상응답)
 GET http://localhost:8080/api/v1/hotels?page=0
 
-### 호텔 상세 조회
+
+### 호텔 상세 조회(정상응답)
 GET http://localhost:8080/api/v1/hotels/1
+
+### 호텔 상세 조회(존재하지않는호텔)
+GET http://localhost:8080/api/v1/hotels/50
+
+
+### 예약 생성(정상응답)
+POST http://localhost:8080/api/v1/reservations
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTc3NzQzMzgzMywiZXhwIjoxNzc3NDM1NjMzfQ.MyDBnIthVL4lf96ZM_j0UU72KKPyN-6NpNEmFCsWjz8
+
+{
+  "reservationId": "550e8400-e29b-41d4-a716-446655440000",
+  "hotelId": 1,
+  "roomTypeId": 1,
+  "startDate": "2026-04-29",
+  "endDate": "2026-04-30",
+  "numberOfRoomsToReserve": 1
+}
+
+### 예약 조회(정상응답)
+GET http://localhost:8080/api/v1/reservations
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTc3NzQzMzgzMywiZXhwIjoxNzc3NDM1NjMzfQ.MyDBnIthVL4lf96ZM_j0UU72KKPyN-6NpNEmFCsWjz8

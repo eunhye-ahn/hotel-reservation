@@ -32,18 +32,17 @@ public class HotelResponse {
      * Rate 없는 호텔은 목록에서 제외 (repository 단에서 필터링)
      * 같은 roomType 기준으로 demandRate가 가장 낮은 타입 선택
      *
+     *
+     * 정적 메서드 -> 객체없는 상태에서 객체생성할때
      */
     public static HotelResponse from(Hotel hotel, Rate cheapestRate){
-        int discountRate = (int) Math.round(
-                (double)(cheapestRate.getMaxRate() - cheapestRate.getDemandRate())/cheapestRate.getMaxRate() * 100
-        );
 
         return HotelResponse.builder()
                 .hotelId(hotel.getId())
                 .name(hotel.getName())
                 .maxRate(cheapestRate.getMaxRate())
                 .demandRate(cheapestRate.getDemandRate())
-                .discountRate(discountRate)
+                .discountRate(cheapestRate.calculateDiscountRate())
                 .checkInTime(hotel.getCheckInTime())
                 .address(hotel.getAddress())
                 .imageUrl(hotel.getImageUrl())

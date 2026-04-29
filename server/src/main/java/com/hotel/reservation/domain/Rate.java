@@ -34,4 +34,11 @@ public class Rate {
     @ManyToOne
     @JoinColumn(name = "room_type_id", nullable = false)
     private RoomType roomType;
+
+    /**
+     * 인스턴스메서드 -> 본인 필드를 사용해야할때
+     */
+    public int calculateDiscountRate(){
+        return (int) Math.round((double)(maxRate - demandRate)/maxRate * 100);
+    }
 }

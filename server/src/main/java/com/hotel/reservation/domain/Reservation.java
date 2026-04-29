@@ -1,6 +1,8 @@
 package com.hotel.reservation.domain;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,10 +12,15 @@ import java.time.LocalDate;
 @Table(name="reservation")
 @Getter
 @NoArgsConstructor
+@Builder
+@AllArgsConstructor
 public class Reservation extends BaseTime{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+//    @Column(unique = true, name = "reservation_key")
+//    private String reservationKey; //멱등키 -클라에서UUID로 생성
 
     @Column(nullable = false, name = "start_date")
     private LocalDate startDate;
@@ -23,7 +30,17 @@ public class Reservation extends BaseTime{
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private ReservationStatus status;
+    private PaymentStatus paymentStatus;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ReservationStatus reservationStatus;
+
+    @Column(nullable = false, name = "total_price")
+    private int totalPrice; // 예약 당시 확정 금액
+
+    @Column(nullable = false, name = "number_of_rooms")
+    private int numberOfRooms; // 예약 객실 수
 
     /**
      * 역정규화
@@ -34,9 +51,10 @@ public class Reservation extends BaseTime{
     @JoinColumn(name = "room_type_id")
     private RoomType roomType;
 
+    @Builder.Default
     @ManyToOne
     @JoinColumn(name = "room_id", nullable = true)
-    private Room room;
+    private Room room = null;
 
     @ManyToOne
     @JoinColumn(name = "hotel_id", nullable = false)
