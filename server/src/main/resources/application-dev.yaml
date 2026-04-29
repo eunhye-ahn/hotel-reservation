@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true  # h2 콘솔 접속 가능
+  jpa:
+    defer-datasource-initialization: true
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop  # 시작시 생성, 종료시 삭제
+  sql:
+    init:
+      encoding: UTF-8
+      mode: always  # data.sql 실행
+
+
+##

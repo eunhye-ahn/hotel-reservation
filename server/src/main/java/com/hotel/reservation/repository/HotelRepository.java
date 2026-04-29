@@ -17,6 +17,6 @@ public interface HotelRepository extends JpaRepository<Hotel,Long> {
      * JpaRepository 기본 제공 -> findAll(Pageable)
      * 하지만 Rate있는 호텔만 필터링해야함
      */
-    @Query("select distinct h from Hotel h join h.roomTypes rt join rt.rates r where r.date = :date")
+    @Query("select distinct r.hotel from Rate r where r.date = :date")
     Page<Hotel> findAllWithRate(@Param("date") LocalDate date, Pageable pageable);
 }

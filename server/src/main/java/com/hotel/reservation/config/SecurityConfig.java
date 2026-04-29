@@ -27,7 +27,7 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(csrf->csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/auth/**","/api/v1/hotels/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 //필터는 통과했으나 context가 비어있는 경우

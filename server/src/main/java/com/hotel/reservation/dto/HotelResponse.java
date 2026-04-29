@@ -9,7 +9,6 @@ import lombok.Getter;
 import java.time.LocalTime;
 
 @Getter
-@AllArgsConstructor
 @Builder
 public class HotelResponse {
     private Long hotelId;
@@ -19,9 +18,9 @@ public class HotelResponse {
     private int discountRate;
     private LocalTime checkInTime;
     private String address;
+    private String imageUrl;
 
     //정적팩토리메서드
-
     /**
      * 호텔 목록 조회 응답 dto
      *
@@ -47,6 +46,7 @@ public class HotelResponse {
                 .discountRate(discountRate)
                 .checkInTime(hotel.getCheckInTime())
                 .address(hotel.getAddress())
+                .imageUrl(hotel.getImageUrl())
                 .build();
     }
 }

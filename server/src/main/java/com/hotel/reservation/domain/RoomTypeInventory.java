@@ -33,4 +33,13 @@ public class RoomTypeInventory{
 
     @Column(nullable = false, name = "total_inventory")
     private int totalInventory;
+
+    //잔여객실수
+    public int getAvailableCount(){
+        return totalInventory - totalReserved;
+    }
+
+    //예약가능여부(10프로 초과예약포함)
+
+    //예약 시 호출 ?
 }

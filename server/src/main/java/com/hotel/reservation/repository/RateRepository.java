@@ -1,6 +1,7 @@
 package com.hotel.reservation.repository;
 
 import com.hotel.reservation.domain.Rate;
+import com.hotel.reservation.domain.RoomType;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,7 +15,7 @@ import java.util.Optional;
  */
 public interface RateRepository extends JpaRepository<Rate,Long> {
     @Query("""
-        select r.maxRate, r.demandRate
+        select r
         from Rate r
         where r.roomType.hotel.id = :hotelId
         and r.date = :date
@@ -22,4 +23,6 @@ public interface RateRepository extends JpaRepository<Rate,Long> {
         limit 1
         """)
     Optional<Rate> findCheapestRate(@Param("hotelId") Long hotelId, @Param("date") LocalDate date);
+
+    Optional<Rate> findByRoomTypeAndDate(RoomType roomType, LocalDate date);
 }
