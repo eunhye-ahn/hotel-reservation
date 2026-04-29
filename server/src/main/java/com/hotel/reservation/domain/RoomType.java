@@ -1,6 +1,8 @@
 package com.hotel.reservation.domain;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -31,6 +33,8 @@ import lombok.NoArgsConstructor;
 @Table(name="room_type")
 @Getter
 @NoArgsConstructor
+@Builder
+@AllArgsConstructor
 public class RoomType extends BaseTime{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,4 +52,10 @@ public class RoomType extends BaseTime{
 
     @Column(name = "image_url")
     private String imageUrl;
+
+    public void update(String name, Integer maxOccupancy, String imageUrl){
+        if (name != null) this.name = name;
+        if (maxOccupancy != null) this.maxOccupancy = maxOccupancy;
+        if (imageUrl != null) this.imageUrl = imageUrl;
+    }
 }

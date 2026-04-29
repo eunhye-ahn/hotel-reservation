@@ -1,6 +1,9 @@
 package com.hotel.reservation.domain;
 
+import com.hotel.reservation.dto.HotelUpdateRequest;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +13,8 @@ import lombok.NoArgsConstructor;
 @Table(name="room")
 @Getter
 @NoArgsConstructor
+@Builder
+@AllArgsConstructor
 public class Room extends BaseTime{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,4 +39,11 @@ public class Room extends BaseTime{
     @ManyToOne
     @JoinColumn(name = "room_type_id", nullable = false)
     private RoomType roomType;
+
+    public void update(String name, Integer floor, Integer number, Boolean is_available){
+        if (name != null) this.name = name;
+        if (floor != null) this.floor = floor;
+        if (number != null) this.number = number;
+        if (is_available != null) this.is_available = is_available;
+    }
 }

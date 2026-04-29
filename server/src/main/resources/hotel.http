@@ -36,3 +36,75 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZSI6IlJPTEVfVVNFU
 GET http://localhost:8080/api/v1/reservations
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTc3NzQzMzgzMywiZXhwIjoxNzc3NDM1NjMzfQ.MyDBnIthVL4lf96ZM_j0UU72KKPyN-6NpNEmFCsWjz8
+
+### 호텔 생성(정상응답)
+POST http://localhost:8080/api/v1/hotels
+Content-Type: application/json
+
+{
+  "hotelName": "Grand Hotel Seoul",
+  "address": "Gangnam-gu, Seoul",
+  "latitude": 37.4979,
+  "longitude": 127.0276,
+  "imageUrl": null,
+  "checkInTime": "14:00:00",
+  "checkOutTime": "11:00:00"
+}
+
+### 호텔 수정(정상응답)
+PUT http://localhost:8080/api/v1/hotels/5
+Content-Type: application/json
+
+{
+  "hotelName": "Grand Seoul",
+  "address": "Gangnam-gu, Seoul",
+  "latitude": 37.4979,
+  "longitude": 127.0276,
+  "imageUrl": null,
+  "checkInTime": "15:00:00",
+  "checkOutTime": "11:00:00"
+}
+
+### 호텔 삭제(정상응답)
+DELETE http://localhost:8080/api/v1/hotels/5
+
+### 호텔 삭제(없는 호텔)
+DELETE http://localhost:8080/api/v1/hotels/500
+
+### 객실타입 생성(정상응답)
+POST http://localhost:8080/api/v1/hotels/1/roomtypes
+Content-Type: application/json
+
+{
+  "roomTypeName": "스위트 룸",
+  "maxOccupancy": 2,
+  "imageUrl": null
+}
+
+
+### 객실타입 수정(정상응답)
+PUT http://localhost:8080/api/v1/hotels/1/roomtypes/1
+Content-Type: application/json
+
+{
+  "roomTypeName": "스위쯔 룸",
+  "maxOccupancy": 5,
+  "imageUrl": null
+}
+
+### 객실타입 삭제(정상응답)
+DELETE http://localhost:8080/api/v1/hotels/2/roomtypes/3
+
+### 객실 생성(정상응답)
+POST http://localhost:8080/api/v1/hotels/1/roomtypes/9
+Content-Type: application/json
+
+{
+  "roomName": "작은방2",
+  "floor": "2",
+  "number": "201"
+}
+
+### 객실 수정(정상응답)
+
+### 객실 삭제(정상응답)

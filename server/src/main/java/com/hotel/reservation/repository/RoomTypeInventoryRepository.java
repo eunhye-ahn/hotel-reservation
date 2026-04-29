@@ -9,4 +9,6 @@ import java.util.Optional;
 
 public interface RoomTypeInventoryRepository extends JpaRepository<RoomTypeInventory, Long> {
     Optional<RoomTypeInventory> findByRoomTypeAndDate(RoomType roomType, LocalDate date);
+
+    void deleteByRoomType(RoomType roomType);
 }

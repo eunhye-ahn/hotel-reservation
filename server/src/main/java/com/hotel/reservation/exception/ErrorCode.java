@@ -27,9 +27,12 @@ public enum ErrorCode {
 
     //hotel
     HOTEL_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않은 호텔입니다"),
+    HOTEL_ALREADY_EXISTS(HttpStatus.CONFLICT, "같은 이름의 호텔이 존재합니다"),
     ROOM_TYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않은 객실 유형입니다"),
     RATE_NOT_FOUND(HttpStatus.SERVICE_UNAVAILABLE, "오늘 요금 정보를 준비 중입니다"),
     ROOM_INVENTORY_NOT_FOUND(HttpStatus.SERVICE_UNAVAILABLE, "오늘 객실 정보를 준비 중입니다"),
+    ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않은 객실 입니다"),
+    ROOM_TYPE_ALREADY_EXISTS(HttpStatus.NOT_FOUND, "같은 이름의 객실 유형이 존재합니다"),
 
     //reservation
     RESERVATION_UNAVAILABLE(HttpStatus.CONFLICT, "예약 가능한 객실을 초과했습니다"),

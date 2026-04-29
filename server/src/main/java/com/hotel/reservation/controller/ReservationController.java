@@ -30,8 +30,18 @@ public class ReservationController {
 
     //내 예약조회
     @GetMapping
-    public ResponseEntity<List<ReservationResponse>> getMyReservation(@AuthenticationPrincipal Long userId){
-        List<ReservationResponse> result = reservationService.getMyReservation(userId);
+    public ResponseEntity<List<ReservationResponse>> getMyReservations(@AuthenticationPrincipal Long userId){
+        List<ReservationResponse> result = reservationService.getMyReservations(userId);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(result);
+    }
+
+    //전체예약조회 -관리자
+    @GetMapping("/all")
+    public ResponseEntity<List<ReservationResponse>> getReservations(){
+        List<ReservationResponse> result = reservationService.getReservations();
 
         return ResponseEntity
                 .status(HttpStatus.OK)

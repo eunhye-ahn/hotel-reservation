@@ -4,15 +4,14 @@ import com.hotel.reservation.domain.Hotel;
 import com.hotel.reservation.domain.Rate;
 import com.hotel.reservation.domain.RoomType;
 import com.hotel.reservation.domain.RoomTypeInventory;
-import com.hotel.reservation.dto.HotelDetailResponse;
-import com.hotel.reservation.dto.HotelResponse;
-import com.hotel.reservation.dto.RoomTypeResponse;
+import com.hotel.reservation.dto.*;
 import com.hotel.reservation.exception.CustomException;
 import com.hotel.reservation.exception.ErrorCode;
 import com.hotel.reservation.repository.HotelRepository;
 import com.hotel.reservation.repository.RateRepository;
 import com.hotel.reservation.repository.RoomTypeInventoryRepository;
 import com.hotel.reservation.repository.RoomTypeRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -68,5 +67,59 @@ public class HotelService {
                 .checkOutTime(hotel.getCheckOutTime())
                 .roomTypes(roomTypes)
                 .build();
+    }
+
+
+    //호텔 생성
+    @Transactional
+    public HotelCreateResponse addHotel(HotelCreateRequest request){
+        //유효성검사
+        //이름이나 주소중복
+        if(hotelRepository.existsByName(request.getHotelName()) || hotelRepository.existsByAddress(request.getAddress())){
+            throw new CustomException(ErrorCode.HOTEL_ALREADY_EXISTS);
+        }
+
+        //db저장
+        Hotel hotel = hotelRepository.save(Hotel.builder()
+                        .name(request.getHotelName())
+                        .address(request.getAddress())
+                        .latitude(request.getLatitude())
+                        .longitude(request.getLongitude())
+                        .imageUrl(request.getImageUrl())
+                        .checkInTime(request.getCheckInTime())
+                        .checkOutTime(request.getCheckOutTime())
+                .build());
+
+        return HotelCreateResponse.from(hotel);
+    }
+
+    //호텔삭제 -staff,관리자
+    public void deleteHotel(Long hotelId){
+        //엔티티검사
+        Hotel hotel = hotelRepository.findById(hotelId)
+                        .orElseThrow(()-> new CustomException(ErrorCode.HOTEL_NOT_FOUND));
+
+        //hotel삭제
+        hotelRepository.delete(hotel);
+    }
+
+    //호텔수정 -staff,관리자
+    public HotelUpdateResponse updateHotel(Long hotelId, HotelUpdateRequest request){
+        //엔티티검사
+        Hotel hotel = hotelRepository.findById(hotelId)
+                .orElseThrow(()-> new CustomException(ErrorCode.HOTEL_NOT_FOUND));
+
+        //hotel수정
+        hotel.update(
+                request.getHotelName(),
+                request.getAddress(),
+                request.getLatitude(),
+                request.getLongitude(),
+                request.getImageUrl(),
+                request.getCheckInTime(),
+                request.getCheckOutTime()
+        );
+
+        return HotelUpdateResponse.from(hotel);
     }
 }

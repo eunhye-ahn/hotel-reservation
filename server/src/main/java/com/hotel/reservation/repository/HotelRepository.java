@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 
 
 import java.time.LocalDate;
+import java.util.List;
 
 
 public interface HotelRepository extends JpaRepository<Hotel,Long> {
@@ -19,4 +20,9 @@ public interface HotelRepository extends JpaRepository<Hotel,Long> {
      */
     @Query("select distinct r.hotel from Rate r where r.date = :date")
     Page<Hotel> findAllWithRate(@Param("date") LocalDate date, Pageable pageable);
+
+
+    boolean existsByName(String name);
+
+    boolean existsByAddress(String address);
 }

@@ -25,4 +25,6 @@ public interface RateRepository extends JpaRepository<Rate,Long> {
     Optional<Rate> findCheapestRate(@Param("hotelId") Long hotelId, @Param("date") LocalDate date);
 
     Optional<Rate> findByRoomTypeAndDate(RoomType roomType, LocalDate date);
+
+    void deleteByRoomType(RoomType roomType);
 }

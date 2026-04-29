@@ -22,13 +22,19 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtFilter jwtFilter) throws Exception {
         http
+                .headers(headers -> headers
+                        .frameOptions(frame -> frame.sameOrigin()) // H2 콘솔 iframe 허용
+                )
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(s->s
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .csrf(csrf->csrf.disable())
+                .csrf(csrf->
+                        csrf.disable()
+                )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**","/api/v1/hotels/**").permitAll()
-                        .anyRequest().authenticated()
+//                        .requestMatchers("/api/auth/**","/api/v1/hotels/**").permitAll()
+//                        .anyRequest().authenticated()
+                                .anyRequest().permitAll()
                 )
                 //필터는 통과했으나 context가 비어있는 경우
                 .exceptionHandling(e->e

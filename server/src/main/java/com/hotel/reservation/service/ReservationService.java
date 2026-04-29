@@ -66,13 +66,21 @@ public class ReservationService {
     }
 
     //내 예약조회
-    public List<ReservationResponse> getMyReservation(Long userId){
+    public List<ReservationResponse> getMyReservations(Long userId){
         //엔티티 조회
         User user = userRepository.findById(userId)
                 .orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
 
         //내예약조회
         return reservationRepository.findByUser(user)
+                .stream().map(ReservationResponse::from)
+                .toList();
+    }
+
+    //전체예약조회 -관리자
+    public List<ReservationResponse> getReservations(){
+
+        return reservationRepository.findAll()
                 .stream().map(ReservationResponse::from)
                 .toList();
     }
