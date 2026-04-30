@@ -9,6 +9,7 @@ import com.hotel.reservation.exception.ErrorCode;
 import com.hotel.reservation.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -35,7 +36,9 @@ public class ReservationService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-
+        if (!request.getStartDate().isBefore(request.getEndDate())) {
+            throw new CustomException(ErrorCode.INVALID_DATE_RANGE);
+        }
 
         //예약가능여부 확인
         LocalDate date = request.getStartDate();
@@ -68,11 +71,11 @@ public class ReservationService {
     //내 예약조회
     public List<ReservationResponse> getMyReservations(Long userId){
         //엔티티 조회
-        User user = userRepository.findById(userId)
+        User User = userRepository.findById(userId)
                 .orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
 
         //내예약조회
-        return reservationRepository.findByUser(user)
+        return reservationRepository.findByUser(User)
                 .stream().map(ReservationResponse::from)
                 .toList();
     }
@@ -83,5 +86,14 @@ public class ReservationService {
         return reservationRepository.findAll()
                 .stream().map(ReservationResponse::from)
                 .toList();
+    }
+
+    //예약취소
+    public void deleteReservation(Long userId, Long reservationId){
+
+        Reservation reservation = reservationRepository.findByIdAndUserId(reservationId, userId)
+                .orElseThrow(()->new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
+
+        reservation.cancel();
     }
 }

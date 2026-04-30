@@ -60,4 +60,13 @@ public class RoomTypeAdminController {
                 .body(result);
     }
 
+    @GetMapping("/{roomTypeId}")
+    public ResponseEntity<RoomTypeDetailResponse> getRoomTypeDetail(@PathVariable Long hotelId,
+                                                                    @PathVariable Long roomTypeId){
+        RoomTypeDetailResponse result = roomTypeService.getRoomTypeDetail(hotelId, roomTypeId);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(result);
+    }
 }

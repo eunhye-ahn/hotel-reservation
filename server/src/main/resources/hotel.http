@@ -21,25 +21,37 @@ GET http://localhost:8080/api/v1/hotels/50
 ### 예약 생성(정상응답)
 POST http://localhost:8080/api/v1/reservations
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTc3NzQzMzgzMywiZXhwIjoxNzc3NDM1NjMzfQ.MyDBnIthVL4lf96ZM_j0UU72KKPyN-6NpNEmFCsWjz8
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZSI6IlJPTEVfR1VFU1QiLCJpYXQiOjE3Nzc1MTY0NDgsImV4cCI6MTc3NzUxODI0OH0.YbGyqt5vW9CXjbv4HOANUK1AdlI-d9S3QA65nCxSt7I
 
 {
-  "reservationId": "550e8400-e29b-41d4-a716-446655440000",
+  "reservationId": "450e8400-e29b-41d4-a716-44665544000",
   "hotelId": 1,
   "roomTypeId": 1,
-  "startDate": "2026-04-29",
+  "startDate": "2026-04-30",
   "endDate": "2026-04-30",
   "numberOfRoomsToReserve": 1
 }
 
-### 예약 조회(정상응답)
+### 내 예약 조회(정상응답)
 GET http://localhost:8080/api/v1/reservations
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTc3NzQzMzgzMywiZXhwIjoxNzc3NDM1NjMzfQ.MyDBnIthVL4lf96ZM_j0UU72KKPyN-6NpNEmFCsWjz8
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZSI6IlJPTEVfR1VFU1QiLCJpYXQiOjE3Nzc1MTY0NDgsImV4cCI6MTc3NzUxODI0OH0.YbGyqt5vW9CXjbv4HOANUK1AdlI-d9S3QA65nCxSt7I
+
+### 전체 예약 조회(정상응답)
+GET http://localhost:8080/api/v1/reservations/all
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZSI6IlJPTEVfR1VFU1QiLCJpYXQiOjE3Nzc1MTY0NDgsImV4cCI6MTc3NzUxODI0OH0.YbGyqt5vW9CXjbv4HOANUK1AdlI-d9S3QA65nCxSt7I
+
+
+### 예약 취소(없는 호텔)
+DELETE http://localhost:8080/api/v1/reservations/1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZSI6IlJPTEVfR1VFU1QiLCJpYXQiOjE3Nzc1MTY0NDgsImV4cCI6MTc3NzUxODI0OH0.YbGyqt5vW9CXjbv4HOANUK1AdlI-d9S3QA65nCxSt7I
 
 ### 호텔 생성(정상응답)
 POST http://localhost:8080/api/v1/hotels
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZSI6IlJPTEVfR1VFU1QiLCJpYXQiOjE3Nzc1MDk5ODksImV4cCI6MTc3NzUxMTc4OX0.s4ZiwxDWT7BxIA_E0epVM5Lkpa2vvKSORco3TNAc7ag
 
 {
   "hotelName": "Grand Hotel Seoul",
@@ -54,6 +66,7 @@ Content-Type: application/json
 ### 호텔 수정(정상응답)
 PUT http://localhost:8080/api/v1/hotels/5
 Content-Type: application/json
+Authorization: Bearer
 
 {
   "hotelName": "Grand Seoul",
@@ -82,12 +95,16 @@ Content-Type: application/json
 }
 
 
+### 객실타입 조회
+GET http://localhost:8080/api/v1/hotels/1/roomtypes/1
+
+
 ### 객실타입 수정(정상응답)
 PUT http://localhost:8080/api/v1/hotels/1/roomtypes/1
 Content-Type: application/json
 
 {
-  "roomTypeName": "스위쯔 룸",
+  "ame": "스위쯔 룸",
   "maxOccupancy": 5,
   "imageUrl": null
 }
@@ -96,7 +113,7 @@ Content-Type: application/json
 DELETE http://localhost:8080/api/v1/hotels/2/roomtypes/3
 
 ### 객실 생성(정상응답)
-POST http://localhost:8080/api/v1/hotels/1/roomtypes/9
+POST http://localhost:8080/api/v1/hotels/1/roomtypes/1/rooms
 Content-Type: application/json
 
 {
@@ -106,5 +123,16 @@ Content-Type: application/json
 }
 
 ### 객실 수정(정상응답)
+PUT http://localhost:8080/api/v1/hotels/1/roomtypes/1/rooms/1
+Content-Type: application/json
+
+{
+  "roomName": "작은방3",
+  "floor": "2",
+  "number": "203",
+  "isAvailable": "false"
+}
 
 ### 객실 삭제(정상응답)
+DELETE http://localhost:8080/api/v1/hotels/1/roomtypes/1/rooms/1
+

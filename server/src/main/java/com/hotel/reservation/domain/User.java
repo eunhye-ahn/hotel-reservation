@@ -32,5 +32,5 @@ public class User extends BaseTime{
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     @Builder.Default
-    private Role role = Role.ROLE_USER;
+    private Role role = Role.ROLE_GUEST;
 }

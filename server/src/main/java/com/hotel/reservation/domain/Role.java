@@ -1,7 +1,7 @@
 package com.hotel.reservation.domain;
 
 public enum Role {
-    ROLE_USER,
+    ROLE_GUEST,
     ROLE_STAFF,
     ROLE_ADMIN
 }

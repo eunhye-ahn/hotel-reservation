@@ -1,15 +1,19 @@
 package com.hotel.reservation.domain;
 
+import com.hotel.reservation.exception.CustomException;
+import com.hotel.reservation.exception.ErrorCode;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Check;
 
 import java.time.LocalDate;
 
 @Entity
 @Table(name="reservation")
+@Check(constraints = "start_date < end_date")
 @Getter
 @NoArgsConstructor
 @Builder
@@ -63,4 +67,12 @@ public class Reservation extends BaseTime{
     @ManyToOne
     @JoinColumn(name="user_id", nullable = false)
     private User user;
+
+    public void cancel(){
+        if(this.reservationStatus != ReservationStatus.BEFORE_USE){
+            throw new CustomException(ErrorCode.CANNOT_CANCEL_RESERVATION);
+        }
+        this.reservationStatus = ReservationStatus.CANCELED;
+        this.paymentStatus = PaymentStatus.REFUNDED;
+    }
 }

@@ -6,13 +6,12 @@ import com.hotel.reservation.domain.RoomType;
 import com.hotel.reservation.dto.*;
 import com.hotel.reservation.exception.CustomException;
 import com.hotel.reservation.exception.ErrorCode;
-import com.hotel.reservation.repository.HotelRepository;
-import com.hotel.reservation.repository.RateRepository;
-import com.hotel.reservation.repository.RoomTypeInventoryRepository;
-import com.hotel.reservation.repository.RoomTypeRepository;
+import com.hotel.reservation.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +21,7 @@ public class RoomTypeService {
     private final RoomTypeRepository roomTypeRepository;
     private final RateRepository rateRepository;
     private final RoomTypeInventoryRepository roomTypeInventoryRepository;
+    private final RoomRepository roomRepository;
 
     //룸타입 생성
     @Transactional
@@ -75,4 +75,15 @@ public class RoomTypeService {
 
         return RoomTypeUpdateResponse.from(roomType);
     }
+
+    //룸타입디테일 조회
+    public RoomTypeDetailResponse getRoomTypeDetail(Long hotelId, Long roomTypeId){
+        RoomType roomType = roomTypeRepository.findByIdAndHotelId(roomTypeId, hotelId)
+                .orElseThrow(()-> new CustomException(ErrorCode.ROOM_TYPE_NOT_FOUND));
+
+        List<Room> rooms = roomRepository.findAllByRoomType(roomType);
+
+        return RoomTypeDetailResponse.from(roomType, rooms);
+    }
+
 }

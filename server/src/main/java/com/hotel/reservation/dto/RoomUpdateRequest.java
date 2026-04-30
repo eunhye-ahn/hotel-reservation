@@ -9,5 +9,5 @@ public class RoomUpdateRequest {
     private String roomName;
     private Integer floor;
     private Integer number;
-    private Boolean isAvailable;
+    private Boolean usable;
 }

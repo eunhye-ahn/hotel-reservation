@@ -41,7 +41,6 @@ public class RoomService {
                         .name(request.getRoomName())
                         .floor(request.getFloor())
                         .number(request.getNumber())
-                        .is_available(true)
                         .hotel(hotel)
                         .roomType(roomType)
                     .build());
@@ -72,9 +71,18 @@ public class RoomService {
                 request.getRoomName(),
                 request.getFloor(),
                 request.getNumber(),
-                request.getIsAvailable()
+                request.getUsable()
         );
 
         return RoomUpdateResponse.from(room);
+    }
+
+    //호텔>객실타입>객실 상세 조회
+    public RoomInfoResponse getRoom(Long hotelId, Long roomTypeId, Long roomId){
+        //엔티티 검사
+        Room room = roomRepository.findByIdAndRoomTypeIdAndHotelId(roomId, roomTypeId, hotelId)
+                .orElseThrow(()-> new CustomException(ErrorCode.ROOM_NOT_FOUND));
+
+        return RoomInfoResponse.from(room);
     }
 }

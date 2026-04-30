@@ -1,5 +1,6 @@
 package com.hotel.reservation.controller;
 
+import com.hotel.reservation.domain.Reservation;
 import com.hotel.reservation.dto.ReservationRequest;
 import com.hotel.reservation.dto.ReservationDetailResponse;
 import com.hotel.reservation.dto.ReservationResponse;
@@ -46,5 +47,15 @@ public class ReservationController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(result);
+    }
+
+    //예약 취소
+    @DeleteMapping("{reservationId}")
+    public ResponseEntity<Void> cancelReservation(@AuthenticationPrincipal Long userId, @PathVariable Long reservationId){
+        reservationService.deleteReservation(userId, reservationId);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .build();
     }
 }

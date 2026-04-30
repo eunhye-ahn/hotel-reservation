@@ -3,6 +3,7 @@ package com.hotel.reservation.config;
 import com.hotel.reservation.jwt.JwtFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -31,18 +32,39 @@ public class SecurityConfig {
                 .csrf(csrf->
                         csrf.disable()
                 )
+
+                //rbac
                 .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers("/api/auth/**","/api/v1/hotels/**").permitAll()
-//                        .anyRequest().authenticated()
-                                .anyRequest().permitAll()
+                        //모두 접근 가능
+                        .requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/hotels/**").permitAll()
+                        .requestMatchers("/h2-console/**").permitAll()
+
+                        //admin만 가능
+                        .requestMatchers(HttpMethod.POST, "/api/v1/hotels/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/hotels/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/hotels/**").hasAuthority("ROLE_ADMIN")
+
+                        //로그인한 사용자만 가능
+                        .requestMatchers("/api/v1/reservations/**").authenticated()
+
+                        .anyRequest().authenticated()
                 )
-                //필터는 통과했으나 context가 비어있는 경우
+
                 .exceptionHandling(e->e
+                        //필터는 통과했으나 context가 비어있는 경우
                         .authenticationEntryPoint((request,response,authException) -> {
                             response.setStatus(401);
                             response.setContentType("application/json");
                             response.setCharacterEncoding("UTF-8");
-                            response.getWriter().write("token null : 인증이 필요합니다");
+                            response.getWriter().write("{\"message\":\"인증이 필요합니다\"}");
+                        })
+                        //rbac의 접근권한이 없는 경우
+                        .accessDeniedHandler((request,response,accessDeniedException)->{
+                          response.setStatus(403);
+                          response.setContentType("application/json");
+                          response.setCharacterEncoding("UTF-8");
+                          response.getWriter().write("{\"message\":\"접근 권한이 없습니다\"}");
                         })
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

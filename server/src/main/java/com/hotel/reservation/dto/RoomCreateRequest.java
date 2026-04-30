@@ -9,5 +9,4 @@ public class RoomCreateRequest {
     private String roomName;
     private int floor;
     private int number;
-    private boolean is_available;
 }

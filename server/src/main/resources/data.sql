@@ -1,6 +1,6 @@
 INSERT INTO users (name, email, password, phone, role, created_at, updated_at)
 VALUES
-    ('Test User', 'test@test.com', '$2a$10$5.OW9/S3MLMEmhTtIXp5s.pYRyOQ77zhOqDH5U36dIPsMH.qjyjaq', '01012345678', 'ROLE_USER', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ('Test User', 'test@test.com', '$2a$10$5.OW9/S3MLMEmhTtIXp5s.pYRyOQ77zhOqDH5U36dIPsMH.qjyjaq', '01012345678', 'ROLE_GUEST', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
     ('Admin User', 'admin@test.com', '$2a$10$5.OW9/S3MLMEmhTtIXp5s.pYRyOQ77zhOqDH5U36dIPsMH.qjyjaq', '01099999999', 'ROLE_ADMIN', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 INSERT INTO hotel (name, address, latitude, longitude, image_url, check_in_time, check_out_time, created_at, updated_at)
@@ -29,4 +29,8 @@ VALUES
     (1, 1, CURRENT_DATE, 10, 3),
     (2, 1, CURRENT_DATE, 8, 5),
     (3, 2, CURRENT_DATE, 12, 2),
-    (4, 3, CURRENT_DATE, 5, 1);
+    (4, 3, CURRENT_DATE, 5, 1),
+    (1, 1, CURRENT_DATE + 1, 10, 5),
+    (2, 1, CURRENT_DATE + 1, 8, 5),
+    (3, 2, CURRENT_DATE + 1, 12, 2),
+    (4, 3, CURRENT_DATE + 1, 5, 1);

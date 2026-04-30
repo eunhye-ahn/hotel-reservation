@@ -29,8 +29,9 @@ public class Room extends BaseTime{
     @Column
     private String name;
 
-    @Column(nullable = false)
-    private boolean is_available;
+    @Builder.Default
+    @Column(nullable = false, name = "is_usable")
+    private boolean usable = true;       //객실 사용 가능여부(공사중, 고장 등)
 
     @ManyToOne
     @JoinColumn(name = "hotel_id", nullable = false)
@@ -40,10 +41,10 @@ public class Room extends BaseTime{
     @JoinColumn(name = "room_type_id", nullable = false)
     private RoomType roomType;
 
-    public void update(String name, Integer floor, Integer number, Boolean is_available){
+    public void update(String name, Integer floor, Integer number, Boolean usable){
         if (name != null) this.name = name;
         if (floor != null) this.floor = floor;
         if (number != null) this.number = number;
-        if (is_available != null) this.is_available = is_available;
+        if (usable != null) this.usable = usable;
     }
 }
