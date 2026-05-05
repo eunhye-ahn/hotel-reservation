@@ -21,7 +21,7 @@ public class RedisService {
      */
     private final RedisTemplate<String,String> redisTemplate;
 
-    //로그인,재발급 -rt저장
+    //로그인,재발급 -rt저장(set:덮어쓰기)
     public void saveRefreshToken(Long userId, String refreshToken, Long expiration){
         redisTemplate.opsForValue()
                 .set("RT:"+userId, refreshToken, expiration, TimeUnit.MILLISECONDS);
@@ -41,4 +41,6 @@ public class RedisService {
 
     //로그인 있는지없는지여부 확인-bl조회
     public boolean isBlackList(String accessToken) { return redisTemplate.hasKey("BL:"+accessToken);}
+
+    //
 }

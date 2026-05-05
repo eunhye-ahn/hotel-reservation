@@ -5,6 +5,7 @@ import com.hotel.reservation.dto.ReservationRequest;
 import com.hotel.reservation.dto.ReservationDetailResponse;
 import com.hotel.reservation.dto.ReservationResponse;
 import com.hotel.reservation.service.ReservationService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,12 +22,13 @@ public class ReservationController {
 
     //예약생성
     @PostMapping
-    public ResponseEntity<ReservationDetailResponse> createReservation(@AuthenticationPrincipal Long userId, @RequestBody ReservationRequest request){
-        ReservationDetailResponse result = reservationService.createReservation(request, userId);
+    public ResponseEntity<Void> createReservation(@AuthenticationPrincipal Long userId,
+                                                  @RequestBody @Valid ReservationRequest request){
+        reservationService.createReservation(request, userId);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(result);
+                .build();
     }
 
     //내 예약조회

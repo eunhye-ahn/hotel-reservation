@@ -40,6 +40,16 @@ public enum ErrorCode {
     RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않은 예약입니다"),
     INVALID_DATE_RANGE(HttpStatus.BAD_REQUEST, "체크아웃 날짜는 체크인 날짜 이후여야 합니다"),
 
+    //reservationKey -멱등키
+    HASH_GENERATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "일시적인 오류가 발생했습니다. 다시 시도해주세요"),
+    IDEMPOTENCY_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "일시적인 오류가 발생했습니다. 다시 시도해주세요"),
+    IDEMPOTENCY_USER_MISMATCH(HttpStatus.FORBIDDEN, "접근 권한이 없습니다"),
+    IDEMPOTENCY_REQUEST_MISMATCH(HttpStatus.UNPROCESSABLE_ENTITY, "잘못된 요청입니다"),
+    IDEMPOTENCY_PROCESSING(HttpStatus.CONFLICT, "이미 처리 중인 요청이 있습니다"),
+    IDEMPOTENCY_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "일시적인 오류가 발생했습니다. 다시 시도해주세요"),
+    IDEMPOTENCY_UNKNOWN(HttpStatus.INTERNAL_SERVER_ERROR, "일시적인 오류가 발생했습니다. 다시 시도해주세요"),
+    
+
     //user
     INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "이메일/비밀번호가 틀렸습니다"),
     DUPLICATE_EMAIL(HttpStatus.CONFLICT, "중복된 이메일 입니다"),

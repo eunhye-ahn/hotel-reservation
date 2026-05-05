@@ -2,6 +2,7 @@ package com.hotel.reservation.dto;
 
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,8 +12,12 @@ import java.time.LocalDate;
 @Getter
 @NoArgsConstructor
 public class ReservationRequest {
-    private String reservationId; //멱등키(프론트에서 생성) -UUID
+    private String reservationKey; //멱등키(프론트에서 생성) -UUID
+
+    @NotNull(message = "호텔을 선택해주세요")
     private Long hotelId;
+
+    @NotNull(message = "객실 유형을 선택해주세요")
     private Long roomTypeId;
 
     @NotNull(message = "체크인 날짜를 입력해주세요")
@@ -22,5 +27,7 @@ public class ReservationRequest {
     @NotNull(message = "체크아웃 날짜를 입력해주세요")
     @Future(message = "체크아웃 날짜는 오늘 이후여야 합니다")
     private LocalDate endDate;
+
+    @Min(value = 1, message = "최소 1개 이상 예약해주세요")
     private int numberOfRoomsToReserve;
 }

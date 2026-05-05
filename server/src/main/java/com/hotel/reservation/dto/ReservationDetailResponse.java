@@ -14,6 +14,7 @@ import java.time.LocalTime;
 @Builder
 public class ReservationDetailResponse {
     private Long reservationId;
+    private String reservationKey;
     private String hotelName;
     private String roomTypeName;
     private LocalDate startDate;

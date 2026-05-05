@@ -20,7 +20,6 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
-    private final RedisTemplate<Object, Object> redisTemplate;
     private final RedisService redisService;
 
     //로그인
