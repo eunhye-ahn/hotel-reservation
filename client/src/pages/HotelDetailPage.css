@@ -1,0 +1,179 @@
+/* HotelDetailPage.css */
+
+.detail-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+/* 검색바 */
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border: 0.5px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 24px;
+}
+
+.search-bar input[type="date"] {
+    border: none;
+    outline: none;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.search-bar span {
+    font-size: 14px;
+    color: #888;
+}
+
+.guest-select {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+}
+
+.guest-select span {
+    font-size: 14px;
+    color: #555;
+}
+
+.guest-select input[type="number"] {
+    width: 48px;
+    padding: 4px 8px;
+    border: 0.5px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    text-align: center;
+    outline: none;
+}
+
+/* 호텔 정보 */
+.hotel-info {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.hotel-info img {
+    width: 300px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    background: #f0f0f0;
+}
+
+.hotel-info-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    justify-content: center;
+}
+
+.hotel-info-text p {
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.hotel-info-text p:first-child {
+    font-size: 16px;
+    font-weight: 500;
+    color: #111;
+}
+
+/* 객실 선택 */
+.room-select-title {
+    font-size: 15px;
+    font-weight: 500;
+    padding: 12px 0;
+    border-top: 0.5px solid #eee;
+    margin-bottom: 16px;
+}
+
+/* 객실 카드 */
+.room-card {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: 0.5px solid #eee;
+}
+
+.room-card img {
+    width: 160px;
+    height: 110px;
+    object-fit: cover;
+    border-radius: 8px;
+    background: #f0f0f0;
+    flex-shrink: 0;
+}
+
+.room-card-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.room-card-info p {
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.room-card-info p:first-child {
+    font-size: 15px;
+    font-weight: 500;
+    color: #111;
+}
+
+.room-card-price {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    min-width: 120px;
+}
+
+.hotel-price-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.hotel-original {
+    font-size: 12px;
+    color: #aaa;
+    text-decoration: line-through;
+}
+
+.hotel-discount {
+    font-size: 12px;
+    color: #e74c3c;
+}
+
+.hotel-demand {
+    font-size: 16px;
+    font-weight: 500;
+    color: #111;
+    margin: 0;
+}
+
+.room-card button {
+    margin-top: 8px;
+    padding: 8px 16px;
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.room-card button:hover {
+    background-color: #357abd;
+}

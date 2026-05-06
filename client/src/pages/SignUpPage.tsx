@@ -27,7 +27,7 @@ export const SignUpPage = () => {
     }
 
     return (
-        <div>
+        <div className="signup-container">
             <form>
                 <div>
                     <label>name</label>

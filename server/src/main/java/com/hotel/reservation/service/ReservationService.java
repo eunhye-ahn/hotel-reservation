@@ -208,7 +208,10 @@ public class ReservationService {
         if (!request.getStartDate().isBefore(request.getEndDate())) {
             throw new CustomException(ErrorCode.INVALID_DATE_RANGE);
         }
-
+        //최대인원수 검사
+        if (request.getNumberOfGuests() > roomType.getMaxOccupancy() * request.getNumberOfRoomsToReserve()) {
+            throw new CustomException(ErrorCode.EXCEED_MAX_OCCUPANCY);
+        }
 
         /**
          * [n+1문제 발생]

@@ -36,7 +36,7 @@ public class SecurityConfig {
                 //rbac
                 .authorizeHttpRequests(auth -> auth
                         //모두 접근 가능
-                        .requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/hotels/**").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
 

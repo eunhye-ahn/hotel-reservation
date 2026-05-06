@@ -34,4 +34,7 @@ public class ReservationRequest {
 
     @Min(value = 1, message = "최소 1개 이상 예약해주세요")
     private int numberOfRoomsToReserve;
+
+    @Min(value = 1, message = "최소 1명 이상이어야 합니다")
+    private int numberOfGuests;
 }

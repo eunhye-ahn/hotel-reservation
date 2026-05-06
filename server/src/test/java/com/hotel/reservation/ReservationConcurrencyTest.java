@@ -55,6 +55,7 @@ public class ReservationConcurrencyTest {
                             .startDate(LocalDate.now())
                             .endDate(LocalDate.now().plusDays(1))
                             .numberOfRoomsToReserve(2)
+                            .numberOfGuests(2)
                             .build();
 
                     reservationService.createReservation(request, 1L);

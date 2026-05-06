@@ -15,7 +15,7 @@ public class HotelController {
     private final HotelService hotelService;
 
     @GetMapping
-    public ResponseEntity<Page<HotelResponse>> getHotels(@RequestParam int page){
+    public ResponseEntity<Page<HotelResponse>> getHotels(@RequestParam(defaultValue = "0") int page){
         Page<HotelResponse> result = hotelService.getHotels(page);
 
         return ResponseEntity

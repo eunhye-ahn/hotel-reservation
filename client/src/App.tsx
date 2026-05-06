@@ -6,6 +6,7 @@ import { Header } from './component/header'
 import { useEffect } from 'react'
 import { reissue } from './axios/api'
 import { useAuthStore } from './store/useAuthStore'
+import { HotelDetailPage } from './pages/HotelDetailPage'
 
 function App() {
   const { setAccessToken } = useAuthStore();
@@ -15,6 +16,7 @@ function App() {
       .then((res) => {
         setAccessToken(res.data.accessToken)
       })
+       .catch(() => {})
   }, []);
 
   return (
@@ -23,6 +25,7 @@ function App() {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/" element={<MainPage />} />
+        <Route path="/hotels/:hotelId" element={<HotelDetailPage />} />
         <Route path="/signup" element={<SignUpPage />} />
       </Routes>
     </BrowserRouter>

@@ -39,6 +39,7 @@ public enum ErrorCode {
     CANNOT_CANCEL_RESERVATION(HttpStatus.CONFLICT, "취소할 수 없는 예약입니다"),
     RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않은 예약입니다"),
     INVALID_DATE_RANGE(HttpStatus.BAD_REQUEST, "체크아웃 날짜는 체크인 날짜 이후여야 합니다"),
+    EXCEED_MAX_OCCUPANCY(HttpStatus.BAD_REQUEST, "최대 수용 인원을 초과했습니다"),
 
     //reservationKey -멱등키
     HASH_GENERATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "일시적인 오류가 발생했습니다. 다시 시도해주세요"),

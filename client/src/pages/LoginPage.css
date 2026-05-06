@@ -1,12 +1,12 @@
 /* Login Page */
-div {
+.login-container {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
 }
 
-form {
+.login-container form {
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -16,19 +16,19 @@ form {
     border-radius: 8px;
 }
 
-form>div {
+.login-container form > div {
     display: flex;
     flex-direction: column;
     gap: 4px;
     height: auto;
 }
 
-label {
+.login-container label {
     font-size: 14px;
     color: #333;
 }
 
-input {
+.login-container input {
     padding: 8px 12px;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -36,11 +36,11 @@ input {
     outline: none;
 }
 
-input:focus {
+.login-container input:focus {
     border-color: #4a90e2;
 }
 
-button {
+.login-container button {
     padding: 10px;
     border: none;
     border-radius: 4px;
@@ -48,12 +48,12 @@ button {
     cursor: pointer;
 }
 
-button:first-of-type {
+.login-container button:first-of-type {
     background-color: #4a90e2;
     color: white;
 }
 
-button:last-of-type {
+.login-container button:last-of-type {
     background-color: #f0f0f0;
     color: #333;
 }
