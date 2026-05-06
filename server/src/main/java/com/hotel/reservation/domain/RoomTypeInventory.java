@@ -19,6 +19,9 @@ public class RoomTypeInventory{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Version //낙관적 락
+    private Long version = 0L;
+
     @ManyToOne
     @JoinColumn(name = "room_type_id")
     private RoomType roomType;

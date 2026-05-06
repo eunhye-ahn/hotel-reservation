@@ -74,10 +74,21 @@ public class ReservationService {
         try{
             process(request, userId);
             idempotencyRedisService.complete(request.getReservationKey());
-        }catch(Exception e){
+        }
+        catch(Exception e){
             idempotencyRedisService.fail(request.getReservationKey());
             throw e;
         }
+
+        /**
+         * [커밋 시점] - 메서드 종료 시
+         * @Transactional이 커밋 실행
+         * → JPA 더티체킹
+         *   → inventory 스냅샷 vs 현재값 비교
+         *   → 변경됐으면 UPDATE 자동 실행
+         *   → UPDATE ... WHERE id=? AND version=0
+         *   → 0 rows updated → OptimisticLockException → 롤백()
+         */
     }
 
     //내 예약조회

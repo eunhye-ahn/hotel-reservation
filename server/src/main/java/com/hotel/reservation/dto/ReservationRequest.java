@@ -4,6 +4,8 @@ import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +13,8 @@ import java.time.LocalDate;
 
 @Getter
 @NoArgsConstructor
+@Builder
+@AllArgsConstructor
 public class ReservationRequest {
     private String reservationKey; //멱등키(프론트에서 생성) -UUID
 

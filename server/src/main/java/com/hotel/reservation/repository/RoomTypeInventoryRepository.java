@@ -11,4 +11,6 @@ public interface RoomTypeInventoryRepository extends JpaRepository<RoomTypeInven
     Optional<RoomTypeInventory> findByRoomTypeAndDate(RoomType roomType, LocalDate date);
 
     void deleteByRoomType(RoomType roomType);
+
+    Optional<RoomTypeInventory> findByRoomTypeIdAndDate(Long roomTypeId, LocalDate date);
 }

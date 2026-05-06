@@ -48,7 +48,9 @@ public enum ErrorCode {
     IDEMPOTENCY_PROCESSING(HttpStatus.CONFLICT, "이미 처리 중인 요청이 있습니다"),
     IDEMPOTENCY_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "일시적인 오류가 발생했습니다. 다시 시도해주세요"),
     IDEMPOTENCY_UNKNOWN(HttpStatus.INTERNAL_SERVER_ERROR, "일시적인 오류가 발생했습니다. 다시 시도해주세요"),
-    
+
+    //낙관적 락
+    OPTIMISTIC_LOCK_CONFLICT(HttpStatus.CONFLICT, "요청이 충돌했습니다. 다시 시도해주세요"),
 
     //user
     INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "이메일/비밀번호가 틀렸습니다"),

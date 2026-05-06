@@ -54,40 +54,40 @@ VALUES
     (3, 4, 200000, 400000, 250000, CURRENT_DATE + 5),
     (3, 4, 200000, 400000, 250000, CURRENT_DATE + 6);
 
-INSERT INTO room_type_inventory (room_type_id, hotel_id, date, total_inventory, total_reserved)
+INSERT INTO room_type_inventory (room_type_id, hotel_id, date, total_inventory, total_reserved, version)
 VALUES
     -- 롯데호텔 스탠다드 (room_type_id: 1)
-    (1, 1, CURRENT_DATE,     10, 3),
-    (1, 1, CURRENT_DATE + 1, 10, 5),
-    (1, 1, CURRENT_DATE + 2, 10, 0),
-    (1, 1, CURRENT_DATE + 3, 10, 0),
-    (1, 1, CURRENT_DATE + 4, 10, 0),
-    (1, 1, CURRENT_DATE + 5, 10, 0),
-    (1, 1, CURRENT_DATE + 6, 10, 0),
+    (1, 1, CURRENT_DATE,     10, 3, 0),
+    (1, 1, CURRENT_DATE + 1, 10, 5, 0),
+    (1, 1, CURRENT_DATE + 2, 10, 0, 0),
+    (1, 1, CURRENT_DATE + 3, 10, 0, 0),
+    (1, 1, CURRENT_DATE + 4, 10, 0, 0),
+    (1, 1, CURRENT_DATE + 5, 10, 0, 0),
+    (1, 1, CURRENT_DATE + 6, 10, 0, 0),
 
     -- 롯데호텔 디럭스 (room_type_id: 2)
-    (2, 1, CURRENT_DATE,     8, 5),
-    (2, 1, CURRENT_DATE + 1, 8, 5),
-    (2, 1, CURRENT_DATE + 2, 8, 0),
-    (2, 1, CURRENT_DATE + 3, 8, 0),
-    (2, 1, CURRENT_DATE + 4, 8, 0),
-    (2, 1, CURRENT_DATE + 5, 8, 0),
-    (2, 1, CURRENT_DATE + 6, 8, 0),
+    (2, 1, CURRENT_DATE,     8, 5, 0),
+    (2, 1, CURRENT_DATE + 1, 8, 5, 0),
+    (2, 1, CURRENT_DATE + 2, 8, 0, 0),
+    (2, 1, CURRENT_DATE + 3, 8, 0, 0),
+    (2, 1, CURRENT_DATE + 4, 8, 0, 0),
+    (2, 1, CURRENT_DATE + 5, 8, 0, 0),
+    (2, 1, CURRENT_DATE + 6, 8, 0, 0),
 
     -- 신라호텔 스탠다드 (room_type_id: 3)
-    (3, 2, CURRENT_DATE,     12, 2),
-    (3, 2, CURRENT_DATE + 1, 12, 2),
-    (3, 2, CURRENT_DATE + 2, 12, 0),
-    (3, 2, CURRENT_DATE + 3, 12, 0),
-    (3, 2, CURRENT_DATE + 4, 12, 0),
-    (3, 2, CURRENT_DATE + 5, 12, 0),
-    (3, 2, CURRENT_DATE + 6, 12, 0),
+    (3, 2, CURRENT_DATE,     12, 2, 0),
+    (3, 2, CURRENT_DATE + 1, 12, 2, 0),
+    (3, 2, CURRENT_DATE + 2, 12, 0, 0),
+    (3, 2, CURRENT_DATE + 3, 12, 0, 0),
+    (3, 2, CURRENT_DATE + 4, 12, 0, 0),
+    (3, 2, CURRENT_DATE + 5, 12, 0, 0),
+    (3, 2, CURRENT_DATE + 6, 12, 0, 0),
 
     -- 제주 신화월드 스위트 (room_type_id: 4)
-    (4, 3, CURRENT_DATE,     5, 1),
-    (4, 3, CURRENT_DATE + 1, 5, 1),
-    (4, 3, CURRENT_DATE + 2, 5, 0),
-    (4, 3, CURRENT_DATE + 3, 5, 0),
-    (4, 3, CURRENT_DATE + 4, 5, 0),
-    (4, 3, CURRENT_DATE + 5, 5, 0),
-    (4, 3, CURRENT_DATE + 6, 5, 0);
+    (4, 3, CURRENT_DATE,     5, 1, 0),
+    (4, 3, CURRENT_DATE + 1, 5, 1, 0),
+    (4, 3, CURRENT_DATE + 2, 5, 0, 0),
+    (4, 3, CURRENT_DATE + 3, 5, 0, 0),
+    (4, 3, CURRENT_DATE + 4, 5, 0, 0),
+    (4, 3, CURRENT_DATE + 5, 5, 0, 0),
+    (4, 3, CURRENT_DATE + 6, 5, 0, 0);
