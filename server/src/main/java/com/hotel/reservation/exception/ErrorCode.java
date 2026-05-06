@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
  * HttpStatus.CONFLICT              // 409  충돌 (동시 예약, 이미 취소된 예약 재취소)
  * HttpStatus.INTERNAL_SERVER_ERROR // 500  서버 내부 오류 (예상치 못한 에러)
  * HttpStatus.SERVICE_UNAVAILABLE   // 503  서비스 일시 불가 (요금 미등록, 점검 중)
+ * HttpStatus.GONE                  // 410  리소스가 존재했지만 더이상 없음
  */
 
 @Getter
@@ -40,6 +41,10 @@ public enum ErrorCode {
     RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않은 예약입니다"),
     INVALID_DATE_RANGE(HttpStatus.BAD_REQUEST, "체크아웃 날짜는 체크인 날짜 이후여야 합니다"),
     EXCEED_MAX_OCCUPANCY(HttpStatus.BAD_REQUEST, "최대 수용 인원을 초과했습니다"),
+
+    //결제
+    PRICE_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "가격 토큰을 찾을 수 없습니다"),
+    PRICE_TOKEN_EXPIRED(HttpStatus.GONE, "가격 토큰이 만료되었습니다"),
 
     //reservationKey -멱등키
     HASH_GENERATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "일시적인 오류가 발생했습니다. 다시 시도해주세요"),

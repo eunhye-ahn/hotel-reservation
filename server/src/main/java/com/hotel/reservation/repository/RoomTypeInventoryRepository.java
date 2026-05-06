@@ -5,6 +5,7 @@ import com.hotel.reservation.domain.RoomTypeInventory;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 public interface RoomTypeInventoryRepository extends JpaRepository<RoomTypeInventory, Long> {
@@ -13,4 +14,6 @@ public interface RoomTypeInventoryRepository extends JpaRepository<RoomTypeInven
     void deleteByRoomType(RoomType roomType);
 
     Optional<RoomTypeInventory> findByRoomTypeIdAndDate(Long roomTypeId, LocalDate date);
+
+    List<RoomTypeInventory> findByRoomTypeIdAndDateBetween(Long roomTypeId, LocalDate startDate, LocalDate endDate);
 }

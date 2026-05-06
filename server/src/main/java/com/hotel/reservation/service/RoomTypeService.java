@@ -1,8 +1,6 @@
 package com.hotel.reservation.service;
 
-import com.hotel.reservation.domain.Hotel;
-import com.hotel.reservation.domain.Room;
-import com.hotel.reservation.domain.RoomType;
+import com.hotel.reservation.domain.*;
 import com.hotel.reservation.dto.*;
 import com.hotel.reservation.exception.CustomException;
 import com.hotel.reservation.exception.ErrorCode;
@@ -11,6 +9,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -22,6 +21,7 @@ public class RoomTypeService {
     private final RateRepository rateRepository;
     private final RoomTypeInventoryRepository roomTypeInventoryRepository;
     private final RoomRepository roomRepository;
+    private final PriceTokenRepository priceTokenRepository;
 
     //룸타입 생성
     @Transactional
@@ -76,7 +76,7 @@ public class RoomTypeService {
         return RoomTypeUpdateResponse.from(roomType);
     }
 
-    //룸타입디테일 조회
+    //룸타입디테일 조회 -관리자용
     public RoomTypeDetailResponse getRoomTypeDetail(Long hotelId, Long roomTypeId){
         RoomType roomType = roomTypeRepository.findByIdAndHotelId(roomTypeId, hotelId)
                 .orElseThrow(()-> new CustomException(ErrorCode.ROOM_TYPE_NOT_FOUND));
@@ -86,4 +86,32 @@ public class RoomTypeService {
         return RoomTypeDetailResponse.from(roomType, rooms);
     }
 
-}
+    LocalDate today = LocalDate.now();
+
+    //예약폼 -유저용
+    public RoomTypeReservationResponse getRoomTypeForReservation(Long hotelId, Long roomTypeId,
+                                                                   LocalDate startDate, LocalDate endDate,
+                                                                 int numberOfRooms) {
+        //유효성검사
+        RoomType roomType = roomTypeRepository.findByIdAndHotelId(roomTypeId, hotelId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ROOM_TYPE_NOT_FOUND));
+
+        //잔여객실조회
+        List<RoomTypeInventory> inventories = roomTypeInventoryRepository.findByRoomTypeIdAndDateBetween(roomTypeId, startDate, endDate.minusDays(1));
+
+        //가격계산
+        List<Rate> rates = rateRepository.findByRoomTypeIdAndDateBetween(roomTypeId, startDate, endDate.minusDays(1));
+
+        int totalDemandRate = rates.stream().mapToInt(Rate::getDemandRate).sum();
+        int totalPrice = totalDemandRate * numberOfRooms;
+
+        //PriceToken 생성
+        PriceToken priceToken = PriceToken.builder()
+                .totalPrice(totalPrice)
+                .build();
+
+        priceTokenRepository.save(priceToken);
+        String token = priceToken.getToken();
+
+        return RoomTypeReservationResponse.from(inventories, token, totalDemandRate, totalPrice);
+    }}

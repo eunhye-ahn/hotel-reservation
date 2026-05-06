@@ -3,6 +3,7 @@ import type { AccessTokenResponse, LoginRequest, SignUpRequest } from "@/type/au
 import { api } from "./axiosInstance"
 import axios from "axios";
 import type { HotelDetailResponse, hotelResponse, Page } from "@/type/hotel";
+import type { ReservationRequest } from "@/type/reservation";
 
 export const login = (request: LoginRequest) => {
     return api.post<AccessTokenResponse>("/auth/login", request);
@@ -29,4 +30,8 @@ export const getHotels = () => {
 
 export const getHotelDetail = (hotelId: number) => {
     return api.get<HotelDetailResponse>(`/hotels/${hotelId}`);
+}
+
+export const createReservation = (request: ReservationRequest) => {
+    return api.post<void>("/reservations", request)
 }

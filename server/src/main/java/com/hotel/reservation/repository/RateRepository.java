@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -24,7 +25,10 @@ public interface RateRepository extends JpaRepository<Rate,Long> {
         """)
     Optional<Rate> findCheapestRate(@Param("hotelId") Long hotelId, @Param("date") LocalDate date);
 
+    //이거 나중에 삭제하도록 코드 구조 변경
     Optional<Rate> findByRoomTypeAndDate(RoomType roomType, LocalDate date);
 
     void deleteByRoomType(RoomType roomType);
+
+    List<Rate> findByRoomTypeIdAndDateBetween(Long roomTypeId, LocalDate startDate, LocalDate endDate);
 }

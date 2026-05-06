@@ -31,7 +31,7 @@ public class ReservationService {
     private final RoomTypeRepository roomTypeRepository;
     private final UserRepository userRepository;
     private final RoomTypeInventoryRepository roomTypeInventoryRepository;
-    private final RateRepository rateRepository;
+    private final PriceTokenRepository priceTokenRepository;
     private final ReservationRepository reservationRepository;
     private final IdempotencyRedisService idempotencyRedisService;
 
@@ -194,7 +194,18 @@ public class ReservationService {
         //completed면 정상 반환 -> status를 enum으로 관리하면 코드가독성 좋아짐
     }
 
+    @Transactional
     private void process(ReservationRequest request, Long userId){
+        //토큰검증
+        PriceToken priceToken = priceTokenRepository.findById(request.getPriceToken())
+                .orElseThrow(()-> new CustomException(ErrorCode.PRICE_TOKEN_NOT_FOUND));
+
+        if(priceToken.isExpired()){
+            throw new CustomException(ErrorCode.PRICE_TOKEN_EXPIRED);
+        }
+        int totalPrice = priceToken.getTotalPrice();
+        priceTokenRepository.delete(priceToken); //일회성
+
         //엔티티조회-유효성검사
         Hotel hotel = hotelRepository
                 .findById(request.getHotelId())
@@ -213,24 +224,15 @@ public class ReservationService {
             throw new CustomException(ErrorCode.EXCEED_MAX_OCCUPANCY);
         }
 
-        /**
-         * [n+1문제 발생]
-         * for문 돌때마다 재고 N번과와 금액 N번 -> 총 db조회 2N번 발생
-         */
-        int totalPrice = 0;
+        //기간합산 재고 조회
+        List<RoomTypeInventory> inventories = roomTypeInventoryRepository
+                .findByRoomTypeIdAndDateBetween(roomType.getId(), request.getStartDate(), request.getEndDate().minusDays(1));
 
-        for(LocalDate date = request.getStartDate();date.isBefore(request.getEndDate());date=date.plusDays(1)){
-            //재고확인 및 차감
-            RoomTypeInventory inventory = roomTypeInventoryRepository
-                    .findByRoomTypeAndDate(roomType, date)
-                    .orElseThrow(()-> new CustomException(ErrorCode.ROOM_INVENTORY_NOT_FOUND));
+
+        //재고 확인 및 차감
+        for(RoomTypeInventory inventory : inventories){
             inventory.reserve(request.getNumberOfRoomsToReserve());
-            //날짜별 금액 합산
-            Rate rate = rateRepository.findByRoomTypeAndDate(roomType, date)
-                    .orElseThrow(()-> new CustomException(ErrorCode.RATE_NOT_FOUND));
-            totalPrice += request.getNumberOfRoomsToReserve()*rate.getDemandRate();
         }
-
         //예약생성
         Reservation reservation = Reservation.builder()
                 .reservationKey(request.getReservationKey())

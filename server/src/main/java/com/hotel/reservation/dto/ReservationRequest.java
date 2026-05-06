@@ -1,9 +1,6 @@
 package com.hotel.reservation.dto;
 
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.FutureOrPresent;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,6 +14,9 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class ReservationRequest {
     private String reservationKey; //멱등키(프론트에서 생성) -UUID
+
+    @NotBlank(message = "가격 토큰이 없습니다")
+    private String priceToken;
 
     @NotNull(message = "호텔을 선택해주세요")
     private Long hotelId;
