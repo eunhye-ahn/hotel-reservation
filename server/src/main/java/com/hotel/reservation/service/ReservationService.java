@@ -1,26 +1,18 @@
 package com.hotel.reservation.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.hotel.reservation.domain.*;
-import com.hotel.reservation.dto.IdempotencyValue;
-import com.hotel.reservation.dto.ReservationRequest;
-import com.hotel.reservation.dto.ReservationDetailResponse;
-import com.hotel.reservation.dto.ReservationResponse;
+import com.hotel.reservation.dto.*;
 import com.hotel.reservation.exception.CustomException;
 import com.hotel.reservation.exception.ErrorCode;
 import com.hotel.reservation.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.HexFormat;
 import java.util.List;
 
@@ -31,9 +23,9 @@ public class ReservationService {
     private final RoomTypeRepository roomTypeRepository;
     private final UserRepository userRepository;
     private final RoomTypeInventoryRepository roomTypeInventoryRepository;
-    private final PriceTokenRepository priceTokenRepository;
     private final ReservationRepository reservationRepository;
     private final IdempotencyRedisService idempotencyRedisService;
+    private final PriceTokenRedisService priceTokenRedisService;
 
     /**
      *
@@ -54,7 +46,7 @@ public class ReservationService {
      */
     //예약생성
     @Transactional
-    public void createReservation(ReservationRequest request, Long userId){
+    public String createReservation(ReservationRequest request, Long userId){
         //멱등키 확인 -Redis
         //1.요청본문 해시생성
         String requestHash = generateHash(request);
@@ -67,13 +59,14 @@ public class ReservationService {
         //3.중복요청이면 이전 요청으로 처리
         if(!isFirst){
             handleDuplicate(request.getReservationKey(), userId, requestHash);
-            return;
+            return request.getReservationKey();
         }
 
         //4.새요청이면 예약처리(여기서 엔티티유효성검사 등하고 response 반환)
         try{
             process(request, userId);
             idempotencyRedisService.complete(request.getReservationKey());
+            return request.getReservationKey();
         }
         catch(Exception e){
             idempotencyRedisService.fail(request.getReservationKey());
@@ -92,15 +85,25 @@ public class ReservationService {
     }
 
     //내 예약조회
-    public List<ReservationResponse> getMyReservations(Long userId){
+    public List<ReservationResponse> getMyReservations(Long userId, ReservationStatus status){
         //엔티티 조회
         User User = userRepository.findById(userId)
                 .orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
 
         //내예약조회
-        return reservationRepository.findByUser(User)
+        return reservationRepository.findByUserAndReservationStatus(User, status)
                 .stream().map(ReservationResponse::from)
                 .toList();
+    }
+
+    //예약상세조회 -예약확인서
+    public ReservationDetailResponse reservationConfirm(
+            Long userId, String reservationKey
+    ){
+        Reservation reservation =  reservationRepository.findByUserIdAndReservationKey(userId, reservationKey)
+                .orElseThrow(()->new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
+
+        return ReservationDetailResponse.from(reservation);
     }
 
     //전체예약조회 -관리자
@@ -194,17 +197,13 @@ public class ReservationService {
         //completed면 정상 반환 -> status를 enum으로 관리하면 코드가독성 좋아짐
     }
 
-    @Transactional
     private void process(ReservationRequest request, Long userId){
         //토큰검증
-        PriceToken priceToken = priceTokenRepository.findById(request.getPriceToken())
+        PriceTokenValue priceTokenValue = priceTokenRedisService.get(request.getPriceToken())
                 .orElseThrow(()-> new CustomException(ErrorCode.PRICE_TOKEN_NOT_FOUND));
 
-        if(priceToken.isExpired()){
-            throw new CustomException(ErrorCode.PRICE_TOKEN_EXPIRED);
-        }
-        int totalPrice = priceToken.getTotalPrice();
-        priceTokenRepository.delete(priceToken); //일회성
+        int totalPrice = priceTokenValue.getTotalPrice();
+        int numberOfRooms = priceTokenValue.getNumberOfRooms();
 
         //엔티티조회-유효성검사
         Hotel hotel = hotelRepository
@@ -220,7 +219,7 @@ public class ReservationService {
             throw new CustomException(ErrorCode.INVALID_DATE_RANGE);
         }
         //최대인원수 검사
-        if (request.getNumberOfGuests() > roomType.getMaxOccupancy() * request.getNumberOfRoomsToReserve()) {
+        if (request.getNumberOfGuests() > roomType.getMaxOccupancy() * numberOfRooms) {
             throw new CustomException(ErrorCode.EXCEED_MAX_OCCUPANCY);
         }
 
@@ -231,8 +230,9 @@ public class ReservationService {
 
         //재고 확인 및 차감
         for(RoomTypeInventory inventory : inventories){
-            inventory.reserve(request.getNumberOfRoomsToReserve());
+            inventory.reserve(numberOfRooms);
         }
+
         //예약생성
         Reservation reservation = Reservation.builder()
                 .reservationKey(request.getReservationKey())
@@ -241,12 +241,15 @@ public class ReservationService {
                 .user(user)
                 .startDate(request.getStartDate())
                 .endDate(request.getEndDate())
-                .numberOfRooms(request.getNumberOfRoomsToReserve())
+                .numberOfRooms(numberOfRooms)
                 .totalPrice(totalPrice)
                 .paymentStatus(PaymentStatus.PAID)
                 .reservationStatus(ReservationStatus.BEFORE_USE)
                 .build();
 
         reservationRepository.save(reservation);
+
+        //db 작업 완료 후 토큰 삭제 (일회성) -redis는 트랜잭션 밖에서 동작하므로 롤백안됨
+        priceTokenRedisService.delete(request.getPriceToken());
     }
 }

@@ -1,0 +1,120 @@
+.confirm-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    font-size: 14px;
+}
+
+.confirm-header {
+    background-color: #f5f5f5;
+    text-align: center;
+    padding: 12px;
+    margin-bottom: 16px;
+    font-weight: bold;
+}
+
+.confirm-order {
+    background-color: #f5f5f5;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.confirm-order-row {
+    display: flex;
+    gap: 60px;
+}
+
+.confirm-order-row span:first-child {
+    color: #666;
+    min-width: 80px;
+}
+
+.confirm-section-title {
+    font-weight: bold;
+    font-size: 15px;
+    margin-bottom: 8px;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 8px 0 16px 0;
+}
+
+.confirm-booking {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.confirm-image {
+    width: 100px;
+    height: 80px;
+    object-fit: cover;
+    background-color: #ddd;
+}
+
+.confirm-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.confirm-info p {
+    margin: 0;
+}
+
+.confirm-info p:first-child {
+    font-weight: bold;
+}
+
+.confirm-info p:last-child {
+    color: #666;
+}
+
+.confirm-status {
+    font-size: 13px;
+    color: #666;
+    white-space: nowrap;
+}
+
+.confirm-dates {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 24px;
+}
+
+.confirm-dates p {
+    margin: 0;
+}
+
+.confirm-payment-detail {
+    background-color: #f5f5f5;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.confirm-payment-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.confirm-payment-row span:first-child {
+    color: #666;
+}
+
+.confirm-payment-total {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    font-size: 15px;
+    padding-top: 4px;
+}

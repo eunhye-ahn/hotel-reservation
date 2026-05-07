@@ -4,6 +4,7 @@ import com.hotel.reservation.domain.User;
 import com.hotel.reservation.dto.LoginRequest;
 import com.hotel.reservation.dto.SignUpRequest;
 import com.hotel.reservation.dto.TokenResponse;
+import com.hotel.reservation.dto.UserInfoResponse;
 import com.hotel.reservation.exception.CustomException;
 import com.hotel.reservation.exception.ErrorCode;
 import com.hotel.reservation.jwt.JwtProvider;

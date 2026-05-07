@@ -1,0 +1,121 @@
+.mypage-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    font-size: 14px;
+}
+
+.mypage-info {
+    margin-bottom: 24px;
+}
+
+.mypage-greeting {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 0 0 4px 0;
+}
+
+.mypage-email,
+.mypage-phone {
+    color: #666;
+    margin: 2px 0;
+}
+
+.mypage-tabs {
+    display: flex;
+    margin-bottom: 16px;
+}
+
+.mypage-tabs button {
+    flex: 1;
+    padding: 10px 0;
+    border: none;
+    background: #f5f5f5;
+    cursor: pointer;
+    font-size: 14px;
+    color: #666;
+}
+
+.mypage-tabs button.active {
+    background: #333;
+    color: #fff;
+    font-weight: bold;
+}
+
+.reservation-card {
+    background: #f5f5f5;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 12px;
+}
+
+.reservation-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.reservation-card-status {
+    font-size: 13px;
+    color: #444;
+    font-weight: bold;
+}
+
+.reservation-detail-btn {
+    background: none;
+    border: 1px solid #ddd;
+    padding: 4px 12px;
+    cursor: pointer;
+    font-size: 13px;
+    border-radius: 4px;
+}
+
+.reservation-detail-btn:hover {
+    background: #eee;
+}
+
+.reservation-card-body {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+}
+
+.reservation-card-image {
+    width: 80px;
+    height: 70px;
+    object-fit: cover;
+    background: #ddd;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.reservation-card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 120px;
+}
+
+.reservation-hotel {
+    font-weight: bold;
+    margin: 0;
+}
+
+.reservation-room {
+    color: #666;
+    margin: 0;
+}
+
+.reservation-card-dates {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-left: auto;
+    text-align: right;
+}
+
+.reservation-card-dates p {
+    margin: 0;
+    color: #444;
+}

@@ -8,6 +8,8 @@ import { reissue } from './axios/api'
 import { useAuthStore } from './store/useAuthStore'
 import { HotelDetailPage } from './pages/HotelDetailPage'
 import { ReservationPage } from './pages/ReservationPage'
+import { ReservationConfirmPage } from './pages/ReservationConfirmPage'
+import { MyPage } from './pages/MyPage'
 
 function App() {
   const { setAccessToken } = useAuthStore();
@@ -29,6 +31,8 @@ function App() {
         <Route path="/hotels/:hotelId" element={<HotelDetailPage />} />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/hotels/:hotelId/rooms/:roomTypeId" element={<ReservationPage />} />
+        <Route path="/reservations/:reservationKey" element={<ReservationConfirmPage />} />
+        <Route path="/mypage" element={<MyPage />} />
       </Routes>
     </BrowserRouter>
   )

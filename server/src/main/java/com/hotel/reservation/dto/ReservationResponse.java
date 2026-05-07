@@ -13,7 +13,7 @@ import java.time.LocalTime;
 @Getter
 @Builder
 public class ReservationResponse {
-    private Long reservationId;
+    private String reservationKey;
     private String hotelName;
     private String roomTypeName;
     private LocalDate startDate;
@@ -24,7 +24,7 @@ public class ReservationResponse {
 
     public static ReservationResponse from(Reservation reservation){
         return ReservationResponse.builder()
-                .reservationId(reservation.getId())
+                .reservationKey(reservation.getReservationKey())
                 .hotelName(reservation.getHotel().getName())
                 .roomTypeName(reservation.getRoomType().getName())
                 .startDate(reservation.getStartDate())

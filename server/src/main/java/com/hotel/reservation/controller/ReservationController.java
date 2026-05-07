@@ -1,8 +1,8 @@
 package com.hotel.reservation.controller;
 
-import com.hotel.reservation.domain.Reservation;
-import com.hotel.reservation.dto.ReservationRequest;
+import com.hotel.reservation.domain.ReservationStatus;
 import com.hotel.reservation.dto.ReservationDetailResponse;
+import com.hotel.reservation.dto.ReservationRequest;
 import com.hotel.reservation.dto.ReservationResponse;
 import com.hotel.reservation.service.ReservationService;
 import jakarta.validation.Valid;
@@ -22,19 +22,31 @@ public class ReservationController {
 
     //예약생성
     @PostMapping
-    public ResponseEntity<Void> createReservation(@AuthenticationPrincipal Long userId,
+    public ResponseEntity<String> createReservation(@AuthenticationPrincipal Long userId,
                                                   @RequestBody @Valid ReservationRequest request){
-        reservationService.createReservation(request, userId);
+        String reservationKey = reservationService.createReservation(request, userId);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .build();
+                .body(reservationKey);
     }
 
     //내 예약조회
     @GetMapping
-    public ResponseEntity<List<ReservationResponse>> getMyReservations(@AuthenticationPrincipal Long userId){
-        List<ReservationResponse> result = reservationService.getMyReservations(userId);
+    public ResponseEntity<List<ReservationResponse>> getMyReservations(@AuthenticationPrincipal Long userId,
+                                                                       @RequestParam ReservationStatus status){
+        List<ReservationResponse> result = reservationService.getMyReservations(userId, status);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(result);
+    }
+
+    //예약상세조회 -예약확인서
+    @GetMapping("/{reservationKey}")
+    public ResponseEntity<ReservationDetailResponse> reservationConfirm(@AuthenticationPrincipal Long userId,
+                                                                        @PathVariable String reservationKey){
+        ReservationDetailResponse result = reservationService.reservationConfirm(userId, reservationKey);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

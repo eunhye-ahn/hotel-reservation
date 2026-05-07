@@ -21,6 +21,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ErrorResponse> handleCustomException(CustomException e){
         ErrorCode errorCode = e.getErrorCode();
+        e.printStackTrace();
         return ResponseEntity
                 .status(errorCode.getStatus())
                 .body(new ErrorResponse(
@@ -36,6 +37,7 @@ public class GlobalExceptionHandler {
                 .getFieldErrors()
                 .getFirst()
                 .getDefaultMessage();
+        e.printStackTrace();
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse(
@@ -47,6 +49,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(OptimisticLockingFailureException.class)
     public ResponseEntity<ErrorResponse> handleOptimisticLock(OptimisticLockingFailureException e){
+        e.printStackTrace();
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
                 .body(new ErrorResponse(

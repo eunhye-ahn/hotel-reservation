@@ -21,7 +21,7 @@ public class RoomTypeService {
     private final RateRepository rateRepository;
     private final RoomTypeInventoryRepository roomTypeInventoryRepository;
     private final RoomRepository roomRepository;
-    private final PriceTokenRepository priceTokenRepository;
+    private final PriceTokenRedisService priceTokenRedisService;
 
     //룸타입 생성
     @Transactional
@@ -105,13 +105,7 @@ public class RoomTypeService {
         int totalDemandRate = rates.stream().mapToInt(Rate::getDemandRate).sum();
         int totalPrice = totalDemandRate * numberOfRooms;
 
-        //PriceToken 생성
-        PriceToken priceToken = PriceToken.builder()
-                .totalPrice(totalPrice)
-                .build();
-
-        priceTokenRepository.save(priceToken);
-        String token = priceToken.getToken();
+        String token = priceTokenRedisService.save(totalPrice, numberOfRooms);
 
         return RoomTypeReservationResponse.from(inventories, token, totalDemandRate, totalPrice);
     }}
