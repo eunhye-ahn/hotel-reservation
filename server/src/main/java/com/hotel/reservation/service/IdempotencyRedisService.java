@@ -54,6 +54,10 @@ public class IdempotencyRedisService {
                 .build();
 
         //redis저장 성공여부
+        /**
+         * redis -> nill (이미있음 저장실패)
+         * -> redisTemplate -> null (Boolean) -> Boolean.TRUE.equals(success) :NPE방지 -> false
+         */
         Boolean success = objectRedisTemplate.opsForValue()
                 .setIfAbsent(buildKey(reservationKey), value, TTL_HOURS, TimeUnit.HOURS);
 

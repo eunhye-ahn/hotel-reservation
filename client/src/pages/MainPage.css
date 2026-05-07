@@ -9,9 +9,9 @@
 }
 
 .hotel-card {
-    width: 200px;
+    width: 180px;
     cursor: pointer;
-    min-width: 200px;
+    min-width: 270px;
     flex-shrink: 0;
 }
 
