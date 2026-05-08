@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
 import { signUp } from "../axios/api";
 import type { SignUpRequest } from "@/type/auth";
+import '@/pages/SignUpPage.css'
+import { toast } from "react-toastify";
 
 export const SignUpPage = () => {
     const [form, setForm] = useState<SignUpRequest>({
@@ -22,7 +24,7 @@ export const SignUpPage = () => {
                 navigate("/")
             })
             .catch((err) => {
-                alert(err.response.data.message)
+                toast.error(err.response.data.message)
             })
     }
 

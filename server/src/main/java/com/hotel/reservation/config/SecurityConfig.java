@@ -37,7 +37,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         //모두 접근 가능
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/hotels/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/hotels").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/hotels/{hotelId}").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
 
                         //admin만 가능
@@ -47,6 +48,8 @@ public class SecurityConfig {
 
                         //로그인한 사용자만 가능
                         .requestMatchers("/api/v1/reservations/**").authenticated()
+                        .requestMatchers("/api/v1/hotels/{hotelId}/roomTypes/**").authenticated()
+                        .requestMatchers("/api/v1/user/**").authenticated()
 
                         .anyRequest().authenticated()
                 )

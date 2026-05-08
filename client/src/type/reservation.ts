@@ -5,7 +5,8 @@ export interface ReservationRequest {
     roomTypeId: number,
     startDate: string,
     endDate: string,
-    numberOfGuests: number
+    numberOfGuests: number,
+    numberOfRooms: number
 }
 
 export interface RoomTypeReservationResponse {

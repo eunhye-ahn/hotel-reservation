@@ -3,6 +3,7 @@ import type { ReservationRequest, RoomTypeReservationResponse } from "@/type/res
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router"
 import '@/pages/ReservationPage.css';
+import { toast } from "react-toastify";
 
 export const ReservationPage = () => {
     const { hotelId, roomTypeId } = useParams();
@@ -27,11 +28,24 @@ export const ReservationPage = () => {
             roomTypeId: Number(roomTypeId),
             startDate: state.startDate,
             endDate: state.endDate,
-            numberOfGuests: state.numberOfGuests
+            numberOfGuests: state.numberOfGuests,
+            numberOfRooms: state.numberOfRooms
         };
 
         createReservation(reservationData)
         .then((res)=>navigate(`/reservations/${res.data}`))
+        .catch((err)=>{
+            const message = err.response.data.message;
+            const code = err.response.data.code;
+
+            switch(code){
+                case 'PRICE_TOKEN_EXPIRED':
+                case 'PRICE_TOKEN_NOT_FOUND':
+                    toast.error(message);
+                    navigate(-1);
+                break;   
+            }
+        })
     }
 
 return (

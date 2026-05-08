@@ -4,16 +4,21 @@ import { useNavigate } from "react-router-dom"
 import { useAuthStore } from "../store/useAuthStore"
 import type { LoginRequest } from "@/type/auth"
 import '@/pages/LoginPage.css'
+import { toast } from "react-toastify"
 
 export const LoginPage = () => {
     const [form, setForm] = useState<LoginRequest>({
-        email: "",
-        password: ""
-    })
+        email: '',
+        password: ''
+    });
     const navigate = useNavigate();
     const { setAccessToken } = useAuthStore();
 
     const handleLogin = () => {
+        if (!form?.email || !form?.password) {
+            toast.error('이메일과 비밀번호를 입력해주세요');
+            return;
+        }
         login(form)
             .then((res) => {
                 console.log(res.data);
@@ -22,7 +27,7 @@ export const LoginPage = () => {
             }
             )
             .catch((err) => {
-                alert(err.response.data.message)
+                toast.error(err.response.data.message)
             })
     }
 

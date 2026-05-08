@@ -50,7 +50,7 @@ public class RoomTypeAdminController {
 
     //호텔수정 -staff,관리자
     @PutMapping("/{roomTypeId}")
-    public ResponseEntity<RoomTypeUpdateResponse> updateHotel(@PathVariable Long hotelId,
+    public ResponseEntity<RoomTypeUpdateResponse> updateRoomType(@PathVariable Long hotelId,
                                                               @PathVariable Long roomTypeId,
                                                           @RequestBody RoomTypeUpdateRequest request){
         RoomTypeUpdateResponse result = roomTypeService.updateRoomType(hotelId, roomTypeId, request);
