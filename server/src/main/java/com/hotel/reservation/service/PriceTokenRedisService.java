@@ -24,11 +24,10 @@ public class PriceTokenRedisService {
     }
 
     //토큰 저장
-    public String save(int totalPrice, int numberOfRooms){
+    public String save(int totalPrice){
         String token = UUID.randomUUID().toString();
         PriceTokenValue value = PriceTokenValue.builder()
                 .totalPrice(totalPrice)
-                .numberOfRooms(numberOfRooms)
                 .build();
         objectRedisTemplate.opsForValue()
                 .set(buildKey(token), value, TTL_MINUTES, TimeUnit.MINUTES);

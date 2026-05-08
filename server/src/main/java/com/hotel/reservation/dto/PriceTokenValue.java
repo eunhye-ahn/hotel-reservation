@@ -10,6 +10,5 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 public class PriceTokenValue {
-    private int totalPrice;
-    private int numberOfRooms;
+    private int totalPrice; //가격만 고정
 }

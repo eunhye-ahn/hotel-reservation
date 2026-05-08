@@ -105,7 +105,7 @@ public class RoomTypeService {
         int totalDemandRate = rates.stream().mapToInt(Rate::getDemandRate).sum();
         int totalPrice = totalDemandRate * numberOfRooms;
 
-        String token = priceTokenRedisService.save(totalPrice, numberOfRooms);
+        String token = priceTokenRedisService.save(totalPrice);
 
         return RoomTypeReservationResponse.from(inventories, token, totalDemandRate, totalPrice);
     }}

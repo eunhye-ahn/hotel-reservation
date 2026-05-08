@@ -7,7 +7,7 @@ import com.hotel.reservation.dto.*;
 import com.hotel.reservation.exception.CustomException;
 import com.hotel.reservation.exception.ErrorCode;
 import com.hotel.reservation.repository.*;
-import jakarta.transaction.Transactional;
+import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,14 +19,10 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ReservationService {
-    private final HotelRepository hotelRepository;
-    private final RoomTypeRepository roomTypeRepository;
     private final UserRepository userRepository;
-    private final RoomTypeInventoryRepository roomTypeInventoryRepository;
     private final ReservationRepository reservationRepository;
     private final IdempotencyRedisService idempotencyRedisService;
-    private final PriceTokenRedisService priceTokenRedisService;
-
+    private final ReservationProcessor reservationProcessor;
     /**
      *
      * 1. 멱등키 확인 (Redis)
@@ -45,7 +41,6 @@ public class ReservationService {
      * }
      */
     //예약생성
-    @Transactional
     public String createReservation(ReservationRequest request, Long userId){
         //멱등키 확인 -Redis
         //1.요청본문 해시생성
@@ -64,7 +59,7 @@ public class ReservationService {
 
         //4.새요청이면 예약처리(여기서 엔티티유효성검사 등하고 response 반환)
         try{
-            process(request, userId);
+            reservationProcessor.processWithRetry(request, userId);
             idempotencyRedisService.complete(request.getReservationKey());
             return request.getReservationKey();
         }
@@ -195,61 +190,5 @@ public class ReservationService {
         }
 
         //completed면 정상 반환 -> status를 enum으로 관리하면 코드가독성 좋아짐
-    }
-
-    private void process(ReservationRequest request, Long userId){
-        //토큰검증
-        PriceTokenValue priceTokenValue = priceTokenRedisService.get(request.getPriceToken())
-                .orElseThrow(()-> new CustomException(ErrorCode.PRICE_TOKEN_NOT_FOUND));
-
-        int totalPrice = priceTokenValue.getTotalPrice();
-        int numberOfRooms = priceTokenValue.getNumberOfRooms();
-
-        //엔티티조회-유효성검사
-        Hotel hotel = hotelRepository
-                .findById(request.getHotelId())
-                .orElseThrow(() -> new CustomException(ErrorCode.HOTEL_NOT_FOUND));
-        RoomType roomType = roomTypeRepository.findById(request.getRoomTypeId())
-                .orElseThrow(() -> new CustomException(ErrorCode.ROOM_TYPE_NOT_FOUND));
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
-        //예약날짜 서비스레벨 차단(외 @Valid 애플리케이션레벨 차단 / DB제약조건 DB레벨 차단)
-        if (!request.getStartDate().isBefore(request.getEndDate())) {
-            throw new CustomException(ErrorCode.INVALID_DATE_RANGE);
-        }
-        //최대인원수 검사
-        if (request.getNumberOfGuests() > roomType.getMaxOccupancy() * numberOfRooms) {
-            throw new CustomException(ErrorCode.EXCEED_MAX_OCCUPANCY);
-        }
-
-        //기간합산 재고 조회
-        List<RoomTypeInventory> inventories = roomTypeInventoryRepository
-                .findByRoomTypeIdAndDateBetween(roomType.getId(), request.getStartDate(), request.getEndDate().minusDays(1));
-
-
-        //재고 확인 및 차감
-        for(RoomTypeInventory inventory : inventories){
-            inventory.reserve(numberOfRooms);
-        }
-
-        //예약생성
-        Reservation reservation = Reservation.builder()
-                .reservationKey(request.getReservationKey())
-                .hotel(hotel)
-                .roomType(roomType)
-                .user(user)
-                .startDate(request.getStartDate())
-                .endDate(request.getEndDate())
-                .numberOfRooms(numberOfRooms)
-                .totalPrice(totalPrice)
-                .paymentStatus(PaymentStatus.PAID)
-                .reservationStatus(ReservationStatus.BEFORE_USE)
-                .build();
-
-        reservationRepository.save(reservation);
-
-        //db 작업 완료 후 토큰 삭제 (일회성) -redis는 트랜잭션 밖에서 동작하므로 롤백안됨
-        priceTokenRedisService.delete(request.getPriceToken());
     }
 }
