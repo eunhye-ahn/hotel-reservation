@@ -34,6 +34,7 @@ public enum ErrorCode {
     ROOM_INVENTORY_NOT_FOUND(HttpStatus.SERVICE_UNAVAILABLE, "오늘 객실 정보를 준비 중입니다"),
     ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않은 객실 입니다"),
     ROOM_TYPE_ALREADY_EXISTS(HttpStatus.CONFLICT, "같은 이름의 객실 유형이 존재합니다"),
+    INVALID_RESTORE(HttpStatus.INTERNAL_SERVER_ERROR, "재고 복구 중 오류가 발생했습니다"),
 
     //reservation
     RESERVATION_UNAVAILABLE(HttpStatus.CONFLICT, "예약 가능한 객실을 초과했습니다"),
@@ -41,6 +42,8 @@ public enum ErrorCode {
     RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않은 예약입니다"),
     INVALID_DATE_RANGE(HttpStatus.BAD_REQUEST, "체크아웃 날짜는 체크인 날짜 이후여야 합니다"),
     EXCEED_MAX_OCCUPANCY(HttpStatus.BAD_REQUEST, "최대 수용 인원을 초과했습니다"),
+    RESERVATION_CONFLICT(HttpStatus.CONFLICT, "일시적으로 예약이 집중되고 있습니다\n" +
+            "잠시 후 다시 시도해주세요"),
 
     //결제
     PRICE_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "가격 토큰을 찾을 수 없습니다"),

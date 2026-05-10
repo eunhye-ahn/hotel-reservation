@@ -1,6 +1,5 @@
 package com.hotel.reservation.dto;
 
-import com.hotel.reservation.domain.Rate;
 import com.hotel.reservation.domain.RoomTypeInventory;
 import com.hotel.reservation.exception.CustomException;
 import com.hotel.reservation.exception.ErrorCode;

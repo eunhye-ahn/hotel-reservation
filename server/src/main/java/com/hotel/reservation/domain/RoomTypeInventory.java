@@ -49,11 +49,19 @@ public class RoomTypeInventory{
         return (totalReserved + numberOfRoomsToReserve) <= (int)(totalInventory*1.1);
     }
 
-    //예약 유효성검사 + 동기화? 라고하나
+    //예약가능객실 존재여부확인 및 재고차감
     public void reserve(int numberOfRoomsToReserve){
         if(!isAvailable(numberOfRoomsToReserve)){
             throw new CustomException(ErrorCode.RESERVATION_UNAVAILABLE);
         }
         this.totalReserved += numberOfRoomsToReserve;
+    }
+
+    //재고복구
+    public void restore(int numberOfRoomsToReserve){
+        if(this.totalReserved - numberOfRoomsToReserve < 0){
+            throw new CustomException(ErrorCode.INVALID_RESTORE);
+        }
+        this.totalReserved -= numberOfRoomsToReserve;
     }
 }

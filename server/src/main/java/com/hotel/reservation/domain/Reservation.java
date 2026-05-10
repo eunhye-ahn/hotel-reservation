@@ -93,6 +93,9 @@ public class Reservation extends BaseTime{
     @Column(nullable = false, name = "number_of_rooms")
     private int numberOfRooms; // 예약 객실 수
 
+    @Column(nullable = false, name = "number_of_guests")
+    private int numberOfGuests;
+
     /**
      * 역정규화
      * room_type으로 예약 후,
@@ -120,6 +123,7 @@ public class Reservation extends BaseTime{
         if(this.reservationStatus != ReservationStatus.BEFORE_USE){
             throw new CustomException(ErrorCode.CANNOT_CANCEL_RESERVATION);
         }
+
         this.reservationStatus = ReservationStatus.CANCELED;
         this.paymentStatus = PaymentStatus.REFUNDED;
     }

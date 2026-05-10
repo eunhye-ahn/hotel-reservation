@@ -65,8 +65,8 @@ public class ReservationController {
 
     //예약 취소
     @DeleteMapping("{reservationId}")
-    public ResponseEntity<Void> cancelReservation(@AuthenticationPrincipal Long userId, @PathVariable Long reservationId){
-        reservationService.deleteReservation(userId, reservationId);
+    public ResponseEntity<Void> cancelReservation(@AuthenticationPrincipal Long userId, @PathVariable String reservationKey){
+        reservationService.deleteReservation(userId, reservationKey);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

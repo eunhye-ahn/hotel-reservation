@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
@@ -98,6 +99,7 @@ public class ReservationProcessor {
                 .startDate(request.getStartDate())
                 .endDate(request.getEndDate())
                 .numberOfRooms(request.getNumberOfRooms())
+                .numberOfGuests(request.getNumberOfGuests())
                 .totalPrice(totalPrice)
                 .paymentStatus(PaymentStatus.PAID)
                 .reservationStatus(ReservationStatus.BEFORE_USE)
@@ -115,5 +117,13 @@ public class ReservationProcessor {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleReservationCreated(ReservationCreatedEvent event){
         priceTokenRedisService.delete(event.getPriceToken());
+    }
+
+    @Recover
+    public void recover(ObjectOptimisticLockingFailureException e,
+                        ReservationRequest request, Long userId){
+        log.error("예약 재시도 모두 실패 - reservationKey: {}",
+                request.getReservationKey());
+        throw new CustomException(ErrorCode.RESERVATION_CONFLICT);
     }
 }

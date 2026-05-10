@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @Table(name="rate")
 @Getter
 @NoArgsConstructor
-public class Rate {
+public class Rate extends BaseTime{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

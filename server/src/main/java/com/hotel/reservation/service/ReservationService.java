@@ -7,12 +7,13 @@ import com.hotel.reservation.dto.*;
 import com.hotel.reservation.exception.CustomException;
 import com.hotel.reservation.exception.ErrorCode;
 import com.hotel.reservation.repository.*;
-import jakarta.persistence.OptimisticLockException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.time.LocalDate;
 import java.util.HexFormat;
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final IdempotencyRedisService idempotencyRedisService;
     private final ReservationProcessor reservationProcessor;
+    private final RoomTypeInventoryRepository roomTypeInventoryRepository;
     /**
      *
      * 1. 멱등키 확인 (Redis)
@@ -110,12 +112,19 @@ public class ReservationService {
     }
 
     //예약취소
-    public void deleteReservation(Long userId, Long reservationId){
+    @Transactional
+    public void deleteReservation(Long userId, String reservationKey){
 
-        Reservation reservation = reservationRepository.findByIdAndUserId(reservationId, userId)
+        Reservation reservation = reservationRepository.findByUserIdAndReservationKey(userId, reservationKey)
                 .orElseThrow(()->new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
 
         reservation.cancel();
+
+        //n+1 발생
+        List<RoomTypeInventory> inventories = roomTypeInventoryRepository
+                .findByRoomTypeIdAndDateBetween(reservation.getRoomType().getId(), reservation.getStartDate(), reservation.getEndDate().minusDays(1));
+
+        inventories.forEach(i -> i.restore(reservation.getNumberOfRooms()));
     }
 
     /**

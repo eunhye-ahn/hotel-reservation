@@ -3,6 +3,7 @@ package com.hotel.reservation.repository;
 import com.hotel.reservation.domain.RoomType;
 import com.hotel.reservation.domain.RoomTypeInventory;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDate;
 import java.util.List;
