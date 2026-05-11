@@ -28,7 +28,7 @@ public class AuthController {
 
     //로그인
     @PostMapping("/login")
-    public ResponseEntity<AccessTokenResponse> login(@RequestBody LoginRequest request,
+    public ResponseEntity<AccessTokenResponse> login(@RequestBody @Valid LoginRequest request,
                                                      HttpServletResponse servletResponse){
         TokenResponse tokens =authService.login(request);
 

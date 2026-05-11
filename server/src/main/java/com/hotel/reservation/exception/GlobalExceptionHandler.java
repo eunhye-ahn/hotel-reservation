@@ -15,7 +15,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleException(Exception e){
         e.printStackTrace();
         log.error("server error: {}", e.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse(
+                        500,
+                        "COMMON",
+                        "INTERNAL_SERVER_ERROR",
+                        "서버 오류가 발생했습니다"
+                        ));
     }
 
     @ExceptionHandler(CustomException.class)
@@ -26,6 +32,7 @@ public class GlobalExceptionHandler {
                 .status(errorCode.getStatus())
                 .body(new ErrorResponse(
                         errorCode.getStatus().value(),
+                        "BUSINESS",
                         errorCode.name(),
                         errorCode.getMessage()
                 ));
@@ -42,6 +49,7 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse(
                         400,
+                        "VALIDATION",
                         ErrorCode.INVALID_INPUT.name(),
                         message
                 ));
@@ -54,6 +62,7 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.CONFLICT)
                 .body(new ErrorResponse(
                         409,
+                        "BUSINESS",
                         ErrorCode.OPTIMISTIC_LOCK_CONFLICT.name(),
                         ErrorCode.OPTIMISTIC_LOCK_CONFLICT.getMessage()
                         ));

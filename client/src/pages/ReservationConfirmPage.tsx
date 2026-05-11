@@ -1,21 +1,32 @@
 import { reservationConfirm } from "@/axios/api";
 import type { ReservationDetailResponse } from "@/type/reservation";
-import { useEffect, useState } from "react";
-import { useParams } from "react-router"
+import { useNavigate, useParams } from "react-router"
 import dayjs from 'dayjs';
 import '@/pages/ReservationConfirmPage.css';
+import { useQuery } from "@tanstack/react-query";
+import NotFoundPage from "./NotFoundPage";
+import { toast } from "react-toastify";
 
 export const ReservationConfirmPage = () => {
     const {reservationKey} = useParams();
+    const navigate = useNavigate();
+    if(!reservationKey) return;
 
-    const [data,setData] = useState<ReservationDetailResponse>();
+    const {data, isLoading, isError, error} = useQuery<ReservationDetailResponse>({
+        queryKey: ["reservationConfirm", reservationKey],
+        queryFn: ()=>reservationConfirm(reservationKey).then((res)=>res.data)
+    })
 
-    useEffect(()=>{
-        if(!reservationKey) return;
-        reservationConfirm(reservationKey)
-        .then((res)=>setData(res.data))
-        .catch((err)=>alert(err.message))
-    },[]);
+    if(isLoading) return <p>Loading...</p>
+    if(isError){
+        const code = (error as any).response.data.code
+        if(code === "RESERVATION_NOT_FOUND"){
+            return <NotFoundPage />
+        }
+        toast.error("일시적인 오류가 발생했습니다")
+        navigate(-1)
+        return null;   
+    }
 
     const numberOfNights = dayjs(data?.endDate).diff(dayjs(data?.startDate), 'day');
 

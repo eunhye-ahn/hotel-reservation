@@ -13,9 +13,9 @@ import java.time.LocalTime;
 public class HotelResponse {
     private Long hotelId;
     private String name;
-    private int maxRate;
-    private int demandRate; //최저가
-    private int discountRate;
+    private Integer maxRate;
+    private Integer demandRate; //최저가
+    private Integer discountRate;
     private LocalTime checkInTime;
     private String address;
     private String imageUrl;
@@ -40,9 +40,9 @@ public class HotelResponse {
         return HotelResponse.builder()
                 .hotelId(hotel.getId())
                 .name(hotel.getName())
-                .maxRate(cheapestRate.getMaxRate())
-                .demandRate(cheapestRate.getDemandRate())
-                .discountRate(cheapestRate.calculateDiscountRate())
+                .maxRate(cheapestRate != null ? cheapestRate.getMaxRate() : null)
+                .demandRate(cheapestRate != null ? cheapestRate.getDemandRate() : null)
+                .discountRate(cheapestRate != null ? cheapestRate.calculateDiscountRate() : null)
                 .checkInTime(hotel.getCheckInTime())
                 .address(hotel.getAddress())
                 .imageUrl(hotel.getImageUrl())

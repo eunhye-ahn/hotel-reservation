@@ -2,24 +2,30 @@ import { getMyInfo, getMyReservations } from "@/axios/api";
 import type { ReservationResponse, ReservationStatus } from "@/type/reservation";
 import type { UserInfoResponse } from "@/type/user";
 import '@/pages/MyPage.css';
-import { useEffect, useState } from "react"
+import { useState } from "react"
+import { useQuery } from "@tanstack/react-query";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router";
 
 export const MyPage = () => {
-    const [data, setData] = useState<UserInfoResponse>();
     const [status, setStatus] = useState<ReservationStatus>('BEFORE_USE');
-    const [reservation, setReservation] = useState<ReservationResponse[]>();
+    const navigate = useNavigate();
+    const {data, isLoading, isError} = useQuery<UserInfoResponse>({
+        queryKey: ["myInfo"],
+        queryFn: ()=> getMyInfo().then((res)=> res.data)
+    });
 
-    useEffect(()=>{
-        getMyInfo()
-        .then((res)=>setData(res.data))
-        .catch((err)=>alert(err.message))
-    },[]);
+    const {data: reservation, isLoading: isReservationListLoading} =  useQuery<ReservationResponse[]>({
+        queryKey: ["myReservationList", status],
+        queryFn: ()=>getMyReservations(status).then((res)=>res.data)
+    })
 
-    useEffect(() => {
-        getMyReservations(status)
-            .then((res) => setReservation(res.data))
-            .catch((err) => alert(err.message));
-    }, [status]);
+    if(isLoading || isReservationListLoading) return <p>Loading...</p>
+    if(isError){
+        toast.error("일시적인 오류가 발생했습니다")
+        navigate(-1)
+        return null;   
+    }
 
 return (
     <div className="mypage-container">
@@ -40,9 +46,7 @@ return (
                     className={status === 'CANCELED' ? 'active' : ''}
                     onClick={() => setStatus('CANCELED')}>취소됨</button>
             </div>
-            {reservation
-                ?.filter((r) => r.reservationStatus === status)
-                .map((reservation) => (
+            {reservation?.map((reservation) => (
                     <div className="reservation-card" key={reservation.reservationKey}>
                         <div className="reservation-card-header">
                             <span className="reservation-card-status">{status === 'AFTER_USE' ? '이용완료' : status === 'BEFORE_USE' ? '이용전' : '취소됨'}</span>

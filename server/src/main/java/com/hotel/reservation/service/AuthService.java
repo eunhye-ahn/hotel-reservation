@@ -27,7 +27,7 @@ public class AuthService {
     public TokenResponse login(LoginRequest request){
         //이메일 검사
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(()-> new CustomException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(()-> new CustomException(ErrorCode.INVALID_PASSWORD));
 
         if(!passwordEncoder.matches(request.getPassword(), user.getPassword())){
             throw new CustomException(ErrorCode.INVALID_PASSWORD);

@@ -1,51 +1,49 @@
-import { useState } from "react"
 import { login } from "../axios/api"
 import { useNavigate } from "react-router-dom"
 import { useAuthStore } from "../store/useAuthStore"
 import type { LoginRequest } from "@/type/auth"
 import '@/pages/LoginPage.css'
 import { toast } from "react-toastify"
+import { useMutation } from "@tanstack/react-query"
+import { useForm } from "react-hook-form"
 
 export const LoginPage = () => {
-    const [form, setForm] = useState<LoginRequest>({
-        email: '',
-        password: ''
-    });
+    const {register, handleSubmit, formState:{errors}} = useForm<LoginRequest>();
     const navigate = useNavigate();
     const { setAccessToken } = useAuthStore();
 
-    const handleLogin = () => {
-        if (!form?.email || !form?.password) {
-            toast.error('이메일과 비밀번호를 입력해주세요');
-            return;
-        }
-        login(form)
-            .then((res) => {
-                console.log(res.data);
+    const {mutate, isPending} = useMutation({
+        mutationFn: login,
+        onSuccess: (res)=>{
                 setAccessToken(res.data.accessToken)
                 navigate("/")
+        },
+        onError: (err: any)=>{
+            const { code, message } = err.response.data
+            if(code === "INVALID_PASSWORD"){
+                toast.error(message)
             }
-            )
-            .catch((err) => {
-                toast.error(err.response.data.message)
-            })
-    }
-
+        }
+    })
 
     return (
         <div className="login-container">
-            <form>
+            <form onSubmit={handleSubmit((data)=>mutate(data))}>
                 <div>
                     <label>email</label>
                     <input type="email"
-                        onChange={(e) => setForm((prev) => ({ ...prev, email: e.target.value }))} />
+                        {...register("email",{required: "이메일을 입력하세요"})} />
+                    {errors.email && <p>{errors.email.message}</p>}
                 </div>
                 <div>
                     <label>password</label>
                     <input type="password"
-                        onChange={(e) => setForm((prev) => ({ ...prev, password: e.target.value }))} />
+                        {...register("password", {required: "비밀번호를 입력하세요"})} />
+                    {errors.password && <p>{errors.password.message}</p>}
                 </div>
-                <button type="button" onClick={handleLogin}>Login</button>
+                <button type="submit" disabled={isPending}>
+                    {isPending? "Loading..." : "Login"}
+                    </button>
                 <button type="button" onClick={() => navigate("/signup")}>SignUp</button>
             </form>
         </div>

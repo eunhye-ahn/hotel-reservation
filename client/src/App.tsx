@@ -13,6 +13,26 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import NotFoundPage from './pages/NotFoundPage'
 import Layout from './Layout'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+
+/**
+ * [tanstack query 흐름] : 서버 상태관리 라이브러리 : 비동기데이터
+ * 
+ * 1. QueryClient 생성
+ * - 앱전체의 캐시 저장소
+ * - staleTime: 5분 -> 5분 안에 같은 요청오면 api 호출 없이 캐시 사용
+ * - retry: 1 -> 
+ */
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries:{
+      staleTime: 1000*60*5,
+      retry: 1,
+    }
+  }
+})
 
 function App() {
   const { setAccessToken } = useAuthStore();
@@ -26,21 +46,24 @@ function App() {
   }, []);
 
   return (
-    <BrowserRouter>
-      <ToastContainer position="top-right" autoClose={3000} />
-      <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignUpPage />} />
-        <Route element={<Layout />}>
-          <Route path="/" element={<MainPage />} />
-          <Route path="/hotels/:hotelId" element={<HotelDetailPage />} />
-          <Route path="/hotels/:hotelId/rooms/:roomTypeId" element={<ReservationPage />} />
-          <Route path="/reservations/:reservationKey" element={<ReservationConfirmPage />} />
-          <Route path="/mypage" element={<MyPage />} />
-        </Route>
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
-    </BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <ToastContainer position="top-right" autoClose={3000} />
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignUpPage />} />
+          <Route element={<Layout />}>
+            <Route path="/" element={<MainPage />} />
+            <Route path="/hotels/:hotelId" element={<HotelDetailPage />} />
+            <Route path="/hotels/:hotelId/rooms/:roomTypeId" element={<ReservationPage />} />
+            <Route path="/reservations/:reservationKey" element={<ReservationConfirmPage />} />
+            <Route path="/mypage" element={<MyPage />} />
+          </Route>
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </BrowserRouter>
+      <ReactQueryDevtools initialIsOpen={false}/>
+    </QueryClientProvider>
   )
 }
 

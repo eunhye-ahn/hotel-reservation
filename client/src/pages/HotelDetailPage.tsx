@@ -1,28 +1,45 @@
 import { getHotelDetail } from "@/axios/api";
 import type { HotelDetailResponse } from "@/type/hotel";
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useNavigate, useParams } from "react-router";
 import '@/pages/HotelDetailPage.css';
+import { useQuery } from "@tanstack/react-query";
+import { toast } from "react-toastify";
+import NotFoundPage from "./NotFoundPage";
 
 export const HotelDetailPage = () => {
     const today = new Date().toISOString().split('T')[0];
     const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
-
     const navigate = useNavigate();
 
     const { hotelId } = useParams();
-    const [data, setData] = useState<HotelDetailResponse>();
     const [startDate, setStartDate] = useState(today);
     const [endDate, setEndDate] = useState(tomorrow);
     const [numberOfRooms, setNumberOfRooms] = useState(1);
     const [numberOfGuests, setNumberOfGuests] = useState(1);
 
-    useEffect(() => {
-        getHotelDetail(Number(hotelId))
-            .then((res) => setData(res.data))
-            .catch((err) => alert(err.message))
-    }, []);
+    const {data, isLoading, isError, error} = useQuery<HotelDetailResponse>({
+        queryKey: ["hotelDetails", hotelId],    //호텔id별로 캐시관리
+        queryFn: () => getHotelDetail(Number(hotelId)).then((res)=>res.data)
+    });
 
+    if(isLoading) return <p>Loading...</p>
+    if(isError){
+        const { code, message } = (error as any).response.data;
+    
+        if(code === "HOTEL_NOT_FOUND"){
+            return <NotFoundPage />
+        }
+        if(code === "RATE_NOT_FOUND" || code === "ROOM_INVENTORY_NOT_FOUND"){
+            toast.error(message)
+            navigate("/")
+            return null
+        }
+
+        toast.error("일시적인 오류가 발생했습니다")
+        navigate("/")
+        return null
+    }
     return (
         <div className="detail-container">
             <div className="search-bar">

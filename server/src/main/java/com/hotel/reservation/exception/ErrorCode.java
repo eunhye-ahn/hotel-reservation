@@ -46,7 +46,7 @@ public enum ErrorCode {
             "잠시 후 다시 시도해주세요"),
 
     //결제
-    PRICE_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "가격 토큰을 찾을 수 없습니다"),
+    PRICE_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "세션이 만료되었습니다. 다시 시도해주세요"),
     PRICE_TOKEN_EXPIRED(HttpStatus.GONE, "가격 토큰이 만료되었습니다"),
 
     //reservationKey -멱등키

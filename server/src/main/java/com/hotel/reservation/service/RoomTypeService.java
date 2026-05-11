@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -93,7 +94,7 @@ public class RoomTypeService {
                                                                    LocalDate startDate, LocalDate endDate,
                                                                  int numberOfRooms) {
         //유효성검사
-        RoomType roomType = roomTypeRepository.findByIdAndHotelId(roomTypeId, hotelId)
+        roomTypeRepository.findByIdAndHotelId(roomTypeId, hotelId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ROOM_TYPE_NOT_FOUND));
 
         //잔여객실조회
@@ -101,6 +102,14 @@ public class RoomTypeService {
 
         //가격계산
         List<Rate> rates = rateRepository.findByRoomTypeIdAndDateBetween(roomTypeId, startDate, endDate.minusDays(1));
+
+        long expectedDays = ChronoUnit.DAYS.between(startDate, endDate);
+        if(rates.size() != expectedDays) {
+            throw new CustomException(ErrorCode.RATE_NOT_FOUND);
+        }
+        if (inventories.size() != expectedDays) {
+            throw new CustomException(ErrorCode.ROOM_INVENTORY_NOT_FOUND);
+        }
 
         int totalDemandRate = rates.stream().mapToInt(Rate::getDemandRate).sum();
         int totalPrice = totalDemandRate * numberOfRooms;

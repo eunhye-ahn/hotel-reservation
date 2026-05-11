@@ -39,7 +39,7 @@ public class HotelService {
         return hotelRepository.findAllWithRate(today, pageable)
                 .map(hotel -> {
                     Rate cheapestRate = rateRepository.findCheapestRate(hotel.getId(), today)
-                            .orElseThrow(()->new CustomException(ErrorCode.RATE_NOT_FOUND));
+                            .orElse(null);
                     return HotelResponse.from(hotel, cheapestRate);
                 });
     }
