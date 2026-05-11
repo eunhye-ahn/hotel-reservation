@@ -1,24 +1,44 @@
-import { getMyInfo, getMyReservations } from "@/axios/api";
+import { cancelReservation, getMyInfo, getMyReservations } from "@/axios/api";
 import type { ReservationResponse, ReservationStatus } from "@/type/reservation";
 import type { UserInfoResponse } from "@/type/user";
 import '@/pages/MyPage.css';
 import { useState } from "react"
-import { useQuery } from "@tanstack/react-query";
+import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export const MyPage = () => {
     const [status, setStatus] = useState<ReservationStatus>('BEFORE_USE');
     const navigate = useNavigate();
+    const {accessToken} = useAuthStore();
     const {data, isLoading, isError} = useQuery<UserInfoResponse>({
         queryKey: ["myInfo"],
-        queryFn: ()=> getMyInfo().then((res)=> res.data)
+        queryFn: ()=> getMyInfo().then((res)=> res.data),
+        enabled: !!accessToken
     });
+    const queryClient = useQueryClient();
 
     const {data: reservation, isLoading: isReservationListLoading} =  useQuery<ReservationResponse[]>({
         queryKey: ["myReservationList", status],
-        queryFn: ()=>getMyReservations(status).then((res)=>res.data)
+        queryFn: ()=>getMyReservations(status).then((res)=>res.data),
+        enabled: !!accessToken
     })
+
+    const {mutate, isPending} = useMutation({
+        mutationFn: cancelReservation,
+        //캐시 무효화 -> useQuery가 stale 감지 -> queryFn 자동 재실행 -> 새 데이터로 화면 업데이트
+        onSuccess: (()=>{
+            queryClient.invalidateQueries({queryKey: ["myReservationList"]})
+        }),
+        onError: ((err: any)=>{
+            const code = err.response.data.code;
+            const message = err.response.data.message;
+            if(code === "RESERVATION_NOT_FOUND"){
+                toast.error(message)
+            }
+        })
+    });
 
     if(isLoading || isReservationListLoading) return <p>Loading...</p>
     if(isError){
@@ -50,10 +70,14 @@ return (
                     <div className="reservation-card" key={reservation.reservationKey}>
                         <div className="reservation-card-header">
                             <span className="reservation-card-status">{status === 'AFTER_USE' ? '이용완료' : status === 'BEFORE_USE' ? '이용전' : '취소됨'}</span>
-                            <button className="reservation-detail-btn">상세보기</button>
-                        </div>
+                            <div className="reservation-card-btns">
+                                <button className="reservation-detail-btn" onClick={() => navigate(`/reservations/${reservation.reservationKey}`)}>상세보기</button>
+                                <button className="reservation-cancel-btn" onClick={() => mutate(reservation.reservationKey)} disabled={isPending}>
+                                    {isPending ? "취소 중..." : "예약취소"}
+                                </button>
+                            </div>                        </div>
                         <div className="reservation-card-body">
-                            <img className="reservation-card-image" src={reservation.imageUrl} />
+                            <img className="reservation-card-image" src={reservation.hotelImageUrl} />
                             <div className="reservation-card-info">
                                 <p className="reservation-hotel">{reservation.hotelName}</p>
                                 <p className="reservation-room">{reservation.roomTypeName} &nbsp; 1박</p>

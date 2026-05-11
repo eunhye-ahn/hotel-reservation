@@ -62,6 +62,12 @@
     font-weight: bold;
 }
 
+.reservation-card-btns {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
 .reservation-detail-btn {
     background: none;
     border: 1px solid #ddd;
@@ -73,6 +79,33 @@
 
 .reservation-detail-btn:hover {
     background: #eee;
+}
+
+.reservation-detail-btn:disabled {
+    border-color: #ddd;
+    color: #ddd;
+    cursor: not-allowed;
+}
+
+.reservation-cancel-btn {
+    background: none;
+    border: 1px solid #ff4d4d;
+    padding: 4px 12px;
+    cursor: pointer;
+    font-size: 13px;
+    border-radius: 4px;
+    color: #ff4d4d;
+}
+
+.reservation-cancel-btn:hover {
+    background: #ff4d4d;
+    color: #fff;
+}
+
+.reservation-cancel-btn:disabled {
+    border-color: #ddd;
+    color: #ddd;
+    cursor: not-allowed;
 }
 
 .reservation-card-body {

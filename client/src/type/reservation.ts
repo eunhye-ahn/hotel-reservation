@@ -34,7 +34,7 @@ export interface ReservationDetailResponse{
 
 export interface ReservationResponse {
     reservationKey: string,
-    imageUrl: string,
+    hotelImageUrl: string,
     hotelName: string,
     roomTypeName: string,
     startDate: string,

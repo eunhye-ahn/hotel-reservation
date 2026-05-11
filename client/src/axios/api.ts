@@ -56,3 +56,7 @@ export const getMyReservations = (status: string) => {
         params: {status}
     })
 }
+
+export const cancelReservation = (reservationKey: string) => {
+    return api.delete<void>(`/reservations/${reservationKey}`)
+}

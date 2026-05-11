@@ -7,6 +7,7 @@ import '@/pages/SignUpPage.css'
 import { toast } from "react-toastify";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
+import NotFoundPage from "./NotFoundPage";
 
 export const SignUpPage = () => {
     const {register, handleSubmit, formState: {errors}} = useForm<SignUpRequest>();
@@ -18,7 +19,7 @@ export const SignUpPage = () => {
         mutationFn: signUp,
         onSuccess: (res)=>{
             setAccessToken(res.data.accessToken)
-            navigate("/")
+            return <NotFoundPage />
         },
         onError : (err: any)=>{
               toast.error(err.response.data.message) 

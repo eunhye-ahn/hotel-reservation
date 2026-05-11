@@ -22,7 +22,9 @@ export const LoginPage = () => {
             const { code, message } = err.response.data
             if(code === "INVALID_PASSWORD"){
                 toast.error(message)
+                return
             }
+            toast.error("일시적인 오류가 발생했습니다")
         }
     })
 

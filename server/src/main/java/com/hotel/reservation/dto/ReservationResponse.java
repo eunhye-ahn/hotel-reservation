@@ -20,6 +20,7 @@ public class ReservationResponse {
     private LocalDate endDate;
     private LocalTime checkInTime;
     private LocalTime checkOutTime;
+    private String hotelImageUrl;
     private ReservationStatus reservationStatus;
 
     public static ReservationResponse from(Reservation reservation){
@@ -31,8 +32,8 @@ public class ReservationResponse {
                 .endDate(reservation.getEndDate())
                 .checkInTime(reservation.getHotel().getCheckInTime())
                 .checkOutTime(reservation.getHotel().getCheckOutTime())
+                .hotelImageUrl(reservation.getHotel().getImageUrl()) //n+1
                 .reservationStatus(reservation.getReservationStatus())
                 .build();
     }
-
 }
