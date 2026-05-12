@@ -7,7 +7,6 @@ import com.hotel.reservation.dto.ReservationRequest;
 import com.hotel.reservation.exception.CustomException;
 import com.hotel.reservation.exception.ErrorCode;
 import com.hotel.reservation.repository.*;
-import jakarta.persistence.OptimisticLockException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -120,10 +119,14 @@ public class ReservationProcessor {
     }
 
     @Recover
-    public void recover(ObjectOptimisticLockingFailureException e,
+    public void recover(RuntimeException e,
                         ReservationRequest request, Long userId){
         log.error("예약 재시도 모두 실패 - reservationKey: {}",
                 request.getReservationKey());
+
+        if(e instanceof CustomException ce){
+            throw ce;  // RESERVATION_UNAVAILABLE 그대로 던짐
+        }
         throw new CustomException(ErrorCode.RESERVATION_CONFLICT);
     }
 }

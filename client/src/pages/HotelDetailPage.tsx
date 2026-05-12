@@ -1,6 +1,6 @@
 import { getHotelDetail } from "@/axios/api";
 import type { HotelDetailResponse } from "@/type/hotel";
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router";
 import '@/pages/HotelDetailPage.css';
 import { useQuery } from "@tanstack/react-query";
@@ -22,6 +22,10 @@ export const HotelDetailPage = () => {
         queryKey: ["hotelDetails", hotelId],    //호텔id별로 캐시관리
         queryFn: () => getHotelDetail(Number(hotelId)).then((res)=>res.data)
     });
+
+    useEffect(() => {
+    console.log(startDate);
+}, [startDate]);
 
     if(isLoading) return <p>Loading...</p>
     if(isError){

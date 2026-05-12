@@ -150,6 +150,12 @@ public class ReservationConcurrencyTest {
 
         assertThatThrownBy(()-> reservationService.createReservation(request,1L))
                 .isInstanceOf(CustomException.class);
+        //assertThatThrownBy(()-> reservationService.createReservation(request,1L))
+        //        .isInstanceOf(CustomException.class)
+        //        .satisfies(e -> {
+        //            CustomException ce = (CustomException) e;
+        //            assertThat(ce.getErrorCode()).isEqualTo(ErrorCode.RESERVATION_UNAVAILABLE);
+        //        });
 
     }
 

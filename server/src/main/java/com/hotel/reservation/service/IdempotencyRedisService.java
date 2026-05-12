@@ -32,7 +32,7 @@ public class IdempotencyRedisService {
     private final RedisTemplate<String, Object> objectRedisTemplate;
     private final ObjectMapper redisObjectMapper;
 
-    private static final long TTL_HOURS = 24;
+    private static final long TTL_MINUTE = 30;
     private static final String PREFIX = "idempotency:";
 
     //키에 idempotency: 붙여서 저장-> redis에서 여러 데이터를 분류하기 위해
@@ -59,7 +59,7 @@ public class IdempotencyRedisService {
          * -> redisTemplate -> null (Boolean) -> Boolean.TRUE.equals(success) :NPE방지 -> false
          */
         Boolean success = objectRedisTemplate.opsForValue()
-                .setIfAbsent(buildKey(reservationKey), value, TTL_HOURS, TimeUnit.HOURS);
+                .setIfAbsent(buildKey(reservationKey), value, TTL_MINUTE, TimeUnit.MINUTES);
 
         return Boolean.TRUE.equals(success);
     }
@@ -106,7 +106,7 @@ public class IdempotencyRedisService {
                     .createdAt(value.getCreatedAt())
                     .build();
             objectRedisTemplate.opsForValue()
-                    .set(buildKey(reservationKey), updated, TTL_HOURS, TimeUnit.HOURS);
+                    .set(buildKey(reservationKey), updated, TTL_MINUTE, TimeUnit.HOURS);
         });
     }
 
@@ -131,7 +131,7 @@ public class IdempotencyRedisService {
                     .createdAt(value.getCreatedAt())
                     .build();
             objectRedisTemplate.opsForValue()
-                    .set(buildKey(reservationKey), updated, TTL_HOURS, TimeUnit.HOURS);
+                    .set(buildKey(reservationKey), updated, TTL_MINUTE, TimeUnit.HOURS);
         });
     }
 

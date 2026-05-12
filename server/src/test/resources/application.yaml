@@ -4,6 +4,8 @@ spring:
     driver-class-name: org.h2.Driver
     username: sa
     password:
+  config:
+    import: optional:file:.env[.properties]
   h2:
     console:
       enabled: true  # h2 콘솔 접속 가능
@@ -16,6 +18,14 @@ spring:
     init:
       encoding: UTF-8
       mode: always  # data.sql 실행
+  data:
+    redis:
+      host: localhost
+      port: 6379
+jwt:
+  secret: testSecretKeyForTestingPurposeOnly1234567890
+  access-expiration: 1800000
+  refresh-expiration: 86400000
 
 
 ##
