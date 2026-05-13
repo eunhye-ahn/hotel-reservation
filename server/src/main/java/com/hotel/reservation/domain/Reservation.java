@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Check;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name="reservation")
@@ -81,7 +82,7 @@ public class Reservation extends BaseTime{
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private PaymentStatus paymentStatus;
+    private PaymentStatus paymentStatus = PaymentStatus.PENDING;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -95,6 +96,13 @@ public class Reservation extends BaseTime{
 
     @Column(nullable = false, name = "number_of_guests")
     private int numberOfGuests;
+
+    /**
+     * 예약 후 3시간 이내에 결제해야된다는 조건
+     */
+    @Builder.Default
+    @Column(nullable = false, name = "expires_at")
+    private LocalDateTime expiresAt = LocalDateTime.now().plusHours(3);
 
     /**
      * 역정규화
@@ -125,6 +133,6 @@ public class Reservation extends BaseTime{
         }
 
         this.reservationStatus = ReservationStatus.CANCELED;
-        this.paymentStatus = PaymentStatus.REFUNDED;
+        this.paymentStatus = PaymentStatus.CANCELED;
     }
 }
