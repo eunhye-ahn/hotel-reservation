@@ -1,7 +1,5 @@
-package com.hotel.reservation.domain.payment;
+package com.hotel.payment.domain;
 
-import com.hotel.reservation.domain.BaseTime;
-import com.hotel.reservation.domain.Reservation;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,18 +21,23 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-public class PaymentEvent extends BaseTime {
+public class PaymentEvent extends BaseTime{
+    //PK,멱등키
     @Id
     private String checkoutId;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="reservation_id", nullable = false)
-    private Reservation reservation;    //예약정보 확인을 위해
+    //unique, Kafka 통신용
+    @Column(nullable = false, unique = true)
+    private Long reservationId;
 
+    //Toss,KAKAO
     @Column(nullable = false)
+    private String pspType;
+
+    //null허용 (PSP 등록 후 받음)
     private String pspToken;
 
+    //결제완료여부
     @Builder.Default
-    @Column(nullable = false)
     private boolean isPaymentDone = false;
 }

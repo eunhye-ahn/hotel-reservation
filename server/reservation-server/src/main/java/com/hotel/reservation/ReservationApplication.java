@@ -16,5 +16,4 @@ public class ReservationApplication {
 		SpringApplication.run(ReservationApplication.class, args);
 		//System.out.println(new BCryptPasswordEncoder().encode("asd798852"));
 	}
-
 }

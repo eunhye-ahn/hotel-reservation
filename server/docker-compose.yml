@@ -1,7 +1,52 @@
 services:
-  postgresql:
+
+  #호텔예약서비스
+  hotel-service:
+    build:
+      context: ./reservation-server
+    container_name: reservation-server
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://reservation-postgresql:5432/hotel_reserve
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      SPRING_REDIS_HOST: redis
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      JWT_SECRET: ${JWT_SECRET}
+
+      PAYMENT_SERVICE_URL: http://payment-service:8081
+    depends_on:
+      - reservation-postgresql
+      - redis
+      - kafka
+    networks:
+      - server-network
+
+  #결제서비스
+  payment-service:
+    build:
+      context: ./payment-service
+    container_name: payment-server
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://payment-postgresql:5432/payment_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      TOSS_SECRET_KEY: ${TOSS_SECRET_KEY}
+    depends_on:
+      - payment-postgresql
+      - kafka
+    networks:
+      - server-network
+
+
+  # 예약 DB
+  reservation-postgresql:
     image: postgres:17
-    container_name: hotelreserve-postgres
+    container_name: reservation-postgresql
     environment:
       POSTGRES_DB: hotel_reserve
       POSTGRES_USER: root
@@ -9,23 +54,65 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - reservation-postgresql-data:/var/lib/postgresql/data
     networks:
-      - hotelreserve-network
+      - server-network
+
+  # 결제 DB
+  payment-postgresql:
+    image: postgres:17
+    container_name: payment-postgresql
+    environment:
+      POSTGRES_DB: payment_db
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5433:5432"
+    volumes:
+      - payment-postgresql-data:/var/lib/postgresql/data
+    networks:
+      - server-network
+
+  #Kafka 실행에 필요한 관리자역할
+  # Kafka 브로커 상태 관리, 리더 선출 담당
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    networks:
+      - server-network
+
+  #메시지큐
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    depends_on:
+      - zookeeper
+    networks:
+      - server-network
 
   redis:
     image: redis:7.4
-    container_name: hotelreserve-redis
+    container_name: reservation-redis
     ports:
       - "6379:6379"
     volumes:
       - redis-data:/data
     networks:
-      - hotelreserve-network
+      - server-network
 
 volumes:
-  postgres-data:
+  reservation-postgresql-data:
   redis-data:
+  payment-postgresql-data:
 
+## 서비스가 확장되면 API 게이트웨이 추가 예정
 networks:
-  hotelreserve-network:
+  server-network:

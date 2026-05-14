@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: payment-server
+  datasource:
+    url: jdbc:postgresql://localhost:5432/payment_db
+    username: root
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  config:
+    import: optional:file:.env[.properties]
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+
+  ##카프카 설정
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    consumer:
+      group-id: payment-group
+      auto-offset-reset: earliest
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+server:
+  port: 8081
+
+psp:
+  toss:
+    secret-key: ${TOSS_SECRET_KEY}

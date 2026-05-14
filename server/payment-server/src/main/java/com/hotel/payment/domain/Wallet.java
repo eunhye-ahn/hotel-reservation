@@ -1,7 +1,8 @@
-package com.hotel.reservation.domain.payment;
+package com.hotel.payment.domain;
 
-import com.hotel.reservation.domain.BaseTime;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -17,16 +18,19 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Wallet extends BaseTime {
+@Builder
+@AllArgsConstructor
+public class Wallet extends BaseTime{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(unique = true, nullable = false)
-    private String account;
+    private String sellerAccount;
 
+    @Builder.Default
     @Column(nullable = false)
-    private int balance;
+    private int balance = 0;
 
     //update only
     public void updateBalance(int amount){

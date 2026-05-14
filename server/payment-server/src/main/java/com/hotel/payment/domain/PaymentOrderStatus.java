@@ -1,4 +1,4 @@
-package com.hotel.reservation.domain.payment;
+package com.hotel.payment.domain;
 
 public enum PaymentOrderStatus {
     NOT_STARTED,

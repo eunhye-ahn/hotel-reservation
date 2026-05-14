@@ -1,1 +1,4 @@
-rootProject.name = 'reservation'
+rootProject.name = 'server'
+
+include 'reservation-server'
+include 'payment-server'
