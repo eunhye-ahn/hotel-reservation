@@ -1,7 +1,7 @@
 services:
 
   #호텔예약서비스
-  hotel-service:
+  reservation-service:
     build:
       context: ./reservation-server
     container_name: reservation-server
@@ -26,7 +26,7 @@ services:
   #결제서비스
   payment-service:
     build:
-      context: ./payment-service
+      context: ./payment-server
     container_name: payment-server
     ports:
       - "8081:8081"
@@ -36,9 +36,12 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       TOSS_SECRET_KEY: ${TOSS_SECRET_KEY}
+      SPRING_REDIS_HOST: redis
+
     depends_on:
       - payment-postgresql
       - kafka
+      - redis
     networks:
       - server-network
 

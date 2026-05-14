@@ -82,7 +82,7 @@ public class Reservation extends BaseTime{
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    @Builder.default
+    @Builder.Default
     private PaymentStatus paymentStatus = PaymentStatus.PENDING;
 
     @Column(nullable = false)

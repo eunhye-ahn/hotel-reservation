@@ -2,6 +2,7 @@ package com.hotel.reservation.controller;
 
 import com.hotel.reservation.domain.ReservationStatus;
 import com.hotel.reservation.dto.ReservationDetailResponse;
+import com.hotel.reservation.dto.ReservationFeignResponse;
 import com.hotel.reservation.dto.ReservationRequest;
 import com.hotel.reservation.dto.ReservationResponse;
 import com.hotel.reservation.service.ReservationService;
@@ -71,5 +72,16 @@ public class ReservationController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .build();
+    }
+
+    /**
+     * 결제서버에서 예약 유효성 확인할 때 호출
+     */
+    @GetMapping("/{reservationKey}/payment-info")
+    public ResponseEntity<ReservationFeignResponse> getReservationForPayment(@PathVariable String reservationKey){
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(reservationService.getReservationForPayment(reservationKey)
+        );
     }
 }

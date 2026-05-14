@@ -31,6 +31,12 @@ dependencies {
 	testCompileOnly 'org.projectlombok:lombok'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testAnnotationProcessor 'org.projectlombok:lombok'
+
+	//멱등키 저장소 -redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+	//다른서버 통신용 -OpenFeign
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 }
 
 tasks.named('test') {

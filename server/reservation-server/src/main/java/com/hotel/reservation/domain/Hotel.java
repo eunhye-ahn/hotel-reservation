@@ -25,6 +25,9 @@ public class Hotel extends BaseTime{
     @Column(nullable = false)
     private String address;
 
+    @Column(nullable = false, unique = true)
+    private String sellerAccount;
+
     @Column
     private Double latitude;   // 위도 (37.5665)
 

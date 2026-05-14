@@ -25,6 +25,7 @@ public class ReservationService {
     private final IdempotencyRedisService idempotencyRedisService;
     private final ReservationProcessor reservationProcessor;
     private final RoomTypeInventoryRepository roomTypeInventoryRepository;
+
     /**
      *
      * 1. 멱등키 확인 (Redis)
@@ -33,17 +34,17 @@ public class ReservationService {
      * 2. 예약가능여부확인-DB
      * 3. 예약 생성-DB
      * 4. Redis 결과 업데이트
-     *
+     * <p>
      * IdempotencyValue {
-     *     status      : processing | completed | failed
-     *     result      : true/false (null 가능)
-     *     userId      : 다른 유저 방지
-     *     requestHash : 요청 본문 해시 (변조 감지)
-     *     createdAt   : 생성 시간
+     * status      : processing | completed | failed
+     * result      : true/false (null 가능)
+     * userId      : 다른 유저 방지
+     * requestHash : 요청 본문 해시 (변조 감지)
+     * createdAt   : 생성 시간
      * }
      */
     //예약생성
-    public String createReservation(ReservationRequest request, Long userId){
+    public String createReservation(ReservationRequest request, Long userId) {
         //멱등키 확인 -Redis
         //1.요청본문 해시생성
         String requestHash = generateHash(request);
@@ -54,18 +55,17 @@ public class ReservationService {
         );
 
         //3.중복요청이면 이전 요청으로 처리
-        if(!isFirst){
+        if (!isFirst) {
             handleDuplicate(request.getReservationKey(), userId, requestHash);
             return request.getReservationKey();
         }
 
         //4.새요청이면 예약처리(여기서 엔티티유효성검사 등하고 response 반환)
-        try{
+        try {
             reservationProcessor.processWithRetry(request, userId);
             idempotencyRedisService.complete(request.getReservationKey());
             return request.getReservationKey();
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             idempotencyRedisService.fail(request.getReservationKey());
             throw e;
         }
@@ -82,10 +82,10 @@ public class ReservationService {
     }
 
     //내 예약조회
-    public List<ReservationResponse> getMyReservations(Long userId, ReservationStatus status){
+    public List<ReservationResponse> getMyReservations(Long userId, ReservationStatus status) {
         //엔티티 조회
         User User = userRepository.findById(userId)
-                .orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         //내예약조회
         return reservationRepository.findByUserAndReservationStatus(User, status)
@@ -96,15 +96,15 @@ public class ReservationService {
     //예약상세조회 -예약확인서
     public ReservationDetailResponse reservationConfirm(
             Long userId, String reservationKey
-    ){
-        Reservation reservation =  reservationRepository.findByUserIdAndReservationKey(userId, reservationKey)
-                .orElseThrow(()->new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
+    ) {
+        Reservation reservation = reservationRepository.findByUserIdAndReservationKey(userId, reservationKey)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
 
         return ReservationDetailResponse.from(reservation);
     }
 
     //전체예약조회 -관리자
-    public List<ReservationResponse> getReservations(){
+    public List<ReservationResponse> getReservations() {
 
         return reservationRepository.findAll()
                 .stream().map(ReservationResponse::from)
@@ -113,10 +113,10 @@ public class ReservationService {
 
     //예약취소
     @Transactional
-    public void deleteReservation(Long userId, String reservationKey){
+    public void deleteReservation(Long userId, String reservationKey) {
 
         Reservation reservation = reservationRepository.findByUserIdAndReservationKey(userId, reservationKey)
-                .orElseThrow(()->new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
 
         reservation.cancel();
 
@@ -129,12 +129,12 @@ public class ReservationService {
 
     /**
      * [WHAT] 요청본문을 해시로 변환 : 변조검지용 방어로직
-     *
+     * <p>
      * [WHY] 같은 reservationKey로 다른 본문이 오면 감지하기 위해
-     *
+     * <p>
      * [흐름]
      * request 객체 → JSON 문자열 → SHA-256 해시
-     *
+     * <p>
      * [비교]
      * JWT - HS256 -> 비밀키 + SHA-256으로 서명 (검증가능)
      * SHA-256 -> 단방향 해시 (복원불가)
@@ -157,11 +157,11 @@ public class ReservationService {
 
     /**
      * [WHAT] 중복요청 처리
-     *
+     * <p>
      * [WHY]
      * tryProcessing()이 false일 때 (이미 redis에 있음)
      * 기존 값을 꺼내서 상황에 맞게 처리
-     *
+     * <p>
      * [흐름]
      * get()으로 기존 값 조회
      * ├── userId 다름   → 403
@@ -170,19 +170,19 @@ public class ReservationService {
      * ├── completed    → 200 (이전 result 반환)
      * └── failed       → 500
      */
-    private void handleDuplicate(String reservationKey, Long userId, String requestHash){
+    private void handleDuplicate(String reservationKey, Long userId, String requestHash) {
         //tryProcessing() -> get() 사이에서 멱등키 만료되는 상황 방지
         //      : 현실적으로는 TTL을 24시간으로 설정해두어서 발생할 확률이 없지만 이론상 방어
         IdempotencyValue value = idempotencyRedisService.get(reservationKey)
-                .orElseThrow(()-> new CustomException(ErrorCode.IDEMPOTENCY_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.IDEMPOTENCY_NOT_FOUND));
 
         //다른 유저가 같은 키 사용 시도
-        if(!value.getUserId().equals(userId)){
+        if (!value.getUserId().equals(userId)) {
             throw new CustomException(ErrorCode.IDEMPOTENCY_USER_MISMATCH);
         }
 
         //같은 키인데 다른 본문
-        if(!value.getRequestHash().equals(requestHash)){
+        if (!value.getRequestHash().equals(requestHash)) {
             throw new CustomException(ErrorCode.IDEMPOTENCY_REQUEST_MISMATCH);
         }
 
@@ -199,5 +199,19 @@ public class ReservationService {
         }
 
         //completed면 정상 반환 -> status를 enum으로 관리하면 코드가독성 좋아짐
+    }
+
+    //예약서비스 -> 결제서비스에 줄 데이터 담기
+    public ReservationFeignResponse getReservationForPayment(String reservationKey) {
+        Reservation reservation = reservationRepository.findByReservationKey(reservationKey)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
+
+        return ReservationFeignResponse.builder()
+                .reservationId(reservation.getId())
+                .reservationKey(reservationKey)
+                .paymentStatus(reservation.getPaymentStatus().toString())
+                .amount(reservation.getTotalPrice())
+                .sellerAccount(reservation.getHotel().getSellerAccount())
+                .build();
     }
 }
