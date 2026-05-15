@@ -1,7 +1,6 @@
 package com.hotel.payment;
 
 import com.hotel.payment.client.ReservationClient;
-import com.hotel.payment.dto.PaymentPrepareRequest;
 import com.hotel.payment.dto.PaymentPrepareResponse;
 import com.hotel.payment.dto.ReservationFeignResponse;
 import com.hotel.payment.repository.PaymentEventRepository;

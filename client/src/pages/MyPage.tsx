@@ -1,12 +1,14 @@
-import { cancelReservation, getMyInfo, getMyReservations } from "@/axios/api";
-import type { ReservationResponse, ReservationStatus } from "@/type/reservation";
-import type { UserInfoResponse } from "@/type/user";
+
+import type { ReservationResponse, ReservationStatus } from "@/shared/type/reservation";
+import type { UserInfoResponse } from "@/shared/type/user";
 import '@/pages/MyPage.css';
 import { useState } from "react"
-import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
 import { useAuthStore } from "@/store/useAuthStore";
+import { cancelReservation, getMyInfo, getMyReservations } from "@/api/reservation-service";
+
 
 export const MyPage = () => {
     const [status, setStatus] = useState<ReservationStatus>('BEFORE_USE');

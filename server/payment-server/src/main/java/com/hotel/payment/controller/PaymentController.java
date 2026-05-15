@@ -1,6 +1,5 @@
 package com.hotel.payment.controller;
 
-import com.hotel.payment.dto.PaymentPrepareRequest;
 import com.hotel.payment.dto.PaymentPrepareResponse;
 import com.hotel.payment.service.PaymentService;
 import lombok.RequiredArgsConstructor;
@@ -15,9 +14,10 @@ public class PaymentController {
 
     private final PaymentService paymentService;
 
-    @GetMapping("/payments/prepare/{reservationKey}")
-    public ResponseEntity<PaymentPrepareResponse> preparedPayment(@RequestBody PaymentPrepareRequest request){
-        PaymentPrepareResponse result = paymentService.preparePayment(request);
+    @PostMapping("/payments/prepare/{reservationKey}")
+    public ResponseEntity<PaymentPrepareResponse> preparedPayment(
+            @PathVariable String reservationKey){
+        PaymentPrepareResponse result = paymentService.preparePayment(reservationKey);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

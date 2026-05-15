@@ -116,14 +116,7 @@ public class ReservationService {
         List<RoomTypeInventory> inventories = roomTypeInventoryRepository.findByRoomTypeIdAndDateBetween(reservation.getRoomType().getId(), reservation.getStartDate(),
                 reservation.getEndDate().minusDays(1));
 
-        int availableCount = inventories.stream()
-                .mapToInt(RoomTypeInventory::getAvailableCount)
-                .min()
-                .orElseThrow(()->new CustomException(ErrorCode.ROOM_INVENTORY_NOT_FOUND));
-
         return ReservationInfoResponse.from(inventories, reservation.getTotalPrice());
-
-
     }
 
     //전체예약조회 -관리자

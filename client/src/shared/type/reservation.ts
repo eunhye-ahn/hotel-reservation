@@ -43,4 +43,9 @@ export interface ReservationResponse {
     reservationStatus: string
 }
 
+export interface ReservationInfoResponse{
+    availableCount: number,
+    totalPrice: number
+}
+
 export type ReservationStatus = 'BEFORE_USE' | 'AFTER_USE' | 'CANCELED';

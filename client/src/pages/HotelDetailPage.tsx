@@ -1,12 +1,12 @@
-import { createReservation, getHotelDetail } from "@/axios/api";
-import type { HotelDetailResponse } from "@/type/hotel";
-import { useEffect, useState } from "react"
+import type { HotelDetailResponse } from "@/shared/type/hotel";
+import { useState } from "react"
 import { useNavigate, useParams } from "react-router";
 import '@/pages/HotelDetailPage.css';
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import NotFoundPage from "./NotFoundPage";
-import type { ReservationRequest } from "@/type/reservation";
+import type { ReservationRequest } from "@/shared/type/reservation";
+import { createReservation, getHotelDetail } from "@/api/reservation-service";
 
 export const HotelDetailPage = () => {
     const today = new Date().toISOString().split('T')[0];
@@ -23,11 +23,6 @@ export const HotelDetailPage = () => {
         queryKey: ["hotelDetails", hotelId],    //호텔id별로 캐시관리
         queryFn: () => getHotelDetail(Number(hotelId)).then((res)=>res.data)
     });
-
-    useEffect(() => {
-    console.log(startDate);
-}, [startDate]);
-
     
         const {mutate, isPending} = useMutation({
         mutationFn: createReservation,

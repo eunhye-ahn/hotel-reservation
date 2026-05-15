@@ -1,9 +1,9 @@
 import axios from "axios";
-import { useAuthStore } from "../../../client/src/store/useAuthStore";
-import { reissue } from "./api";
+import { useAuthStore } from "../../store/useAuthStore";
 import { toast } from 'react-toastify';
+import { reissue } from "../reservation-service";
 
-export const api = axios.create({
+export const reservationApi = axios.create({
     baseURL: "http://localhost:8080/api/v1",
     headers: {
         'Content-Type': 'application/json'
@@ -15,7 +15,7 @@ export const api = axios.create({
  * error: 요청 설정 실패하면 에러처리 
  */
 
-api.interceptors.request.use(
+reservationApi.interceptors.request.use(
     (config) => {
         const token = useAuthStore.getState().accessToken;
 
@@ -30,7 +30,7 @@ api.interceptors.request.use(
  * response : 서버 성공 응답 객체 - data, status, headers, config
  * error : 서버가 에러 응답 객체 
  */
-api.interceptors.response.use(
+reservationApi.interceptors.response.use(
     (response) => response,
 
     async (error) => {
@@ -47,7 +47,7 @@ api.interceptors.response.use(
             try {
                 const res = await reissue();
                 useAuthStore.getState().setAccessToken(res.data.accessToken)
-                return api(error.config)
+                return reservationApi(error.config)
             } catch (e) {
                 useAuthStore.getState().setAccessToken(null);
                 window.location.href = "/login";

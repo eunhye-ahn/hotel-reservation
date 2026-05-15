@@ -1,6 +1,6 @@
 import { Outlet } from "react-router";
-import { Header } from "@/component/header";
-import '@/component/header.css'
+import './shared/component/header.css'
+import { Header } from "./shared/component/header";
 
 export default function Layout() {
     return (

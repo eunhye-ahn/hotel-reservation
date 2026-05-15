@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom"
-import '@/component/header.css'
+import './header.css'
 import { useAuthStore } from "@/store/useAuthStore"
-import { logout } from "@/axios/api"
+import { logout } from "@/api/reservation-service"
 
 export const Header = () => {
     const navigate = useNavigate()

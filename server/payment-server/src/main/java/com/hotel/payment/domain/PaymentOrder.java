@@ -36,4 +36,14 @@ public class PaymentOrder extends BaseTime{
 
     @Builder.Default
     private boolean walletUpdated = false;
+
+    public void success(){
+        this.paymentOrderStatus = PaymentOrderStatus.SUCCESS;
+    }
+    public void fail() {
+        this.paymentOrderStatus = PaymentOrderStatus.FAILED;
+    }
+    public void executing(){
+        this.paymentOrderStatus = PaymentOrderStatus.EXECUTING;
+    }
 }

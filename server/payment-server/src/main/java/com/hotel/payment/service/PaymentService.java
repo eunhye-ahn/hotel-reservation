@@ -4,7 +4,6 @@ import com.hotel.payment.client.ReservationClient;
 import com.hotel.payment.domain.PaymentEvent;
 import com.hotel.payment.domain.PaymentOrder;
 import com.hotel.payment.domain.PaymentOrderStatus;
-import com.hotel.payment.dto.PaymentPrepareRequest;
 import com.hotel.payment.dto.PaymentPrepareResponse;
 import com.hotel.payment.dto.ReservationFeignResponse;
 import com.hotel.payment.repository.PaymentEventRepository;
@@ -36,9 +35,9 @@ public class PaymentService {
     private final PaymentOrderRepository paymentOrderRepository;
 
     @Transactional
-    public PaymentPrepareResponse preparePayment(PaymentPrepareRequest request){
+    public PaymentPrepareResponse preparePayment(String reservationKey){
         //예약 유효성 확인
-        ReservationFeignResponse reservation = reservationClient.getReservationForPayment(request.getReservationKey());
+        ReservationFeignResponse reservation = reservationClient.getReservationForPayment(reservationKey);
 
         //paymentStatus PENDING 확인
         if(!reservation.getPaymentStatus().equals("PENDING")){
@@ -65,7 +64,7 @@ public class PaymentService {
                 .paymentOrderId(paymentOrderId)
                 .checkoutId(checkoutId)
                 .sellerAccount(reservation.getSellerAccount())
-                .amount(request.getAmount())
+                .amount(reservation.getAmount())
                 .paymentOrderStatus(PaymentOrderStatus.NOT_STARTED)
                 .build();
         paymentOrderRepository.save(paymentOrder);
@@ -74,7 +73,7 @@ public class PaymentService {
         return PaymentPrepareResponse
                 .builder()
                 .paymentOrderId(paymentOrderId)
-                .amount(request.getAmount())
+                .amount(reservation.getAmount())
                 .build();
     }
 }

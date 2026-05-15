@@ -40,4 +40,9 @@ public class PaymentEvent extends BaseTime{
     //결제완료여부
     @Builder.Default
     private boolean isPaymentDone = false;
+
+    public void complete(String pspToken){
+        this.pspToken = pspToken;
+        this.isPaymentDone = true;
+    }
 }

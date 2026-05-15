@@ -3,8 +3,6 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { MainPage } from './pages/MainPage'
 import { SignUpPage } from './pages/SignUpPage'
 import { useEffect } from 'react'
-import { reissue } from './axios/api'
-import { useAuthStore } from './store/useAuthStore'
 import { HotelDetailPage } from './pages/HotelDetailPage'
 import { ReservationPage } from './pages/ReservationPage'
 import { ReservationConfirmPage } from './pages/ReservationConfirmPage'
@@ -15,6 +13,8 @@ import NotFoundPage from './pages/NotFoundPage'
 import Layout from './Layout'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { reissue } from './api/reservation-service'
+import { useAuthStore } from './store/useAuthStore'
 
 /**
  * [tanstack query 흐름] : 서버 상태관리 라이브러리 : 비동기데이터

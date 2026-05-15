@@ -1,11 +1,11 @@
-import { login } from "../axios/api"
 import { useNavigate } from "react-router-dom"
 import { useAuthStore } from "../store/useAuthStore"
-import type { LoginRequest } from "@/type/auth"
+import type { LoginRequest } from "@/shared/type/auth"
 import '@/pages/LoginPage.css'
 import { toast } from "react-toastify"
 import { useMutation } from "@tanstack/react-query"
 import { useForm } from "react-hook-form"
+import { login } from "@/api/reservation-service"
 
 export const LoginPage = () => {
     const {register, handleSubmit, formState:{errors}} = useForm<LoginRequest>();

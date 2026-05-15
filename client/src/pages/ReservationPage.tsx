@@ -1,9 +1,11 @@
 import { useLocation, useNavigate, useParams } from "react-router"
 import '@/pages/ReservationPage.css';
 import { useQuery } from "@tanstack/react-query";
-import type { ReservationInfoResponse } from "@/type/reservation";
-import { reservationInfo } from "@/axios/api";
-
+import type { ReservationInfoResponse } from "@/shared/type/reservation";
+import { preparePayment } from "@/api/payment-service";
+import { toast } from "react-toastify";
+import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
+import { reservationInfo } from "@/api/reservation-service";
 
 export const ReservationPage = () => {
     const { reservationKey } = useParams<string>();
@@ -11,11 +13,49 @@ export const ReservationPage = () => {
     const state = location.state;
     const navigate = useNavigate();
 
-    if (!reservationKey) return null;
+
     const {data, isLoading, isError} = useQuery<ReservationInfoResponse>({
         queryKey: ["reservationInfo",reservationKey],
-        queryFn: () => reservationInfo(reservationKey).then((res)=>res.data)
+        queryFn: () => reservationInfo(reservationKey!).then((res)=>res.data)
     });
+
+    const handlePayment = async () => {
+        try{
+            //내 서버에서 paymentOrderId, amount 받아오기
+            //오픈 -> 승인 결과 받은 후에 순서대로 실행되어야함
+            const res = await preparePayment(reservationKey!);
+            const {paymentOrderId, amount} = res.data;
+
+            //토스 결제창 오픈
+            const toss = await loadTossPayments(import.meta.env.VITE_TOSS_CLIENT_KEY);
+            const payment = toss.payment({ customerKey: reservationKey! });
+
+            await payment.requestPayment({
+                method: "CARD",
+                orderId: paymentOrderId,
+                orderName: state.roomTypeName,
+                amount: {
+                currency: "KRW",
+                value: amount,
+            },
+            successUrl: `${window.location.origin}/payments/success`,
+            failUrl: `${window.location.origin}/payments/fail`,
+            });
+
+        }catch(err){
+            toast.error("결제 중 오류가 발생했습니다")
+            navigate("/");
+        }
+
+
+    }
+
+    if(isLoading) return <p>loading...</p>
+    if(isError) {
+        toast.error("일시적인 오류가 발생했습니다");
+        navigate("/");
+    }
+    if (!reservationKey) return null;
 
 return(
     <div className="reservation-container">
@@ -55,7 +95,7 @@ return(
                         <span>결제금액</span>
                         <span>{data?.totalPrice.toLocaleString()}</span>
                     </div>
-                    <button className="payment-button">
+                    <button className="payment-button" onClick={handlePayment}>
                         결제하기
                     </button>
                 </div>

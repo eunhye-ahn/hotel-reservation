@@ -1,8 +1,8 @@
-import { getHotels } from "@/axios/api";
-import {type hotelResponse, type Page } from "@/type/hotel";
 import '@/pages/MainPage.css';
 import { useNavigate } from "react-router";
 import { useQuery } from "@tanstack/react-query";
+import { getHotels } from "@/api/reservation-service";
+import type { hotelResponse, Page } from '@/shared/type/hotel';
 
 //호텔정보페이지
 export const MainPage = () => {

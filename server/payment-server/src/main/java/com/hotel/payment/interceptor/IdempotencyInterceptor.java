@@ -2,7 +2,6 @@ package com.hotel.payment.interceptor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hotel.payment.domain.PaymentEvent;
-import com.hotel.payment.dto.PaymentPrepareRequest;
 import com.hotel.payment.dto.PaymentPrepareResponse;
 import com.hotel.payment.repository.PaymentEventRepository;
 import jakarta.servlet.http.HttpServletRequest;

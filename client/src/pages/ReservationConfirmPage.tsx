@@ -1,11 +1,12 @@
-import { reservationConfirm } from "@/axios/api";
-import type { ReservationDetailResponse } from "@/type/reservation";
+
+import type { ReservationDetailResponse } from "@/shared/type/reservation";
 import { useNavigate, useParams } from "react-router"
 import dayjs from 'dayjs';
 import '@/pages/ReservationConfirmPage.css';
 import { useQuery } from "@tanstack/react-query";
 import NotFoundPage from "./NotFoundPage";
 import { toast } from "react-toastify";
+import { reservationConfirm } from "@/api/reservation-service";
 
 export const ReservationConfirmPage = () => {
     const {reservationKey} = useParams();
