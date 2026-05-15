@@ -93,7 +93,7 @@ public class ReservationService {
                 .toList();
     }
 
-    //예약상세조회 -예약확인서
+    //예약상세조회 -예약확인
     public ReservationDetailResponse reservationConfirm(
             Long userId, String reservationKey
     ) {
@@ -101,6 +101,29 @@ public class ReservationService {
                 .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
 
         return ReservationDetailResponse.from(reservation);
+    }
+
+    //결제폼 -예약정보확인
+    public ReservationInfoResponse getReservationInfo(Long userId,
+                                                      String reservationKey){
+        //유효성
+        User User = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        Reservation reservation = reservationRepository.findByReservationKey(reservationKey)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
+
+        //잔여객실조회
+        List<RoomTypeInventory> inventories = roomTypeInventoryRepository.findByRoomTypeIdAndDateBetween(reservation.getRoomType().getId(), reservation.getStartDate(),
+                reservation.getEndDate().minusDays(1));
+
+        int availableCount = inventories.stream()
+                .mapToInt(RoomTypeInventory::getAvailableCount)
+                .min()
+                .orElseThrow(()->new CustomException(ErrorCode.ROOM_INVENTORY_NOT_FOUND));
+
+        return ReservationInfoResponse.from(inventories, reservation.getTotalPrice());
+
+
     }
 
     //전체예약조회 -관리자

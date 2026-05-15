@@ -10,21 +10,19 @@ import java.util.List;
 
 @Getter
 @Builder
-public class RoomTypeReservationResponse {
+public class ReservationInfoResponse {
     private int availableCount;      // 잔여객실
-    private int demandRate;          // 현재가
     private int totalPrice;
 
-    public static RoomTypeReservationResponse from(List<RoomTypeInventory> inventories, int totalDemandRate, int totalPrice) {
+    public static ReservationInfoResponse from(List<RoomTypeInventory> inventories, int totalPrice) {
         //기간 합산 내 잔여객실 조회
         int availableCount = inventories.stream()
                 .mapToInt(RoomTypeInventory::getAvailableCount)
                 .min()
                 .orElseThrow(()->new CustomException(ErrorCode.ROOM_INVENTORY_NOT_FOUND));
 
-        return RoomTypeReservationResponse.builder()
+        return ReservationInfoResponse.builder()
                 .availableCount(availableCount)
-                .demandRate(totalDemandRate)
                 .totalPrice(totalPrice)
                 .build();
     }

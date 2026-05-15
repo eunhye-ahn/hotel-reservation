@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 /**
@@ -39,12 +40,13 @@ import java.util.List;
 @Slf4j
 public class ReservationProcessor {
 
-    private final PriceTokenRedisService priceTokenRedisService;
+//    private final PriceTokenRedisService priceTokenRedisService;
     private final HotelRepository hotelRepository;
     private final RoomTypeRepository roomTypeRepository;
     private final UserRepository userRepository;
     private final RoomTypeInventoryRepository roomTypeInventoryRepository;
     private final ReservationRepository reservationRepository;
+    private final RateRepository rateRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional
@@ -56,10 +58,15 @@ public class ReservationProcessor {
     public void processWithRetry(ReservationRequest request, Long userId){
         log.info("processor retry - reservationKey: {}", request.getReservationKey());
         //토큰검증
-        PriceTokenValue priceTokenValue = priceTokenRedisService.get(request.getPriceToken())
-                .orElseThrow(()-> new CustomException(ErrorCode.PRICE_TOKEN_NOT_FOUND));
+//        PriceTokenValue priceTokenValue = priceTokenRedisService.get(request.getPriceToken())
+//                .orElseThrow(()-> new CustomException(ErrorCode.PRICE_TOKEN_NOT_FOUND));
 
-        int totalPrice = priceTokenValue.getTotalPrice();
+//        int totalPrice = priceTokenValue.getTotalPrice();
+
+        //멱등키검사(방어선)
+        if(reservationRepository.existsByReservationKey(request.getReservationKey())){
+            return;
+        }
 
         //엔티티조회-유효성검사
         Hotel hotel = hotelRepository
@@ -83,6 +90,21 @@ public class ReservationProcessor {
         List<RoomTypeInventory> inventories = roomTypeInventoryRepository
                 .findByRoomTypeIdAndDateBetween(roomType.getId(), request.getStartDate(), request.getEndDate().minusDays(1));
 
+        //날짜별 요금조회
+        List<Rate> rates = rateRepository.findByRoomTypeIdAndDateBetween(request.getRoomTypeId(), request.getStartDate(), request.getEndDate().minusDays(1));
+
+        //날짜수 검증 -요금누락검사
+        long expectedDays = ChronoUnit.DAYS.between(request.getStartDate(), request.getEndDate());
+        if(rates.size() != expectedDays) {
+            throw new CustomException(ErrorCode.RATE_NOT_FOUND);
+        }
+        if (inventories.size() != expectedDays) {
+            throw new CustomException(ErrorCode.ROOM_INVENTORY_NOT_FOUND);
+        }
+
+        //가격계산
+        int totalDemandRate = rates.stream().mapToInt(Rate::getDemandRate).sum();
+        int totalPrice = totalDemandRate * request.getNumberOfRooms();
 
         //재고 확인 및 차감
         for(RoomTypeInventory inventory : inventories){
@@ -100,7 +122,7 @@ public class ReservationProcessor {
                 .numberOfRooms(request.getNumberOfRooms())
                 .numberOfGuests(request.getNumberOfGuests())
                 .totalPrice(totalPrice)
-                .paymentStatus(PaymentStatus.PAID)
+                .paymentStatus(PaymentStatus.PENDING)
                 .reservationStatus(ReservationStatus.BEFORE_USE)
                 .build();
 
@@ -110,13 +132,13 @@ public class ReservationProcessor {
         //db 작업 완료 후 토큰 삭제 (일회성) -redis는 트랜잭션 밖에서 동작하므로 롤백이 안됨
         //-> 커밋 실패했는데 토큰 삭제 될 가능성
         //트랜잭션 커밋 후 삭제되도록 트랜잭션 밖으로 꺼내고 이벤트 발행
-        applicationEventPublisher.publishEvent(new ReservationCreatedEvent(request.getPriceToken()));
+//        applicationEventPublisher.publishEvent(new ReservationCreatedEvent(request.getTotalPrice()));
     }
 
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void handleReservationCreated(ReservationCreatedEvent event){
-        priceTokenRedisService.delete(event.getPriceToken());
-    }
+//    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+//    public void handleReservationCreated(ReservationCreatedEvent event){
+//        priceTokenRedisService.delete(event.getPriceToken());
+//    }
 
     @Recover
     public void recover(RuntimeException e,

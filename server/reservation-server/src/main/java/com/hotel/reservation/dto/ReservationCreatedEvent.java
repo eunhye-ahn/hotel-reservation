@@ -6,5 +6,5 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class ReservationCreatedEvent {
-    private String priceToken;
+    private int totalPrice;
 }

@@ -37,6 +37,8 @@ dependencies {
 
 	//다른서버 통신용 -OpenFeign
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
+
 }
 
 tasks.named('test') {

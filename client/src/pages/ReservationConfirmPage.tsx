@@ -30,6 +30,8 @@ export const ReservationConfirmPage = () => {
 
     const numberOfNights = dayjs(data?.endDate).diff(dayjs(data?.startDate), 'day');
 
+    
+
 return (
     <div className="confirm-container">
         <div className="confirm-header">예약 확인서</div>
@@ -49,12 +51,12 @@ return (
         <hr />
 
         <div className="confirm-booking">
-            <img className="confirm-image" src={data?.imageUrl} />
+            <img className="confirm-image" src={data?.roomTypeImageUrl} />
             <div className="confirm-info">
                 <p>{data?.hotelName}</p>
                 <p>{data?.roomTypeName}</p>
             </div>
-            <span className="confirm-status">결제완료</span>
+            <span className="confirm-status">결제미완료</span>
         </div>
 
         <div className="confirm-dates">

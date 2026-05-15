@@ -55,8 +55,9 @@ function App() {
           <Route element={<Layout />}>
             <Route path="/" element={<MainPage />} />
             <Route path="/hotels/:hotelId" element={<HotelDetailPage />} />
-            <Route path="/hotels/:hotelId/rooms/:roomTypeId" element={<ReservationPage />} />
-            <Route path="/reservations/:reservationKey" element={<ReservationConfirmPage />} />
+            <Route path="/reservations/:reservationKey" element={<ReservationConfirmPage/>}/>
+            {/* <Route path="/hotels/:hotelId/rooms/:roomTypeId" element={<ReservationPage />} /> */}
+            <Route path="/reservations/:reservationKey/reservation-info" element={<ReservationPage />} />
             <Route path="/mypage" element={<MyPage />} />
           </Route>
           <Route path="*" element={<NotFoundPage />} />

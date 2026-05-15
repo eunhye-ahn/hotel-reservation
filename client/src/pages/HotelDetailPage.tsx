@@ -1,11 +1,12 @@
-import { getHotelDetail } from "@/axios/api";
+import { createReservation, getHotelDetail } from "@/axios/api";
 import type { HotelDetailResponse } from "@/type/hotel";
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router";
 import '@/pages/HotelDetailPage.css';
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import NotFoundPage from "./NotFoundPage";
+import type { ReservationRequest } from "@/type/reservation";
 
 export const HotelDetailPage = () => {
     const today = new Date().toISOString().split('T')[0];
@@ -27,7 +28,67 @@ export const HotelDetailPage = () => {
     console.log(startDate);
 }, [startDate]);
 
-    if(isLoading) return <p>Loading...</p>
+    
+        const {mutate, isPending} = useMutation({
+        mutationFn: createReservation,
+        onError: (err: any) => {
+            const message = err.response.data.message;
+            const code = err.response.data.code;
+
+            switch(code){
+                case 'PRICE_TOKEN_EXPIRED':
+                case 'PRICE_TOKEN_NOT_FOUND':
+                case 'RESERVATION_CONFLICT':
+                case 'IDEMPOTENCY_NOT_FOUND':
+                case 'IDEMPOTENCY_FAILED':
+                case 'IDEMPOTENCY_REQUEST_MISMATCH':
+                case 'IDEMPOTENCY_USER_MISMATCH':
+                case 'HASH_GENERATION_FAILED':
+                case 'IDEMPOTENCY_UNKNOWN':
+                case 'IDEMPOTENCY_PROCESSING':
+                    toast.error(message);
+                    navigate(`/hotels/${hotelId}`);
+                    break;
+                default:
+                    toast.error("일시적인 오류가 발생했습니다")
+                    navigate(`/hotels/${hotelId}`)   
+            }
+        }
+    })
+
+    const handleReservation = (roomTypeId: number) => {
+        if (!data) return;
+        const roomType = data.roomTypes.find(r=> r.roomTypeId === roomTypeId);
+        const reservationData: ReservationRequest = {
+            reservationKey: crypto.randomUUID(),
+            hotelId: Number(hotelId),
+            roomTypeId,
+            startDate,
+            endDate,
+            numberOfGuests,
+            numberOfRooms
+        };
+        mutate(reservationData, {
+            onSuccess: (res)=>{
+               navigate(`/reservations/${res.data}/reservation-info`, {
+                state: {
+                    hotelName: data.hotelName,
+                    hotelAddress: data.address,
+                    roomTypeName: roomType?.name,
+                    imageUrl: roomType?.imageUrl,
+                    checkInTime: data.checkInTime,
+                    checkOutTime: data.checkOutTime,
+                    startDate,
+                    endDate,
+                    numberOfRooms,
+                    numberOfGuests
+                }
+            }); 
+            }
+        })
+    }
+
+        if(isLoading) return <p>Loading...</p>
     if(isError){
         const { code, message } = (error as any).response.data;
     
@@ -44,6 +105,7 @@ export const HotelDetailPage = () => {
         navigate("/")
         return null
     }
+
     return (
         <div className="detail-container">
             <div className="search-bar">
@@ -97,20 +159,9 @@ export const HotelDetailPage = () => {
                             <span className="hotel-discount">{roomType.discountRate}%</span>
                         </div>
                         <p className="hotel-demand">{roomType.demandRate.toLocaleString()}원</p>
-                        <button onClick={() => navigate(`/hotels/${hotelId}/rooms/${roomType.roomTypeId}`, {
-                            state: {
-                                hotelName: data.hotelName,
-                                hotelAddress: data.address,
-                                roomTypeName: roomType.name,
-                                imageUrl: roomType.imageUrl,
-                                checkInTime: data.checkInTime,
-                                checkOutTime: data.checkOutTime,
-                                startDate,
-                                endDate,
-                                numberOfRooms,
-                                numberOfGuests,
-                            }
-                        })}>예약하기</button>
+                        <button onClick={()=>handleReservation(roomType.roomTypeId)} disabled={isPending}>
+                        {isPending ? "Loading..." : "예약하기"}
+                            </button>
                     </div>
                 </div>
             ))}

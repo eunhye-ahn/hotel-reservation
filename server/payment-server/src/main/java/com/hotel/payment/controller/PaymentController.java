@@ -15,7 +15,7 @@ public class PaymentController {
 
     private final PaymentService paymentService;
 
-    @GetMapping("/reservations/{reservationKey}/payment-info")
+    @GetMapping("/payments/prepare/{reservationKey}")
     public ResponseEntity<PaymentPrepareResponse> preparedPayment(@RequestBody PaymentPrepareRequest request){
         PaymentPrepareResponse result = paymentService.preparePayment(request);
 

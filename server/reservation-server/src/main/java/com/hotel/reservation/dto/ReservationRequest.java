@@ -15,8 +15,8 @@ import java.time.LocalDate;
 public class ReservationRequest {
     private String reservationKey; //멱등키(프론트에서 생성) -UUID
 
-    @NotBlank(message = "가격 토큰이 없습니다")
-    private String priceToken;
+//    @NotBlank(message = "가격이 없습니다")
+//    private String priceToken;
 
     @NotNull(message = "호텔을 선택해주세요")
     private Long hotelId;

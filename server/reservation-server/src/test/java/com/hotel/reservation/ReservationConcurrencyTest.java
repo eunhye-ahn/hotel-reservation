@@ -6,13 +6,14 @@ import com.hotel.reservation.dto.ReservationRequest;
 import com.hotel.reservation.exception.CustomException;
 import com.hotel.reservation.repository.ReservationRepository;
 import com.hotel.reservation.repository.RoomTypeInventoryRepository;
-import com.hotel.reservation.service.PriceTokenRedisService;
 import com.hotel.reservation.service.ReservationService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -32,6 +33,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 @Slf4j
 @SpringBootTest
+@ActiveProfiles("test")
+@TestPropertySource(properties = {
+        "DB_PASSWORD=asd798852!",
+        "JWT_SECRET=53c525c46324d79276f8bec1a5bef250"
+})
 public class ReservationConcurrencyTest {
     @Autowired
     private ReservationService reservationService;
@@ -42,9 +48,6 @@ public class ReservationConcurrencyTest {
     @Autowired
     private RoomTypeInventoryRepository roomTypeInventoryRepository;
 
-    @Autowired
-    private PriceTokenRedisService priceTokenRedisService;
-
     @BeforeEach
     void setUp() {
         reservationRepository.deleteAll();
@@ -52,8 +55,6 @@ public class ReservationConcurrencyTest {
 
     @Test
     void 단일_예약_성공(){
-        String token = priceTokenRedisService.save(100000);
-
         ReservationRequest request = ReservationRequest.builder()
                 .reservationKey(UUID.randomUUID().toString())
                 .hotelId(1L)
@@ -62,7 +63,7 @@ public class ReservationConcurrencyTest {
                 .endDate(LocalDate.now().plusDays(2))
                 .numberOfRooms(2)
                 .numberOfGuests(2)
-                .priceToken(token)
+                .totalPrice(10000)
                 .build();
 
         reservationService.createReservation(request, 1L);
@@ -83,7 +84,6 @@ public class ReservationConcurrencyTest {
         CountDownLatch latch = new CountDownLatch(threadCount);
 
         for(int i=0;i<threadCount;i++){
-            String token = priceTokenRedisService.save(100000);
             executor.submit(()->{
                 try{
                     ReservationRequest request = ReservationRequest
@@ -95,7 +95,7 @@ public class ReservationConcurrencyTest {
                             .endDate(LocalDate.now().plusDays(1))
                             .numberOfRooms(2)
                             .numberOfGuests(2)
-                            .priceToken(token)
+                            .totalPrice(10000)
                             .build();
 
                     reservationService.createReservation(request, 1L);
@@ -129,7 +129,6 @@ public class ReservationConcurrencyTest {
 
     @Test
     void 잔여_객실_부족(){
-        String token = priceTokenRedisService.save(100000);
         //totalReserved = totalInventory인 데이터(10프로 초과예약 고려)
         ReservationRequest request = ReservationRequest.builder()
                 .reservationKey(UUID.randomUUID().toString())
@@ -139,7 +138,7 @@ public class ReservationConcurrencyTest {
                 .endDate(LocalDate.now().plusDays(1))
                 .numberOfRooms(1)
                 .numberOfGuests(2)
-                .priceToken(token)
+                .totalPrice(10000)
                 .build();
 
         //결과 검증 -db변경없는지
@@ -166,7 +165,6 @@ public class ReservationConcurrencyTest {
         CountDownLatch latch = new CountDownLatch(threadCount);
 
         for(int i=0;i<threadCount;i++){
-            String token = priceTokenRedisService.save(100000);
             executor.submit(()->{
                 try{
                     ReservationRequest request = ReservationRequest
@@ -178,7 +176,7 @@ public class ReservationConcurrencyTest {
                             .endDate(LocalDate.now().plusDays(1))
                             .numberOfRooms(2)
                             .numberOfGuests(2)
-                            .priceToken(token)
+                            .totalPrice(10000)
                             .build();
 
                     reservationService.createReservation(request, 1L);
@@ -218,7 +216,6 @@ public class ReservationConcurrencyTest {
         CountDownLatch latch = new CountDownLatch(threadCount);
 
         for(int i=0;i<threadCount;i++){
-            String token = priceTokenRedisService.save(100000);
             executor.submit(()->{
                 try{
                     ReservationRequest request = ReservationRequest
@@ -230,7 +227,7 @@ public class ReservationConcurrencyTest {
                             .endDate(LocalDate.now().plusDays(1))
                             .numberOfRooms(1)
                             .numberOfGuests(2)
-                            .priceToken(token)
+                            .totalPrice(10000)
                             .build();
 
                     reservationService.createReservation(request, 1L);

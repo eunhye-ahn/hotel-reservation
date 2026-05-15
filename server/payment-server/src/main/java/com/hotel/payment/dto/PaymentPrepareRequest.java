@@ -1,5 +1,7 @@
 package com.hotel.payment.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -16,6 +18,8 @@ import lombok.NoArgsConstructor;
  */
 @Getter
 @NoArgsConstructor
+@Builder
+@AllArgsConstructor
 public class PaymentPrepareRequest {
     private String reservationKey;  // 예약 고유키
     private int amount;             // 결제 금액 (KRW)

@@ -27,14 +27,16 @@ public class ReservationDetailResponse {
 
     @JsonFormat(pattern = "yyyy.MM.dd HH:mm")
     private LocalDateTime createdAt;
-    private String imageUrl;
+    private String roomTypeImageUrl;
+    private  String hotelImageUrl;
 
     //reservation -> dto변환
     public static ReservationDetailResponse from(Reservation reservation){
         return ReservationDetailResponse.builder()
                 .reservationKey(reservation.getReservationKey())
                 .hotelName(reservation.getHotel().getName())
-                .imageUrl(reservation.getRoomType().getImageUrl())
+                .roomTypeImageUrl(reservation.getRoomType().getImageUrl())
+                .hotelImageUrl(reservation.getHotel().getImageUrl())
                 .roomTypeName(reservation.getRoomType().getName())
                 .startDate(reservation.getStartDate())
                 .endDate(reservation.getEndDate())

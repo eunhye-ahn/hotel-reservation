@@ -1,6 +1,5 @@
 export interface ReservationRequest {
     reservationKey: string,
-    priceToken: string,
     hotelId: number,
     roomTypeId: number,
     startDate: string,
@@ -10,7 +9,6 @@ export interface ReservationRequest {
 }
 
 export interface RoomTypeReservationResponse {
-    priceToken: string,
     availableCount: number,
     demandRate: number,
     totalPrice: number
@@ -18,7 +16,8 @@ export interface RoomTypeReservationResponse {
 
 export interface ReservationDetailResponse{
     reservationKey: string,
-    imageUrl: string,
+    hotelImageUrl: string,
+    roomTypeImageUrl: string,
     hotelName: string,
     roomTypeName: string,
     startDate: string,

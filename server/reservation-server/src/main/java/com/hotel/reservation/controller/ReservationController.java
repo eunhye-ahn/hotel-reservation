@@ -1,10 +1,7 @@
 package com.hotel.reservation.controller;
 
 import com.hotel.reservation.domain.ReservationStatus;
-import com.hotel.reservation.dto.ReservationDetailResponse;
-import com.hotel.reservation.dto.ReservationFeignResponse;
-import com.hotel.reservation.dto.ReservationRequest;
-import com.hotel.reservation.dto.ReservationResponse;
+import com.hotel.reservation.dto.*;
 import com.hotel.reservation.service.ReservationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +45,17 @@ public class ReservationController {
     public ResponseEntity<ReservationDetailResponse> reservationConfirm(@AuthenticationPrincipal Long userId,
                                                                         @PathVariable String reservationKey){
         ReservationDetailResponse result = reservationService.reservationConfirm(userId, reservationKey);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(result);
+    }
+
+    //결제창
+    @GetMapping("/{reservationKey}/reservation-info")
+    public ResponseEntity<ReservationInfoResponse> reservationInfo(@AuthenticationPrincipal Long userId,
+                                                                   @PathVariable String reservationKey){
+        ReservationInfoResponse result = reservationService.getReservationInfo(userId, reservationKey);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
