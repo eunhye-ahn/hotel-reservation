@@ -1,5 +1,8 @@
 package com.hotel.payment.controller;
 
+import com.hotel.payment.dto.PaymentConfirmRequest;
+import com.hotel.payment.dto.PaymentConfirmResponse;
+import com.hotel.payment.dto.TossConfirmRequest;
 import com.hotel.payment.dto.PaymentPrepareResponse;
 import com.hotel.payment.service.PaymentService;
 import lombok.RequiredArgsConstructor;
@@ -9,15 +12,24 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/payments")
 public class PaymentController {
 
     private final PaymentService paymentService;
 
-    @PostMapping("/payments/prepare/{reservationKey}")
+    @PostMapping("/prepare/{reservationKey}")
     public ResponseEntity<PaymentPrepareResponse> preparedPayment(
             @PathVariable String reservationKey){
         PaymentPrepareResponse result = paymentService.preparePayment(reservationKey);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(result);
+    }
+
+    @PostMapping("/confirm")
+    public ResponseEntity<PaymentConfirmResponse> confirmPayment(@RequestBody PaymentConfirmRequest request){
+        PaymentConfirmResponse result = paymentService.confirmPayment(request);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

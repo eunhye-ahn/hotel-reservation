@@ -19,4 +19,7 @@ import lombok.Getter;
 public class PaymentPrepareResponse {
     private String paymentOrderId;  // 토스 SDK orderId로 사용
     private int amount;             // 결제 금액 검증용
+    private Long userId;            //customerKey: 고객식별자
+
+
 }

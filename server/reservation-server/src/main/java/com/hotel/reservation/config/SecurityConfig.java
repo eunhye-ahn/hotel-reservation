@@ -46,6 +46,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/v1/hotels/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/hotels/**").hasAuthority("ROLE_ADMIN")
 
+                        //결제서버 허용(서버간통신)
+                        .requestMatchers("/api/v1/reservations/*/payment-info").permitAll()
+
                         //로그인한 사용자만 가능
                         .requestMatchers("/api/v1/reservations/**").authenticated()
                         .requestMatchers("/api/v1/hotels/{hotelId}/roomTypes/**").authenticated()

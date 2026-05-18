@@ -9,8 +9,8 @@ import type { ReservationRequest } from "@/shared/type/reservation";
 import { createReservation, getHotelDetail } from "@/api/reservation-service";
 
 export const HotelDetailPage = () => {
-    const today = new Date().toISOString().split('T')[0];
-    const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
+    const today = new Date().toLocaleDateString('en-CA')
+    const tomorrow = new Date(Date.now() + 86400000).toLocaleDateString('en-CA');
     const navigate = useNavigate();
 
     const { hotelId } = useParams();
@@ -41,6 +41,7 @@ export const HotelDetailPage = () => {
                 case 'HASH_GENERATION_FAILED':
                 case 'IDEMPOTENCY_UNKNOWN':
                 case 'IDEMPOTENCY_PROCESSING':
+                case 'INVALID_INPUT':
                     toast.error(message);
                     navigate(`/hotels/${hotelId}`);
                     break;

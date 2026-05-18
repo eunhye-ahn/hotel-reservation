@@ -46,16 +46,11 @@ public class PaymentServiceTest {
     @Test
     void 결제준비_성공(){
         //given: 테스트환경 세팅
-        PaymentPrepareRequest request = PaymentPrepareRequest.builder()
-                .reservationKey("RSV-001")
-                .amount(100000)
-                .build();
-
-        when(reservationClient.getReservationForPayment("RSV-001"))
+        when(reservationClient.getReservationForPayment(mockReservation().getReservationKey()))
                 .thenReturn(mockReservation());
 
         //when: 실제 테스트할 메서드 실행
-        PaymentPrepareResponse response = paymentService.preparePayment(request);
+        PaymentPrepareResponse response = paymentService.preparePayment(mockReservation().getReservationKey());
 
         //then: 결과검증(assertThat, verify)
         assertThat(response.getPaymentOrderId()).isNotNull();
@@ -65,11 +60,6 @@ public class PaymentServiceTest {
     @Test
     void 결제준비_실패_PENDING아닐때(){
         //given: 테스트환경 세팅
-        PaymentPrepareRequest request = PaymentPrepareRequest.builder()
-                .reservationKey("RSV-001")
-                .amount(100000)
-                .build();
-
         ReservationFeignResponse notPending = ReservationFeignResponse.builder()
                     .reservationId(1L)
                     .reservationKey("RSV-001")
@@ -77,11 +67,11 @@ public class PaymentServiceTest {
                     .paymentStatus("COMPLETED")
                     .amount(100000)
                     .build();
-        when(reservationClient.getReservationForPayment("RSV-001"))
+        when(reservationClient.getReservationForPayment(notPending.getReservationKey()))
                 .thenReturn(notPending);
 
         // when & then
-        assertThatThrownBy(() -> paymentService.preparePayment(request))
+        assertThatThrownBy(() -> paymentService.preparePayment(notPending.getReservationKey()))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("결제 가능한 예약이 아닙니다.");
     }

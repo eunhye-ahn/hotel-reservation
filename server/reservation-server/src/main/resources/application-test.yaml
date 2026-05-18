@@ -22,10 +22,21 @@ spring:
     redis:
       host: localhost
       port: 6379
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: reservation-group
+      auto-offset-reset: earliest
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+        spring.json.value.default.type: com.hotel.reservation.dto.PaymentCompletedMessage
+        spring.json.use.type.headers: false
 jwt:
   secret: testSecretKeyForTestingPurposeOnly1234567890
   access-expiration: 1800000
   refresh-expiration: 86400000
+
 
 
 ##

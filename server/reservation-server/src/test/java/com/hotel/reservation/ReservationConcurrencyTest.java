@@ -63,7 +63,6 @@ public class ReservationConcurrencyTest {
                 .endDate(LocalDate.now().plusDays(2))
                 .numberOfRooms(2)
                 .numberOfGuests(2)
-                .totalPrice(10000)
                 .build();
 
         reservationService.createReservation(request, 1L);
@@ -95,7 +94,6 @@ public class ReservationConcurrencyTest {
                             .endDate(LocalDate.now().plusDays(1))
                             .numberOfRooms(2)
                             .numberOfGuests(2)
-                            .totalPrice(10000)
                             .build();
 
                     reservationService.createReservation(request, 1L);
@@ -138,7 +136,6 @@ public class ReservationConcurrencyTest {
                 .endDate(LocalDate.now().plusDays(1))
                 .numberOfRooms(1)
                 .numberOfGuests(2)
-                .totalPrice(10000)
                 .build();
 
         //결과 검증 -db변경없는지
@@ -176,7 +173,6 @@ public class ReservationConcurrencyTest {
                             .endDate(LocalDate.now().plusDays(1))
                             .numberOfRooms(2)
                             .numberOfGuests(2)
-                            .totalPrice(10000)
                             .build();
 
                     reservationService.createReservation(request, 1L);
@@ -227,7 +223,6 @@ public class ReservationConcurrencyTest {
                             .endDate(LocalDate.now().plusDays(1))
                             .numberOfRooms(1)
                             .numberOfGuests(2)
-                            .totalPrice(10000)
                             .build();
 
                     reservationService.createReservation(request, 1L);

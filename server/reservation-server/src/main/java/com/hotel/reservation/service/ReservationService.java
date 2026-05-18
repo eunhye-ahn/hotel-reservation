@@ -228,6 +228,7 @@ public class ReservationService {
                 .paymentStatus(reservation.getPaymentStatus().toString())
                 .amount(reservation.getTotalPrice())
                 .sellerAccount(reservation.getHotel().getSellerAccount())
+                .userId(reservation.getUser().getId())
                 .build();
     }
 }

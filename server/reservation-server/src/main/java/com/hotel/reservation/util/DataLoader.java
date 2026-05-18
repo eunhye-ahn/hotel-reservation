@@ -27,6 +27,7 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        if (true) return; //임시비활성화
         if (hotelRepository.count() > 0) {
             log.info("already data load");
             return;

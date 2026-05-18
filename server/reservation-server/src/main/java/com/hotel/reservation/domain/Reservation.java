@@ -136,4 +136,8 @@ public class Reservation extends BaseTime{
         this.reservationStatus = ReservationStatus.CANCELED;
         this.paymentStatus = PaymentStatus.CANCELED;
     }
+
+    public void paid(){
+        this.paymentStatus = PaymentStatus.PAID;
+    }
 }
