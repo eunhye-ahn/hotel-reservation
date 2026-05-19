@@ -16,6 +16,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { reissue } from './api/reservation-service'
 import { useAuthStore } from './store/useAuthStore'
 import PaymentSuccess from './pages/PaymentSuccess'
+import PaymentFail from './pages/PaymentFail'
 
 /**
  * [tanstack query 흐름] : 서버 상태관리 라이브러리 : 비동기데이터
@@ -54,6 +55,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="/payments/success" element={<PaymentSuccess />}/>
+          <Route path="/payments/fail" element={<PaymentFail />}/>
           <Route element={<Layout />}>
             <Route path="/" element={<MainPage />} />
             <Route path="/hotels/:hotelId" element={<HotelDetailPage />} />

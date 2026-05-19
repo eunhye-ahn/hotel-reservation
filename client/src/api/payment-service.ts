@@ -9,3 +9,8 @@ export const preparePayment = (reservationKey: string) => {
 export const confirmPayment = (request: PaymentConfirmRequest) => {
     return paymentApi.post<PaymentConfirmResponse>("/payments/confirm", request)
 }
+
+//토스 success -> 예약확인서 이동을 위한 예약키 반환 api
+export const getReservationKey = (orderId: string) => {
+    return paymentApi.get<string>(`/payments/${orderId}/reservationKey`)
+}

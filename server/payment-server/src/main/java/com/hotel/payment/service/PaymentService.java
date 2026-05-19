@@ -97,6 +97,14 @@ public class PaymentService {
                 .build();
     }
 
+    public String getReservationKey(String orderId){
+        PaymentOrder paymentOrder = paymentOrderRepository.findById(orderId)
+                .orElseThrow(()->new CustomException(ErrorCode.PAYMENT_NOT_FOUND));
+        PaymentEvent paymentEvent = paymentEventRepository.findByCheckoutId(paymentOrder.getCheckoutId())
+                .orElseThrow();
+        return paymentEvent.getReservationKey();
+    }
+
     //결제승인
     @Transactional
     public PaymentConfirmResponse confirmPayment(PaymentConfirmRequest request){
@@ -107,9 +115,6 @@ public class PaymentService {
             throw new CustomException(ErrorCode.PAYMENT_ALREADY_PROCESSED);
         }
 
-        //PaymentOrderStatus 상태변경(Pendig -> executing)
-        paymentOrder.executing();
-
         //토스 승인 API 호출
         String encodedKey = Base64.getEncoder()
                 .encodeToString((secretKey + ":").getBytes());
@@ -118,21 +123,9 @@ public class PaymentService {
                 new TossConfirmRequest(request.getPaymentKey(), request.getOrderId(), request.getAmount())
         );
 
-        //PaymentOrderStatus 상태변경(executing -> success)
-        paymentOrder.success();
-
-        //paymentEvent 완료처리(isPayDone=true)
-        PaymentEvent paymentEvent = paymentEventRepository.findByCheckoutId(paymentOrder.getCheckoutId())
+        PaymentEvent paymentEvent = paymentEventRepository
+                .findByCheckoutId(paymentOrder.getCheckoutId())
                 .orElseThrow();
-        paymentEvent.complete(request.getPaymentKey());
-
-        //kafka 결제완료 이벤트 발행(paymentStatus -> paid로 변경하기 위해)
-        paymentEventProducer.sendPaymentCompleted(
-                new PaymentCompletedMessage(
-                        paymentEvent.getReservationKey(),
-                        paymentEvent.getReservationId()
-                )
-        );
 
         return new PaymentConfirmResponse(paymentEvent.getReservationKey());
     }

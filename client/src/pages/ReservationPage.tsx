@@ -24,20 +24,20 @@ export const ReservationPage = () => {
             //내 서버에서 paymentOrderId, amount 받아오기
             //오픈 -> 승인 결과 받은 후에 순서대로 실행되어야함
             const res = await preparePayment(reservationKey!);
-            const {paymentOrderId, amount} = res.data;
+            const {paymentOrderId, amount, userId} = res.data;
 
             //토스 결제창 오픈
-            const toss = await loadTossPayments(import.meta.env.VITE_TOSS_CLIENT_KEY);
-            const payment = toss.payment({ customerKey: reservationKey! });
+            const tossPayments = await loadTossPayments(import.meta.env.VITE_TOSS_CLIENT_KEY);
+            const payment = tossPayments.payment({ customerKey: String(userId) });
 
             await payment.requestPayment({
                 method: "CARD",
+                amount: {
+                    currency: "KRW",
+                    value: amount,
+                },
                 orderId: paymentOrderId,
                 orderName: state.roomTypeName,
-                amount: {
-                currency: "KRW",
-                value: amount,
-            },
             successUrl: `${window.location.origin}/payments/success`,
             failUrl: `${window.location.origin}/payments/fail`,
             });
@@ -46,8 +46,6 @@ export const ReservationPage = () => {
             toast.error("결제 중 오류가 발생했습니다")
             navigate("/");
         }
-
-
     }
 
     if(isLoading) return <p>loading...</p>

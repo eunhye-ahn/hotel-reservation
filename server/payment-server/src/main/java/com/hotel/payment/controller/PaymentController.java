@@ -27,6 +27,14 @@ public class PaymentController {
                 .body(result);
     }
 
+    @GetMapping("/{orderId}/reservationKey")
+    public ResponseEntity<String> getReservationKey(@PathVariable String orderId){
+        String reservationKey = paymentService.getReservationKey(orderId);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(reservationKey);
+    }
+
     @PostMapping("/confirm")
     public ResponseEntity<PaymentConfirmResponse> confirmPayment(@RequestBody PaymentConfirmRequest request){
         PaymentConfirmResponse result = paymentService.confirmPayment(request);
