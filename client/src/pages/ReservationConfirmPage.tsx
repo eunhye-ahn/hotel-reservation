@@ -57,7 +57,9 @@ return (
                 <p>{data?.hotelName}</p>
                 <p>{data?.roomTypeName}</p>
             </div>
-            <span className="confirm-status">결제미완료</span>
+            <span className="confirm-status">
+                {data?.status === "PAID" ? "결제완료" : "결제미완료"}
+            </span>
         </div>
 
         <div className="confirm-dates">

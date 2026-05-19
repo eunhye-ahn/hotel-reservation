@@ -129,4 +129,11 @@ public class PaymentService {
 
         return new PaymentConfirmResponse(paymentEvent.getReservationKey());
     }
+
+    //폴링 : 결제상태확인
+    public String getPaymentStatus(String orderId){
+        PaymentOrder paymentOrder = paymentOrderRepository.findById(orderId)
+                .orElseThrow(()-> new CustomException(ErrorCode.PAYMENT_NOT_FOUND));
+        return paymentOrder.getPaymentOrderStatus().name();
+    }
 }

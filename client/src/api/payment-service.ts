@@ -14,3 +14,7 @@ export const confirmPayment = (request: PaymentConfirmRequest) => {
 export const getReservationKey = (orderId: string) => {
     return paymentApi.get<string>(`/payments/${orderId}/reservationKey`)
 }
+
+export const getPaymentStatus = (orderId: string) => {
+    return paymentApi.get<string>(`/payments/${orderId}/status`)
+}

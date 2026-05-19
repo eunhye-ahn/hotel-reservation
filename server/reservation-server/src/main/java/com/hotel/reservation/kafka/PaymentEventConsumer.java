@@ -4,6 +4,7 @@ import com.hotel.reservation.domain.Reservation;
 import com.hotel.reservation.dto.PaymentCompletedMessage;
 import com.hotel.reservation.repository.ReservationRepository;
 import com.hotel.reservation.service.ReservationService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -27,6 +28,7 @@ public class PaymentEventConsumer {
         this.reservationRepository = reservationRepository;
     }
 
+    @Transactional
     @KafkaListener(topics="payment-completed", groupId = "reservation-group")
     public void consumerPaymentCompleted(PaymentCompletedMessage message){
         log.info("payment completed event subscribe - reservationKey: {}", message.getReservationKey());

@@ -43,4 +43,14 @@ public class PaymentController {
                 .status(HttpStatus.OK)
                 .body(result);
     }
+
+    //폴링
+    @GetMapping("/{orderId}/status")
+    public ResponseEntity<String> getPaymentStatus(@PathVariable String orderId){
+        String status = paymentService.getPaymentStatus(orderId);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(status);
+    }
 }

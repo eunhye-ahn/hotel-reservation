@@ -1,14 +1,13 @@
 package com.hotel.payment.service;
 
-import com.hotel.payment.domain.PaymentEvent;
-import com.hotel.payment.domain.PaymentOrder;
-import com.hotel.payment.domain.PaymentOrderStatus;
+import com.hotel.payment.domain.*;
 import com.hotel.payment.dto.PaymentCompletedMessage;
 import com.hotel.payment.dto.TossWebhookRequest;
 import com.hotel.payment.dto.TossWebhookResponse;
 import com.hotel.payment.exception.CustomException;
 import com.hotel.payment.exception.ErrorCode;
 import com.hotel.payment.kafka.PaymentEventProducer;
+import com.hotel.payment.repository.LedgerRepository;
 import com.hotel.payment.repository.PaymentEventRepository;
 import com.hotel.payment.repository.PaymentOrderRepository;
 import jakarta.transaction.Transactional;
@@ -37,6 +36,7 @@ public class WebhookService {
     private final PaymentOrderRepository paymentOrderRepository;
     private final PaymentEventRepository paymentEventRepository;
     private final PaymentEventProducer paymentEventProducer;
+    private final LedgerRepository ledgerRepository;
 
     @Transactional
     public TossWebhookResponse handleWebhook(TossWebhookRequest request){
@@ -70,6 +70,24 @@ public class WebhookService {
                                 paymentEvent.getReservationKey(),
                                 paymentEvent.getReservationId()
                         )
+                );
+                //판매자
+                ledgerRepository.save(Ledger.builder()
+                        .paymentOrderId(orderId)
+                        .account(paymentOrder.getSellerAccount())
+                        .accountType(AccountType.BUYER)
+                        .debit(paymentOrder.getAmount())
+                        .credit(null)
+                        .build()
+                );
+                //구매자
+                ledgerRepository.save(Ledger.builder()
+                        .paymentOrderId(orderId)
+                        .account(paymentOrder.)
+                        .accountType()
+                        .debit()
+                        .credit()
+                        .build()
                 );
                 log.info("payment completed processed- orderId : {}", request.getData().getOrderId());
             }
