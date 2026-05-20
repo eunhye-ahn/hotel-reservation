@@ -5,6 +5,7 @@ import com.hotel.payment.dto.PaymentConfirmResponse;
 import com.hotel.payment.dto.TossConfirmRequest;
 import com.hotel.payment.dto.PaymentPrepareResponse;
 import com.hotel.payment.service.PaymentService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +20,10 @@ public class PaymentController {
 
     @PostMapping("/prepare/{reservationKey}")
     public ResponseEntity<PaymentPrepareResponse> preparedPayment(
-            @PathVariable String reservationKey){
-        PaymentPrepareResponse result = paymentService.preparePayment(reservationKey);
+            @PathVariable String reservationKey,
+            HttpServletRequest request
+    ){
+        PaymentPrepareResponse result = paymentService.preparePayment(reservationKey, request);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -43,4 +46,5 @@ public class PaymentController {
                 .status(HttpStatus.OK)
                 .body(result);
     }
+
 }

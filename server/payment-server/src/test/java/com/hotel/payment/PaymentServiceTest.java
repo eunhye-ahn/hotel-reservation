@@ -6,6 +6,7 @@ import com.hotel.payment.dto.ReservationFeignResponse;
 import com.hotel.payment.repository.PaymentEventRepository;
 import com.hotel.payment.repository.PaymentOrderRepository;
 import com.hotel.payment.service.PaymentService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -30,6 +31,9 @@ public class PaymentServiceTest {
     @Mock
     private PaymentOrderRepository paymentOrderRepository;
 
+    @Mock
+    private HttpServletRequest request;
+
     @InjectMocks
     private PaymentService paymentService;
 
@@ -48,9 +52,10 @@ public class PaymentServiceTest {
         //given: 테스트환경 세팅
         when(reservationClient.getReservationForPayment(mockReservation().getReservationKey()))
                 .thenReturn(mockReservation());
+        when(request.getHeader("Idempotency-Key")).thenReturn("11111");
 
         //when: 실제 테스트할 메서드 실행
-        PaymentPrepareResponse response = paymentService.preparePayment(mockReservation().getReservationKey());
+        PaymentPrepareResponse response = paymentService.preparePayment(mockReservation().getReservationKey(), request);
 
         //then: 결과검증(assertThat, verify)
         assertThat(response.getPaymentOrderId()).isNotNull();
@@ -69,9 +74,10 @@ public class PaymentServiceTest {
                     .build();
         when(reservationClient.getReservationForPayment(notPending.getReservationKey()))
                 .thenReturn(notPending);
+        when(request.getHeader("Idempotency-Key")).thenReturn("11111");
 
         // when & then
-        assertThatThrownBy(() -> paymentService.preparePayment(notPending.getReservationKey()))
+        assertThatThrownBy(() -> paymentService.preparePayment(notPending.getReservationKey(), request))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("결제 가능한 예약이 아닙니다.");
     }

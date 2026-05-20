@@ -1,5 +1,5 @@
 import type { HotelDetailResponse } from "@/shared/type/hotel";
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router";
 import '@/pages/HotelDetailPage.css';
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -9,8 +9,10 @@ import type { ReservationRequest } from "@/shared/type/reservation";
 import { createReservation, getHotelDetail } from "@/api/reservation-service";
 
 export const HotelDetailPage = () => {
+    //한국 기준 오늘날짜 설정 -date기본값
     const today = new Date().toLocaleDateString('en-CA')
     const tomorrow = new Date(Date.now() + 86400000).toLocaleDateString('en-CA');
+
     const navigate = useNavigate();
 
     const { hotelId } = useParams();

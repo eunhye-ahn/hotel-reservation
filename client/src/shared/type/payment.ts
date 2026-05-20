@@ -14,3 +14,7 @@ export interface PaymentConfirmRequest {
     orderId: string,
     amount: number
 }
+
+export interface PaymentConfirmResponse {
+    reservationKey: string
+}

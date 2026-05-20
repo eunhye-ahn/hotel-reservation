@@ -30,6 +30,9 @@ public class PaymentEvent extends BaseTime{
     @Column(nullable = false, unique = true)
     private Long reservationId;
 
+    @Column(nullable = false)
+    private Long userId;
+
     //리다이렉트용
     @Column(nullable = false)
     private String reservationKey;

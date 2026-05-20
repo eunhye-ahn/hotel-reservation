@@ -63,3 +63,7 @@ export const cancelReservation = (reservationKey: string) => {
 export const reservationInfo = (reservationKey: string) => {
     return reservationApi.get<ReservationInfoResponse>(`/reservations/${reservationKey}/reservation-info`)
 }
+
+export const getReservationStatus = (reservationKey: string) => {
+    return reservationApi.get<String>(`/reservations/${reservationKey}/status`)
+}

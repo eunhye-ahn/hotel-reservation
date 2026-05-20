@@ -11,6 +11,7 @@ import com.hotel.payment.exception.ErrorCode;
 import com.hotel.payment.kafka.PaymentEventProducer;
 import com.hotel.payment.repository.PaymentEventRepository;
 import com.hotel.payment.repository.PaymentOrderRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,7 +54,7 @@ public class PaymentService {
     private String secretKey;
 
     @Transactional
-    public PaymentPrepareResponse preparePayment(String reservationKey){
+    public PaymentPrepareResponse preparePayment(String reservationKey, HttpServletRequest request){
         //예약 유효성 확인
         ReservationFeignResponse reservation = reservationClient.getReservationForPayment(reservationKey);
 
@@ -64,7 +65,11 @@ public class PaymentService {
         }
 
         //checkoutId 생성 (클라-서버 멱등키)
-        String checkoutId = UUID.randomUUID().toString();
+        String checkoutId = request.getHeader("Idempotency-Key");
+
+        if(checkoutId == null) {
+            throw new CustomException(ErrorCode.MISSING_IDEMPOTENCY_KEY);
+        }
 
         //paymentOrderId 생성 (서버-PSP 멱등키)
         String paymentOrderId = UUID.randomUUID().toString();
@@ -72,6 +77,7 @@ public class PaymentService {
         //PaymentEvent 저장
         PaymentEvent paymentEvent = PaymentEvent.builder()
                 .checkoutId(checkoutId)
+                .userId(reservation.getUserId())
                 .reservationId(reservation.getReservationId())
                 .reservationKey(reservationKey)
                 .pspType("TOSS")
