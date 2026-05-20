@@ -45,8 +45,8 @@ export const ReservationPage = () => {
             });
 
         }catch(err){
-            //타임아웃 시 같은멱등키로 시도 로직 추가
-            
+            //타임아웃 시 (또는 네트워크오류?) 같은멱등키로 시도 로직 추가
+            console.log(err)
             toast.error("결제 중 오류가 발생했습니다")
             navigate("/");
         }

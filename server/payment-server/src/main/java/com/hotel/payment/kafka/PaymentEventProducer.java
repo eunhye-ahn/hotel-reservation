@@ -11,6 +11,10 @@ import org.springframework.stereotype.Component;
  * [WHY] 결제 승인 완료 후 reservation-server에 예약 상태 업데이트 요청
  *
  * [흐름]
+ * kafkaTemplate이 PaymentCompletedMessage를 JSON으로 직렬화해서 브로커로 전송
+ * payment-completed 토픽의 파티션 중 하나에 저장됨
+ * 전송 후 기다리지 않고 바로 리턴 (비동기)
+ *
  * payment-server -> Kafka "payment-completed" 토픽 발행
  * -> reservation-server Consumer 수신
  * -> 예약상태 PAID 업데이트
@@ -25,7 +29,8 @@ public class PaymentEventProducer {
     private static final String TOPIC = "payment-completed";
 
     public void sendPaymentCompleted(PaymentCompletedMessage message){
-        kafkaTemplate.send(TOPIC, message);
+        //브로커로 전송 : 파티션 키(예약키)
+        kafkaTemplate.send(TOPIC, message.getReservationKey(), message);
         log.info("payment-completed event publish - reservationKey: {}", message.getReservationKey());
     }
 }
