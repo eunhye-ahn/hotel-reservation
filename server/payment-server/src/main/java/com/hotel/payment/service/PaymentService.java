@@ -121,6 +121,11 @@ public class PaymentService {
             throw new CustomException(ErrorCode.PAYMENT_ALREADY_PROCESSED);
         }
 
+        //금액 위조검증
+        if(paymentOrder.getAmount() != request.getAmount()){
+            throw new CustomException(ErrorCode.PAYMENT_AMOUNT_MISMATCH);
+        }
+
         //토스 승인 API 호출
         String encodedKey = Base64.getEncoder()
                 .encodeToString((secretKey + ":").getBytes());

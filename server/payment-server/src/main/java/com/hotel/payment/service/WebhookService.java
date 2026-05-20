@@ -80,6 +80,7 @@ public class WebhookService {
                         .credit(null)
                         .build()
                 );
+
                 //구매자
                 ledgerRepository.save(Ledger.builder()
                         .paymentOrderId(orderId)
@@ -89,15 +90,26 @@ public class WebhookService {
                         .credit(paymentOrder.getAmount())
                         .build()
                 );
+                paymentOrder.completedLedgerAndWalletUpdate();
+
                 log.info("payment completed processed- orderId : {}", request.getData().getOrderId());
             }
             case "CANCELED", "ABORTED", "EXPIRED", "PARTIAL_CANCELED" -> {
                 paymentOrder.fail();
                 log.info("payment failed processed- orderId : {}", request.getData().getOrderId());
+
+                //재시도 가능여부 판단
+                if(isRetryable(status)){
+
+                }
             }
             default -> log.warn("unknown payment status : {}", status);
         }
 
         return new TossWebhookResponse(paymentEvent.getReservationKey());
+    }
+
+    private boolean isRetryable(String status){
+        return status.equals("ABORTED");
     }
 }

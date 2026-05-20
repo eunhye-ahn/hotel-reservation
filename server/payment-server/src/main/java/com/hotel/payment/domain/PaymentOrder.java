@@ -24,6 +24,7 @@ public class PaymentOrder extends BaseTime{
     @Column(nullable = false)
     private String sellerAccount;
 
+    @Column(nullable = false)
     private int amount;
 
     @Enumerated(EnumType.STRING)
@@ -37,6 +38,10 @@ public class PaymentOrder extends BaseTime{
     @Builder.Default
     private boolean walletUpdated = false;
 
+    public void completedLedgerAndWalletUpdate(){
+        this.ledgerUpdated = true;
+        this.walletUpdated = true;
+    }
     public void success(){
         this.paymentOrderStatus = PaymentOrderStatus.SUCCESS;
     }
