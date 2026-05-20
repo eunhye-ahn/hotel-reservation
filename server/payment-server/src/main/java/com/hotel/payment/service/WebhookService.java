@@ -75,7 +75,7 @@ public class WebhookService {
                 ledgerRepository.save(Ledger.builder()
                         .paymentOrderId(orderId)
                         .account(paymentOrder.getSellerAccount())
-                        .accountType(AccountType.BUYER)
+                        .accountType(AccountType.SELLER)
                         .debit(paymentOrder.getAmount())
                         .credit(null)
                         .build()
@@ -83,10 +83,10 @@ public class WebhookService {
                 //구매자
                 ledgerRepository.save(Ledger.builder()
                         .paymentOrderId(orderId)
-                        .account(paymentOrder.)
-                        .accountType()
-                        .debit()
-                        .credit()
+                        .account(paymentEvent.getUserId().toString())
+                        .accountType(AccountType.BUYER)
+                        .debit(null)
+                        .credit(paymentOrder.getAmount())
                         .build()
                 );
                 log.info("payment completed processed- orderId : {}", request.getData().getOrderId());

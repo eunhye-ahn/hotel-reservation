@@ -1,4 +1,5 @@
-import { confirmPayment, getPaymentStatus, getReservationKey } from "@/api/payment-service";
+import { confirmPayment } from "@/api/payment-service";
+import { getReservationStatus } from "@/api/reservation-service";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router"
@@ -15,13 +16,14 @@ export default function PaymentSuccess () {
 
     const {data} = useQuery({
         queryKey: ["paymentStuats", orderId],
-        queryFn: () => getPaymentStatus(orderId!).then(res => res.data),
-        refetchInterval: 2000,  //2초마다 자동 재요청
+        queryFn: () => getReservationStatus(reservationKeyRef.current!).then(res => res.data),
+        refetchInterval: 2000,  //2초마다 자동 재요청(폴링)
         enabled: confirmed && !!orderId,
     })
 
     useEffect(()=>{
-        if(data === "SUCCESS"){
+        console.log(data)
+        if(data === "PAID"){
             navigate(`/reservations/${reservationKeyRef.current}`)
         }
     },[data])
@@ -36,6 +38,7 @@ export default function PaymentSuccess () {
         })
         .then((res)=>{
             reservationKeyRef.current = res.data.reservationKey;
+            console.log( reservationKeyRef.current);
             setConfirmed(true);
         }
         )

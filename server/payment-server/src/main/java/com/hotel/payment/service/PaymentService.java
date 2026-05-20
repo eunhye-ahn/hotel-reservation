@@ -72,6 +72,7 @@ public class PaymentService {
         //PaymentEvent 저장
         PaymentEvent paymentEvent = PaymentEvent.builder()
                 .checkoutId(checkoutId)
+                .userId(reservation.getUserId())
                 .reservationId(reservation.getReservationId())
                 .reservationKey(reservationKey)
                 .pspType("TOSS")

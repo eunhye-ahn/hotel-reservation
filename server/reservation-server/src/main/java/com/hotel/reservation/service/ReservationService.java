@@ -231,4 +231,12 @@ public class ReservationService {
                 .userId(reservation.getUser().getId())
                 .build();
     }
+
+    //예약상태확인
+    public String getReservationStatus(String reservationKey){
+        Reservation reservation = reservationRepository.findByReservationKey(reservationKey)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
+
+        return reservation.getPaymentStatus().name();
+    }
 }

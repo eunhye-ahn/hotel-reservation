@@ -48,6 +48,7 @@ public class SecurityConfig {
 
                         //결제서버 허용(서버간통신)
                         .requestMatchers("/api/v1/reservations/*/payment-info").permitAll()
+                        .requestMatchers("/api/v1/reservations/*/status").permitAll()
 
                         //로그인한 사용자만 가능
                         .requestMatchers("/api/v1/reservations/**").authenticated()
