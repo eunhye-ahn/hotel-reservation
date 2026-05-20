@@ -1,8 +1,12 @@
 import type { PaymentConfirmRequest, PaymentConfirmResponse, PaymentPrepareResponse } from "@/shared/type/payment"
 import { paymentApi } from "./axios/payment-axios"
 
-export const preparePayment = (reservationKey: string) => {
-    return paymentApi.post<PaymentPrepareResponse>(`/payments/prepare/${reservationKey}`)
+export const preparePayment = (reservationKey: string, idempotencyKey: string) => {
+    return paymentApi.post<PaymentPrepareResponse>(`/payments/prepare/${reservationKey}`, {}, {
+        headers: {
+            "Idempotency-Key": idempotencyKey
+        }
+    })
 }
 
 //결제승인처리api

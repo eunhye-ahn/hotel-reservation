@@ -2,8 +2,10 @@ package com.hotel.payment.interceptor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hotel.payment.domain.PaymentEvent;
+import com.hotel.payment.domain.PaymentOrder;
 import com.hotel.payment.dto.PaymentPrepareResponse;
 import com.hotel.payment.repository.PaymentEventRepository;
+import com.hotel.payment.repository.PaymentOrderRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +33,7 @@ import java.util.Optional;
 public class IdempotencyInterceptor implements HandlerInterceptor {
     private final PaymentEventRepository paymentEventRepository;
     private final ObjectMapper objectMapper;
+    private final PaymentOrderRepository paymentOrderRepository;
 
     @Override
     public boolean preHandle(HttpServletRequest request,
@@ -50,10 +53,13 @@ public class IdempotencyInterceptor implements HandlerInterceptor {
         if(paymentEvent.isPresent()){
             //중복요청 -> 기존 결과 반환
             PaymentEvent event = paymentEvent.get();
+            PaymentOrder order = paymentOrderRepository.findByCheckoutId(event.getCheckoutId())
+                    .orElseThrow();
             PaymentPrepareResponse cachedResponse = PaymentPrepareResponse
                     .builder()
                     .paymentOrderId(event.getCheckoutId())
-                    .amount(0) //paymentOrder에서 조회필요
+                    .amount(order.getAmount())
+                    .userId(event.getUserId())
                     .build();
 
             response.setStatus(HttpServletResponse.SC_OK);

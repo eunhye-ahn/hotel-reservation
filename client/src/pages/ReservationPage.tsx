@@ -6,6 +6,7 @@ import { preparePayment } from "@/api/payment-service";
 import { toast } from "react-toastify";
 import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
 import { reservationInfo } from "@/api/reservation-service";
+import { useRef, useState } from "react";
 
 export const ReservationPage = () => {
     const { reservationKey } = useParams<string>();
@@ -13,6 +14,7 @@ export const ReservationPage = () => {
     const state = location.state;
     const navigate = useNavigate();
 
+    const idempotencyKey = useRef<string>(crypto.randomUUID());
 
     const {data, isLoading, isError} = useQuery<ReservationInfoResponse>({
         queryKey: ["reservationInfo",reservationKey],
@@ -23,7 +25,7 @@ export const ReservationPage = () => {
         try{
             //내 서버에서 paymentOrderId, amount 받아오기
             //오픈 -> 승인 결과 받은 후에 순서대로 실행되어야함
-            const res = await preparePayment(reservationKey!);
+            const res = await preparePayment(reservationKey!, idempotencyKey.current);
             const {paymentOrderId, amount, userId} = res.data;
 
             //토스 결제창 오픈
@@ -43,6 +45,8 @@ export const ReservationPage = () => {
             });
 
         }catch(err){
+            //타임아웃 시 같은멱등키로 시도 로직 추가
+            
             toast.error("결제 중 오류가 발생했습니다")
             navigate("/");
         }
