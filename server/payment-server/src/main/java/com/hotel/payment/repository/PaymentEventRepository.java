@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface PaymentEventRepository extends JpaRepository<PaymentEvent, String> {
     Optional<PaymentEvent> findByCheckoutId(String checkoutId);
+
+    Optional<PaymentEvent> findByReservationId(Long reservationId);
 }

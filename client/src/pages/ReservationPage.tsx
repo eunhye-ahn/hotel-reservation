@@ -30,7 +30,7 @@ export const ReservationPage = () => {
 
             //토스 결제창 오픈
             const tossPayments = await loadTossPayments(import.meta.env.VITE_TOSS_CLIENT_KEY);
-            const payment = tossPayments.payment({ customerKey: String(userId) });
+            const payment = tossPayments.payment({ customerKey: `USER-${userId}` });
 
             await payment.requestPayment({
                 method: "CARD",

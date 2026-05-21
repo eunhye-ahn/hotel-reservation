@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Base64;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -64,7 +65,19 @@ public class PaymentService {
             throw new IllegalStateException("결제 가능한 예약이 아닙니다.");
         }
 
-        //checkoutId 생성 (클라-서버 멱등키)
+        //기존 paymentEvent있으면 재사용 :결제창닫고 다시 결제를 열 경우 예약ID unique 방지
+        Optional<PaymentEvent> existingEvent = paymentEventRepository.findByReservationId(reservation.getReservationId());
+        if(existingEvent.isPresent()){
+            PaymentOrder existingOrder = paymentOrderRepository.findByCheckoutId(existingEvent.get().getCheckoutId())
+                    .orElseThrow();
+            return PaymentPrepareResponse.builder()
+                    .paymentOrderId(existingOrder.getPaymentOrderId())
+                    .amount(existingOrder.getAmount())
+                    .userId(reservation.getUserId())
+                    .build();
+        }
+
+        //checkoutId 가져오기 (클라-서버 멱등키)
         String checkoutId = request.getHeader("Idempotency-Key");
 
         if(checkoutId == null) {
