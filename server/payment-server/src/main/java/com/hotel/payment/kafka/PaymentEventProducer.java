@@ -1,5 +1,6 @@
 package com.hotel.payment.kafka;
 
+import com.hotel.payment.domain.PaymentRetryMessage;
 import com.hotel.payment.dto.PaymentCompletedMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,13 +25,20 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Slf4j
 public class PaymentEventProducer {
-    private final KafkaTemplate<String, PaymentCompletedMessage> kafkaTemplate;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
-    private static final String TOPIC = "payment-completed";
+    private static final String COMPLETED_TOPIC = "payment-completed";
+    private static final String RETRY_TOPIC = "payment-retry-queue";
 
     public void sendPaymentCompleted(PaymentCompletedMessage message){
         //브로커로 전송 : 파티션 키(예약키)
-        kafkaTemplate.send(TOPIC, message.getReservationKey(), message);
+        kafkaTemplate.send(COMPLETED_TOPIC, message.getReservationKey(), message);
         log.info("payment-completed event publish - reservationKey: {}", message.getReservationKey());
+    }
+
+    public void sendToRetry(PaymentRetryMessage message){
+        //브로커로 전송 : 파티션 키(결제아이디)
+        kafkaTemplate.send(RETRY_TOPIC, message.getOrderId(), message);
+
     }
 }

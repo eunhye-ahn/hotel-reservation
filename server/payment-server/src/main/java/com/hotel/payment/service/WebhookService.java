@@ -10,9 +10,11 @@ import com.hotel.payment.kafka.PaymentEventProducer;
 import com.hotel.payment.repository.LedgerRepository;
 import com.hotel.payment.repository.PaymentEventRepository;
 import com.hotel.payment.repository.PaymentOrderRepository;
+import com.hotel.payment.repository.WalletRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 /**
@@ -37,6 +39,7 @@ public class WebhookService {
     private final PaymentEventRepository paymentEventRepository;
     private final PaymentEventProducer paymentEventProducer;
     private final LedgerRepository ledgerRepository;
+    private final WalletRepository walletRepository;
 
     @Transactional
     public TossWebhookResponse handleWebhook(TossWebhookRequest request){
@@ -62,9 +65,20 @@ public class WebhookService {
         //상태변경
         switch (status){
             case "DONE" -> {
-                paymentOrder.success();
-                paymentEvent.complete(paymentKey);
+                try {
+                    paymentOrder.success();
+                    paymentEvent.complete(paymentKey);
+                    //판매자
+                    ledgerRepository.save(Ledger.builder()
+                            .paymentOrderId(orderId)
+                            .account(paymentOrder.getSellerAccount())
+                            .accountType(AccountType.SELLER)
+                            .debit(paymentOrder.getAmount())
+                            .credit(null)
+                            .build()
+                    );
 
+<<<<<<< Updated upstream
                 paymentEventProducer.sendPaymentCompleted(
                         new PaymentCompletedMessage(
                                 paymentEvent.getReservationKey(),
@@ -90,6 +104,40 @@ public class WebhookService {
                         .build()
                 );
                 log.info("payment completed processed- orderId : {}", request.getData().getOrderId());
+=======
+                    //구매자
+                    ledgerRepository.save(Ledger.builder()
+                            .paymentOrderId(orderId)
+                            .account(paymentEvent.getUserId().toString())
+                            .accountType(AccountType.BUYER)
+                            .debit(null)
+                            .credit(paymentOrder.getAmount())
+                            .build()
+                    );
+
+                    //wallet 업데이트
+                    Wallet wallet = walletRepository.findBySellerAccount(paymentOrder.getSellerAccount())
+                            .orElseThrow();//updateonly로할까?
+                    wallet.updateBalance(paymentOrder.getAmount());
+
+                    paymentOrder.completedLedgerAndWalletUpdate();
+
+                    paymentEventProducer.sendPaymentCompleted(
+                            new PaymentCompletedMessage(
+                                    paymentEvent.getReservationKey(),
+                                    paymentEvent.getReservationId()
+                            )
+                    );
+
+                    log.info("payment completed processed- orderId : {}", request.getData().getOrderId());
+                }catch(DataAccessException e){
+                    //DB 일시적 오류 -> 재시도가능
+                    log.error("DB오류 - orderId : {}", orderId, e);
+                    if(paymentOrder.isRetryExhausted()){
+                        paymentEventProducer.sendToDLQ(()->);
+                    }
+                }
+>>>>>>> Stashed changes
             }
             case "CANCELED", "ABORTED", "EXPIRED", "PARTIAL_CANCELED" -> {
                 paymentOrder.fail();

@@ -37,6 +37,25 @@ public class PaymentOrder extends BaseTime{
     @Builder.Default
     private boolean walletUpdated = false;
 
+<<<<<<< Updated upstream
+=======
+    @Builder.Default
+    private int retryCount = 0;
+
+    public static final int MAX_RETRY_COUNT = 3;
+
+    public boolean isRetryExhausted(){
+        return this.retryCount >= MAX_RETRY_COUNT;
+    }
+    public void incrementRetryCount(){
+        this.retryCount += 1;
+    }
+
+    public void completedLedgerAndWalletUpdate(){
+        this.ledgerUpdated = true;
+        this.walletUpdated = true;
+    }
+>>>>>>> Stashed changes
     public void success(){
         this.paymentOrderStatus = PaymentOrderStatus.SUCCESS;
     }
