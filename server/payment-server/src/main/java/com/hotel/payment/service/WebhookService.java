@@ -40,14 +40,16 @@ public class WebhookService {
     private final PaymentEventProducer paymentEventProducer;
     private final LedgerRepository ledgerRepository;
     private final WalletRepository walletRepository;
+    private final PaymentService paymentService;
+    private final PaymentProcessService paymentProcessService;
 
-    @Transactional
     public TossWebhookResponse handleWebhook(TossWebhookRequest request){
         log.info("webhook - eventType: {}. status: {}", request.getEventType(), request.getData().getStatus());
 
         //payment_status_changed 이벤트만 처리
         if(!request.getEventType().equals("PAYMENT_STATUS_CHANGED")){
             log.info("not wanted event type : {}", request.getEventType());
+            return null;
         }
 
         String orderId = request.getData().getOrderId();
@@ -66,48 +68,7 @@ public class WebhookService {
         switch (status){
             case "DONE" -> {
                 try {
-                    paymentOrder.success();
-                    paymentEvent.complete(paymentKey);
-                    //판매자
-                    ledgerRepository.save(Ledger.builder()
-                            .paymentOrderId(orderId)
-                            .account(paymentOrder.getSellerAccount())
-                            .accountType(AccountType.SELLER)
-                            .debit(paymentOrder.getAmount())
-                            .credit(null)
-                            .build()
-                    );
-
-                paymentEventProducer.sendPaymentCompleted(
-                        new PaymentCompletedMessage(
-                                paymentEvent.getOrderId()
-                        )
-                );
-                //판매자
-                ledgerRepository.save(Ledger.builder()
-                        .paymentOrderId(orderId)
-                        .account(paymentOrder.getSellerAccount())
-                        .accountType(AccountType.SELLER)
-                        .debit(paymentOrder.getAmount())
-                        .credit(null)
-                        .build()
-                );
-                    //구매자
-                    ledgerRepository.save(Ledger.builder()
-                            .paymentOrderId(orderId)
-                            .account(paymentEvent.getUserId().toString())
-                            .accountType(AccountType.BUYER)
-                            .debit(null)
-                            .credit(paymentOrder.getAmount())
-                            .build()
-                    );
-
-                    //wallet 업데이트
-                    Wallet wallet = walletRepository.findBySellerAccount(paymentOrder.getSellerAccount())
-                            .orElseThrow();//updateonly로할까?
-                    wallet.updateBalance(paymentOrder.getAmount());
-
-                    paymentOrder.completedLedgerAndWalletUpdate();
+                    paymentProcessService.processDone(orderId, paymentKey, paymentOrder, paymentEvent);
 
                     paymentEventProducer.sendPaymentCompleted(
                             new PaymentCompletedMessage(
@@ -119,8 +80,20 @@ public class WebhookService {
                 }catch(DataAccessException e){
                     //DB 일시적 오류 -> 재시도가능
                     log.error("DB오류 - orderId : {}", orderId, e);
+                    //재시도 횟수 초과했을 경우
                     if(paymentOrder.isRetryExhausted()){
+                        paymentEventProducer.sendToDLQ(
+                                new PaymentRetryMessage(orderId, paymentOrder.getRetryCount())
+                        );
+                    }else{
+                        paymentOrder.incrementRetryCount();
+                        paymentEventProducer.sendToRetry(
+                                new PaymentRetryMessage(orderId, paymentOrder.getRetryCount())
+                        );
                     }
+                }catch(Exception e){
+                    //재시도 불가 오류
+                    log.error("retry impossible error - orderId: {}", orderId, e);
                 }
             }
             case "CANCELED", "ABORTED", "EXPIRED", "PARTIAL_CANCELED" -> {
