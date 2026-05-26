@@ -55,7 +55,7 @@ public class PaymentService {
     private String secretKey;
 
     @Transactional
-    public PaymentPrepareResponse preparePayment(String reservationKey, HttpServletRequest request){
+    public PaymentPrepareResponse preparePayment(String reservationKey, String orderId, HttpServletRequest request){
         //예약 유효성 확인
         ReservationFeignResponse reservation = reservationClient.getReservationForPayment(reservationKey);
 
@@ -91,6 +91,7 @@ public class PaymentService {
         PaymentEvent paymentEvent = PaymentEvent.builder()
                 .checkoutId(checkoutId)
                 .userId(reservation.getUserId())
+                .orderId(orderId)
                 .reservationId(reservation.getReservationId())
                 .reservationKey(reservationKey)
                 .pspType("TOSS")

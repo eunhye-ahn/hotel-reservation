@@ -19,7 +19,7 @@ import java.util.Date;
 //토큰 생성/검증/파싱 + 유저정보꺼내는메서드
 @Component
 public class JwtProvider {
-    @Value("${JWT_SECRET}")
+    @Value("${jwt.secret}")
     private String secret;
 
     @Value("${jwt.access-expiration}")

@@ -1,5 +1,5 @@
 import type { HotelDetailResponse } from "@/shared/type/hotel";
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useNavigate, useParams } from "react-router";
 import '@/pages/HotelDetailPage.css';
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import NotFoundPage from "./NotFoundPage";
 import type { ReservationRequest } from "@/shared/type/reservation";
 import { createReservation, getHotelDetail } from "@/api/reservation-service";
+import { createOrder } from "@/api/order-service";
 
 export const HotelDetailPage = () => {
     //한국 기준 오늘날짜 설정 -date기본값
@@ -20,14 +21,53 @@ export const HotelDetailPage = () => {
     const [endDate, setEndDate] = useState(tomorrow);
     const [numberOfRooms, setNumberOfRooms] = useState(1);
     const [numberOfGuests, setNumberOfGuests] = useState(1);
+    const selectedRoomTypeIdRef = useRef<number|null>(null);
+    const orderIdRef = useRef<string|null>(null);
+
+    const reservationKey = useRef(crypto.randomUUID());
 
     const {data, isLoading, isError, error} = useQuery<HotelDetailResponse>({
         queryKey: ["hotelDetails", hotelId],    //호텔id별로 캐시관리
         queryFn: () => getHotelDetail(Number(hotelId)).then((res)=>res.data)
     });
+
+    const {mutate: createOrderMuate} = useMutation({
+        mutationFn: createOrder,
+        onSuccess: (res)=>{
+            orderIdRef.current = res.data;
+            createReservationMutate({
+                reservationKey: reservationKey.current,
+                orderId: res.data,
+                hotelId: Number(hotelId),
+                roomTypeId: selectedRoomTypeIdRef.current!,
+                startDate,
+                endDate,
+                numberOfGuests,
+                numberOfRooms
+            });
+        }
+    })
     
-        const {mutate, isPending} = useMutation({
+        const {mutate : createReservationMutate, isPending} = useMutation({
         mutationFn: createReservation,
+        onSuccess: (res)=>{
+                const roomType = data?.roomTypes.find(r => r.roomTypeId === selectedRoomTypeIdRef.current);
+               navigate(`/reservations/${res.data}/reservation-info`, {
+                state: {
+                    orderId: orderIdRef.current,
+                    hotelName: data?.hotelName,
+                    hotelAddress: data?.address,
+                    roomTypeName: roomType?.name,
+                    imageUrl: roomType?.imageUrl,
+                    checkInTime: data?.checkInTime,
+                    checkOutTime: data?.checkOutTime,
+                    startDate,
+                    endDate,
+                    numberOfRooms,
+                    numberOfGuests
+                }
+            }); 
+        },
         onError: (err: any) => {
             const message = err.response.data.message;
             const code = err.response.data.code;
@@ -56,34 +96,8 @@ export const HotelDetailPage = () => {
 
     const handleReservation = (roomTypeId: number) => {
         if (!data) return;
-        const roomType = data.roomTypes.find(r=> r.roomTypeId === roomTypeId);
-        const reservationData: ReservationRequest = {
-            reservationKey: crypto.randomUUID(),
-            hotelId: Number(hotelId),
-            roomTypeId,
-            startDate,
-            endDate,
-            numberOfGuests,
-            numberOfRooms
-        };
-        mutate(reservationData, {
-            onSuccess: (res)=>{
-               navigate(`/reservations/${res.data}/reservation-info`, {
-                state: {
-                    hotelName: data.hotelName,
-                    hotelAddress: data.address,
-                    roomTypeName: roomType?.name,
-                    imageUrl: roomType?.imageUrl,
-                    checkInTime: data.checkInTime,
-                    checkOutTime: data.checkOutTime,
-                    startDate,
-                    endDate,
-                    numberOfRooms,
-                    numberOfGuests
-                }
-            }); 
-            }
-        })
+        selectedRoomTypeIdRef.current = roomTypeId;
+        createOrderMuate();
     }
 
         if(isLoading) return <p>Loading...</p>

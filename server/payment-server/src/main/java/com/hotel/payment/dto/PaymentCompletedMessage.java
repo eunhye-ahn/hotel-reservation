@@ -16,6 +16,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PaymentCompletedMessage {
-    private String reservationKey;
-    private Long reservationId;
+    private String orderId;
 }

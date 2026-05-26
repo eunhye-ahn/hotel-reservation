@@ -21,9 +21,10 @@ public class PaymentController {
     @PostMapping("/prepare/{reservationKey}")
     public ResponseEntity<PaymentPrepareResponse> preparedPayment(
             @PathVariable String reservationKey,
+            @PathVariable String orderId,
             HttpServletRequest request
     ){
-        PaymentPrepareResponse result = paymentService.preparePayment(reservationKey, request);
+        PaymentPrepareResponse result = paymentService.preparePayment(reservationKey,orderId, request);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

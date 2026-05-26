@@ -114,6 +114,7 @@ public class ReservationProcessor {
         //예약생성
         Reservation reservation = Reservation.builder()
                 .reservationKey(request.getReservationKey())
+                .orderId(request.getOrderId())
                 .hotel(hotel)
                 .roomType(roomType)
                 .user(user)

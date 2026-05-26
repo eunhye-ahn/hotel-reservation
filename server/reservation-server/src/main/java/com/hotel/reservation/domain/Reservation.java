@@ -70,6 +70,9 @@ public class Reservation extends BaseTime{
      *
      *
      */
+    @Column(nullable = false)
+    private String orderId;
+
     //동시성제어하는 멱등키 + 외부식별자겸 - pathvariable
     @Column(unique = true, name = "reservation_key")
     private String reservationKey; //멱등키 -클라에서UUID로 생성

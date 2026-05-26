@@ -20,7 +20,7 @@ public class ReservationController {
 
     //예약생성
     @PostMapping
-    public ResponseEntity<String> createReservation(@AuthenticationPrincipal Long userId,
+    public ResponseEntity<String> createReservation(@RequestHeader("X-User-Id") Long userId,
                                                   @RequestBody @Valid ReservationRequest request){
         String reservationKey = reservationService.createReservation(request, userId);
 

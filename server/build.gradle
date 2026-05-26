@@ -31,6 +31,7 @@ subprojects {
 //spring cloud 라이브러리 버전 한번에 관리
 	dependencyManagement {
 		imports {
+			mavenBom "org.springframework.boot:spring-boot-dependencies:3.5.14"
 			mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
 		}
 	}

@@ -30,6 +30,10 @@ public class PaymentEvent extends BaseTime{
     @Column(nullable = false, unique = true)
     private Long reservationId;
 
+    //분산트랜잭션 식별키
+    @Column(nullable = false, unique = true)
+    private String orderId;
+
     @Column(nullable = false)
     private Long userId;
 

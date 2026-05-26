@@ -1,5 +1,6 @@
 export interface ReservationRequest {
     reservationKey: string,
+    orderId: string,
     hotelId: number,
     roomTypeId: number,
     startDate: string,

@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-public class PaymentOrder extends BaseTime{
+public class PaymentOrder extends BaseTime {
     @Id
     private String paymentOrderId;
 
@@ -37,29 +37,27 @@ public class PaymentOrder extends BaseTime{
     @Builder.Default
     private boolean walletUpdated = false;
 
-<<<<<<< Updated upstream
-=======
     @Builder.Default
     private int retryCount = 0;
 
     public static final int MAX_RETRY_COUNT = 3;
 
-    public boolean isRetryExhausted(){
+    public boolean isRetryExhausted() {
         return this.retryCount >= MAX_RETRY_COUNT;
     }
-    public void incrementRetryCount(){
+
+    public void incrementRetryCount() {
         this.retryCount += 1;
     }
 
-    public void completedLedgerAndWalletUpdate(){
+    public void completedLedgerAndWalletUpdate() {
         this.ledgerUpdated = true;
         this.walletUpdated = true;
     }
->>>>>>> Stashed changes
     public void success(){
         this.paymentOrderStatus = PaymentOrderStatus.SUCCESS;
     }
-    public void fail() {
+    public void fail(){
         this.paymentOrderStatus = PaymentOrderStatus.FAILED;
     }
 }

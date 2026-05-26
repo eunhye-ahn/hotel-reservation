@@ -78,11 +78,9 @@ public class WebhookService {
                             .build()
                     );
 
-<<<<<<< Updated upstream
                 paymentEventProducer.sendPaymentCompleted(
                         new PaymentCompletedMessage(
-                                paymentEvent.getReservationKey(),
-                                paymentEvent.getReservationId()
+                                paymentEvent.getOrderId()
                         )
                 );
                 //판매자
@@ -94,17 +92,6 @@ public class WebhookService {
                         .credit(null)
                         .build()
                 );
-                //구매자
-                ledgerRepository.save(Ledger.builder()
-                        .paymentOrderId(orderId)
-                        .account(paymentEvent.getUserId().toString())
-                        .accountType(AccountType.BUYER)
-                        .debit(null)
-                        .credit(paymentOrder.getAmount())
-                        .build()
-                );
-                log.info("payment completed processed- orderId : {}", request.getData().getOrderId());
-=======
                     //구매자
                     ledgerRepository.save(Ledger.builder()
                             .paymentOrderId(orderId)
@@ -124,8 +111,7 @@ public class WebhookService {
 
                     paymentEventProducer.sendPaymentCompleted(
                             new PaymentCompletedMessage(
-                                    paymentEvent.getReservationKey(),
-                                    paymentEvent.getReservationId()
+                                    paymentEvent.getOrderId()
                             )
                     );
 
@@ -134,10 +120,8 @@ public class WebhookService {
                     //DB 일시적 오류 -> 재시도가능
                     log.error("DB오류 - orderId : {}", orderId, e);
                     if(paymentOrder.isRetryExhausted()){
-                        paymentEventProducer.sendToDLQ(()->);
                     }
                 }
->>>>>>> Stashed changes
             }
             case "CANCELED", "ABORTED", "EXPIRED", "PARTIAL_CANCELED" -> {
                 paymentOrder.fail();

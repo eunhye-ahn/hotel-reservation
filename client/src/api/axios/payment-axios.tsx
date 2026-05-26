@@ -4,7 +4,7 @@ import { useAuthStore } from "../../store/useAuthStore";
 import { toast } from 'react-toastify';
 
 export const paymentApi = axios.create({
-    baseURL: "http://localhost:8081/api/v1",
+    baseURL: "http://localhost:8000/api/v1",
     headers: {
         'Content-Type': 'application/json'
     },

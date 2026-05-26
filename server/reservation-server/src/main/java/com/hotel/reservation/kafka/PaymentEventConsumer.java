@@ -34,9 +34,9 @@ public class PaymentEventConsumer {
     //브로커를 지속적으로 폴링해서 메시지 수신 / 같은 그룹 내 컨슈머끼리 파티션을 나눠서 처리
     @KafkaListener(topics="payment-completed", groupId = "reservation-group")
     public void consumerPaymentCompleted(PaymentCompletedMessage message){
-        log.info("payment completed event subscribe - reservationKey: {}", message.getReservationKey());
+        log.info("payment completed event subscribe - orderId: {}", message.getOrderId());
 
-        Reservation reservation = reservationRepository.findByReservationKey(message.getReservationKey())
+        Reservation reservation = reservationRepository.findByReservationKey(message.getOrderId())
                 .orElseThrow();
         reservation.paid(); //예약확정으로 상태변경
     }
