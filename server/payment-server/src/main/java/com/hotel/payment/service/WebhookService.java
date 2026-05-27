@@ -2,6 +2,7 @@ package com.hotel.payment.service;
 
 import com.hotel.payment.domain.*;
 import com.hotel.payment.dto.PaymentCompletedMessage;
+import com.hotel.payment.dto.PaymentRetryMessage;
 import com.hotel.payment.dto.TossWebhookRequest;
 import com.hotel.payment.dto.TossWebhookResponse;
 import com.hotel.payment.exception.CustomException;
@@ -11,7 +12,6 @@ import com.hotel.payment.repository.LedgerRepository;
 import com.hotel.payment.repository.PaymentEventRepository;
 import com.hotel.payment.repository.PaymentOrderRepository;
 import com.hotel.payment.repository.WalletRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
@@ -68,6 +68,7 @@ public class WebhookService {
         switch (status){
             case "DONE" -> {
                 try {
+                    //db트랜잭션과 카프카발행을 분리하기위해 별도 클래스로 분리
                     paymentProcessService.processDone(orderId, paymentKey, paymentOrder, paymentEvent);
 
                     paymentEventProducer.sendPaymentCompleted(
@@ -86,7 +87,9 @@ public class WebhookService {
                                 new PaymentRetryMessage(orderId, paymentOrder.getRetryCount())
                         );
                     }else{
+                        //재시도 카운트 ++
                         paymentOrder.incrementRetryCount();
+                        paymentOrderRepository.save(paymentOrder); //트랜잭션으로 안묶어서 명시적 저장(더티체킹 보장X)
                         paymentEventProducer.sendToRetry(
                                 new PaymentRetryMessage(orderId, paymentOrder.getRetryCount())
                         );
@@ -98,6 +101,7 @@ public class WebhookService {
             }
             case "CANCELED", "ABORTED", "EXPIRED", "PARTIAL_CANCELED" -> {
                 paymentOrder.fail();
+                paymentOrderRepository.save(paymentOrder);
                 log.info("payment failed processed- orderId : {}", request.getData().getOrderId());
             }
             default -> log.warn("unknown payment status : {}", status);

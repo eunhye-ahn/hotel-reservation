@@ -1,4 +1,4 @@
-package com.hotel.payment.domain;
+package com.hotel.payment.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

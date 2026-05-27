@@ -25,7 +25,7 @@ export const ReservationPage = () => {
         try{
             //내 서버에서 paymentOrderId, amount 받아오기
             //오픈 -> 승인 결과 받은 후에 순서대로 실행되어야함
-            const res = await preparePayment(reservationKey!, idempotencyKey.current);
+            const res = await preparePayment(reservationKey!, state.orderId, idempotencyKey.current);
             const {paymentOrderId, amount, userId} = res.data;
 
             //토스 결제창 오픈

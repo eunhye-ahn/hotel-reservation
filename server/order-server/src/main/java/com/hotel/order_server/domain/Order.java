@@ -18,12 +18,4 @@ public class Order {
 
     @Column(nullable = false)
     private Long userId;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private OrderStatus orderStatus;
-
-    public void cancel(){
-        this.orderStatus = OrderStatus.CANCELED;
-    }
 }

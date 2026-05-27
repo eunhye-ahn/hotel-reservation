@@ -17,7 +17,7 @@ public class PaymentProcessService {
     //웹훅
     @Transactional
     public void processDone(String orderId, String paymentKey,
-                            PaymentOrder paymentOrder, PaymentEvent paymentEvent){
+                            PaymentOrder paymentOrder, PaymentEvent paymentEvent) {
         //판매자
         ledgerRepository.save(Ledger.builder()
                 .paymentOrderId(orderId)

@@ -1,7 +1,6 @@
 package com.hotel.order_server.service;
 
 import com.hotel.order_server.domain.Order;
-import com.hotel.order_server.domain.OrderStatus;
 import com.hotel.order_server.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

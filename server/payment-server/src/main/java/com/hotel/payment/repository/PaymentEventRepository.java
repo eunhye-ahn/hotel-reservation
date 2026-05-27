@@ -9,4 +9,6 @@ public interface PaymentEventRepository extends JpaRepository<PaymentEvent, Stri
     Optional<PaymentEvent> findByCheckoutId(String checkoutId);
 
     Optional<PaymentEvent> findByReservationId(Long reservationId);
+
+    Optional<PaymentEvent> findByOrderId(String orderId);
 }

@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 public interface TossPaymentClient {
     /**
      * 토스페이먼츠 결제 승인 API 호출
-     * @param authorization     Base64로 인코딩된 키 (Basic {encodedKey})
+     * @param authorization     Base64로 인코딩된 키 (Basic {encodedKey}) //시크릿키를 토스자체에서 내부적 db와 비교
      * @param request
      */
     @PostMapping(value="/v1/payments/confirm", consumes = MediaType.APPLICATION_JSON_VALUE)

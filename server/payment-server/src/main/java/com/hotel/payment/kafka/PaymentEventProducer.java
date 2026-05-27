@@ -1,6 +1,6 @@
 package com.hotel.payment.kafka;
 
-import com.hotel.payment.domain.PaymentRetryMessage;
+import com.hotel.payment.dto.PaymentRetryMessage;
 import com.hotel.payment.dto.PaymentCompletedMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
