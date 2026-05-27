@@ -133,6 +133,12 @@ public class PaymentService {
             throw new CustomException(ErrorCode.PAYMENT_ALREADY_PROCESSED);
         }
 
+        //금액위변조 감지
+        //db에 저장된 amount와 클라이언트가 보낸 amount 비교
+        if(paymentOrder.getAmount() != request.getAmount()){
+            throw new CustomException(ErrorCode.PAYMENT_AMOUNT_MISMATCH);
+        }
+
         //토스 승인 API 호출
         String encodedKey = Base64.getEncoder()
                 .encodeToString((secretKey + ":").getBytes());
