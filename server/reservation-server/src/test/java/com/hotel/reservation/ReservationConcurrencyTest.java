@@ -1,11 +1,9 @@
 package com.hotel.reservation;
 
 import com.hotel.reservation.domain.Reservation;
-import com.hotel.reservation.domain.RoomTypeInventory;
 import com.hotel.reservation.dto.ReservationRequest;
 import com.hotel.reservation.exception.CustomException;
 import com.hotel.reservation.repository.ReservationRepository;
-import com.hotel.reservation.repository.RoomTypeInventoryRepository;
 import com.hotel.reservation.service.ReservationService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;

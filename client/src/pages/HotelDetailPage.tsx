@@ -1,13 +1,11 @@
 import type { HotelDetailResponse } from "@/shared/type/hotel";
-import { useEffect, useRef, useState } from "react"
+import {  useRef, useState } from "react"
 import { useNavigate, useParams } from "react-router";
 import '@/pages/HotelDetailPage.css';
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import NotFoundPage from "./NotFoundPage";
-import type { ReservationRequest } from "@/shared/type/reservation";
 import { createReservation, getHotelDetail } from "@/api/reservation-service";
-import { createOrder } from "@/api/order-service";
 
 export const HotelDetailPage = () => {
     //한국 기준 오늘날짜 설정 -date기본값
@@ -22,7 +20,6 @@ export const HotelDetailPage = () => {
     const [numberOfRooms, setNumberOfRooms] = useState(1);
     const [numberOfGuests, setNumberOfGuests] = useState(1);
     const selectedRoomTypeIdRef = useRef<number|null>(null);
-    const orderIdRef = useRef<string|null>(null);
 
     const reservationKey = useRef(crypto.randomUUID());
 
@@ -30,31 +27,16 @@ export const HotelDetailPage = () => {
         queryKey: ["hotelDetails", hotelId],    //호텔id별로 캐시관리
         queryFn: () => getHotelDetail(Number(hotelId)).then((res)=>res.data)
     });
-
-    const {mutate: createOrderMuate} = useMutation({
-        mutationFn: createOrder,
-        onSuccess: (res)=>{
-            orderIdRef.current = res.data;
-            createReservationMutate({
-                reservationKey: reservationKey.current,
-                orderId: res.data,
-                hotelId: Number(hotelId),
-                roomTypeId: selectedRoomTypeIdRef.current!,
-                startDate,
-                endDate,
-                numberOfGuests,
-                numberOfRooms
-            });
-        }
-    })
     
         const {mutate : createReservationMutate, isPending} = useMutation({
         mutationFn: createReservation,
         onSuccess: (res)=>{
+            const {reservationKey, orderId} =res.data;
                 const roomType = data?.roomTypes.find(r => r.roomTypeId === selectedRoomTypeIdRef.current);
-               navigate(`/reservations/${res.data}/reservation-info`, {
+               navigate(`/reservations/${reservationKey}/reservation-info`, {
                 state: {
-                    orderId: orderIdRef.current,
+                    orderId,
+                    reservationKey,
                     hotelName: data?.hotelName,
                     hotelAddress: data?.address,
                     roomTypeName: roomType?.name,
@@ -97,7 +79,15 @@ export const HotelDetailPage = () => {
     const handleReservation = (roomTypeId: number) => {
         if (!data) return;
         selectedRoomTypeIdRef.current = roomTypeId;
-        createOrderMuate();
+        createReservationMutate({
+                reservationKey: reservationKey.current,
+                hotelId: Number(hotelId),
+                roomTypeId: selectedRoomTypeIdRef.current!,
+                startDate,
+                endDate,
+                numberOfGuests,
+                numberOfRooms
+            });
     }
 
         if(isLoading) return <p>Loading...</p>

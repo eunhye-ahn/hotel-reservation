@@ -12,4 +12,5 @@ public class ReservationFeignResponse {
     private int amount;
     private String sellerAccount;
     private Long userId;
+    private String orderId;
 }

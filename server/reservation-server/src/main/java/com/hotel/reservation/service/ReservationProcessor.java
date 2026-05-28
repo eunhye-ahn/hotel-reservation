@@ -21,6 +21,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * 분리한 이유:
@@ -111,10 +112,13 @@ public class ReservationProcessor {
             inventory.reserve(request.getNumberOfRooms());
         }
 
+        //orderId 생성 -분산트랜잭션(예약-결제) 식별키
+        String orderId = UUID.randomUUID().toString();
+
         //예약생성
         Reservation reservation = Reservation.builder()
                 .reservationKey(request.getReservationKey())
-                .orderId(request.getOrderId())
+                .orderId(orderId)
                 .hotel(hotel)
                 .roomType(roomType)
                 .user(user)

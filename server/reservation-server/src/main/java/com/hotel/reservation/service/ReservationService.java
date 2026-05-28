@@ -44,7 +44,7 @@ public class ReservationService {
      * }
      */
     //예약생성
-    public String createReservation(ReservationRequest request, Long userId) {
+    public ReservationCreateResponse createReservation(ReservationRequest request, Long userId) {
         //멱등키 확인 -Redis
         //1.요청본문 해시생성
         String requestHash = generateHash(request);
@@ -57,14 +57,24 @@ public class ReservationService {
         //3.중복요청이면 이전 요청으로 처리
         if (!isFirst) {
             handleDuplicate(request.getReservationKey(), userId, requestHash);
-            return request.getReservationKey();
+            return new ReservationCreateResponse(
+                    request.getReservationKey(),
+                    reservationRepository.findByReservationKey(request.getReservationKey())
+                            .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND))
+                            .getOrderId()
+            );
         }
 
         //4.새요청이면 예약처리(여기서 엔티티유효성검사 등하고 response 반환)
         try {
             reservationProcessor.processWithRetry(request, userId);
             idempotencyRedisService.complete(request.getReservationKey());
-            return request.getReservationKey();
+            return new ReservationCreateResponse(
+                    request.getReservationKey(),
+                    reservationRepository.findByReservationKey(request.getReservationKey())
+                            .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND))
+                            .getOrderId()
+            );
         } catch (Exception e) {
             idempotencyRedisService.fail(request.getReservationKey());
             throw e;

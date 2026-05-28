@@ -1,9 +1,6 @@
 package com.hotel.payment.controller;
 
-import com.hotel.payment.dto.PaymentConfirmRequest;
-import com.hotel.payment.dto.PaymentConfirmResponse;
-import com.hotel.payment.dto.TossConfirmRequest;
-import com.hotel.payment.dto.PaymentPrepareResponse;
+import com.hotel.payment.dto.*;
 import com.hotel.payment.service.PaymentService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -21,23 +18,23 @@ public class PaymentController {
     @PostMapping("/prepare/{reservationKey}")
     public ResponseEntity<PaymentPrepareResponse> preparedPayment(
             @PathVariable String reservationKey,
-            @PathVariable String orderId,
-            HttpServletRequest request
+            @RequestBody PaymentPrepareRequest request,
+            HttpServletRequest httpRequest
     ){
-        PaymentPrepareResponse result = paymentService.preparePayment(reservationKey,orderId, request);
+        PaymentPrepareResponse result = paymentService.preparePayment(reservationKey,request.getOrderId(), httpRequest);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(result);
     }
 
-    @GetMapping("/{orderId}/reservationKey")
-    public ResponseEntity<String> getReservationKey(@PathVariable String orderId){
-        String reservationKey = paymentService.getReservationKey(orderId);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(reservationKey);
-    }
+//    @GetMapping("/{orderId}/reservationKey")
+//    public ResponseEntity<String> getReservationKey(@PathVariable String orderId){
+//        String reservationKey = paymentService.getReservationKey(orderId);
+//        return ResponseEntity
+//                .status(HttpStatus.OK)
+//                .body(reservationKey);
+//    }
 
     @PostMapping("/confirm")
     public ResponseEntity<PaymentConfirmResponse> confirmPayment(@RequestBody PaymentConfirmRequest request){

@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: hotel-server
+server:
+  port: 8082

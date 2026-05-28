@@ -19,9 +19,6 @@ public class ReservationRequest {
 //    @NotBlank(message = "가격이 없습니다")
 //    private String priceToken;
 
-    @Column(nullable = false)
-    private String orderId;
-
     @NotNull(message = "호텔을 선택해주세요")
     private Long hotelId;
 

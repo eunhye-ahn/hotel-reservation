@@ -20,13 +20,13 @@ public class ReservationController {
 
     //예약생성
     @PostMapping
-    public ResponseEntity<String> createReservation(@RequestHeader("X-User-Id") Long userId,
-                                                  @RequestBody @Valid ReservationRequest request){
-        String reservationKey = reservationService.createReservation(request, userId);
+    public ResponseEntity<ReservationCreateResponse> createReservation(@RequestHeader("X-User-Id") Long userId,
+                                                                       @RequestBody @Valid ReservationRequest request){
+        ReservationCreateResponse result = reservationService.createReservation(request, userId);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(reservationKey);
+                .body(result);
     }
 
     //내 예약조회

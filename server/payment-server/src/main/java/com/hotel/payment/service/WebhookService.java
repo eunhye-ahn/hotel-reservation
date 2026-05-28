@@ -38,9 +38,6 @@ public class WebhookService {
     private final PaymentOrderRepository paymentOrderRepository;
     private final PaymentEventRepository paymentEventRepository;
     private final PaymentEventProducer paymentEventProducer;
-    private final LedgerRepository ledgerRepository;
-    private final WalletRepository walletRepository;
-    private final PaymentService paymentService;
     private final PaymentProcessService paymentProcessService;
 
     public TossWebhookResponse handleWebhook(TossWebhookRequest request){
@@ -59,8 +56,10 @@ public class WebhookService {
         //paymentOrderId로 멱등성 체크
         PaymentOrder paymentOrder = paymentOrderRepository.findById(orderId)
                 .orElseThrow(()-> new CustomException(ErrorCode.PAYMENT_NOT_FOUND));
+        PaymentEvent event = paymentEventRepository.findByCheckoutId(paymentOrder.getCheckoutId()).orElseThrow();
         if(!paymentOrder.getPaymentOrderStatus().equals(PaymentOrderStatus.NOT_STARTED)){
             log.info("already processed payments - orderId: {}", paymentOrder.getPaymentOrderStatus());
+            return new TossWebhookResponse(event.getReservationKey());
         }
         PaymentEvent paymentEvent = paymentEventRepository.findByCheckoutId(paymentOrder.getCheckoutId())
                 .orElseThrow();

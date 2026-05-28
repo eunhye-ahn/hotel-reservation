@@ -1,12 +1,16 @@
 export interface ReservationRequest {
     reservationKey: string,
-    orderId: string,
     hotelId: number,
     roomTypeId: number,
     startDate: string,
     endDate: string,
     numberOfGuests: number,
     numberOfRooms: number
+}
+
+export interface ReservationCreateResponse{
+    reservationKey: string,
+    orderId: string
 }
 
 export interface RoomTypeReservationResponse {

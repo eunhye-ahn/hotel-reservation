@@ -22,7 +22,6 @@ public class OrderService {
         Order order = Order.builder()
                 .orderId(orderId)
                 .userId(userId)
-                .orderStatus(OrderStatus.PENDING)
                 .build();
 
         orderRepository.save(order);

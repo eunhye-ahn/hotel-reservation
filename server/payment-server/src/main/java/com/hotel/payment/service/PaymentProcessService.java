@@ -37,9 +37,13 @@ public class PaymentProcessService {
                 .build()
         );
 
-        //wallet 업데이트
+        //wallet 업데이트 => 임시적으로 인서트허용
         Wallet wallet = walletRepository.findBySellerAccount(paymentOrder.getSellerAccount())
-                .orElseThrow();//updateonly로할까?
+                .orElseGet(()-> walletRepository.save(
+                        Wallet.builder()
+                                .sellerAccount(paymentOrder.getSellerAccount())
+                                .build()
+                ));
         wallet.updateBalance(paymentOrder.getAmount());
 
         paymentOrder.completedLedgerAndWalletUpdate();

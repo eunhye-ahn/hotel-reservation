@@ -1,7 +1,7 @@
 import type { AccessTokenResponse, LoginRequest, SignUpRequest } from "@/shared/type/auth";
 import axios from "axios";
 import type { HotelDetailResponse, hotelResponse, Page } from "@/shared/type/hotel";
-import type { ReservationDetailResponse, ReservationInfoResponse, ReservationRequest, ReservationResponse, RoomTypeReservationResponse } from "@/shared/type/reservation";
+import type { ReservationCreateResponse, ReservationDetailResponse, ReservationInfoResponse, ReservationRequest, ReservationResponse, RoomTypeReservationResponse } from "@/shared/type/reservation";
 import type { UserInfoResponse } from "@/shared/type/user";
 import { reservationApi } from "./axios/reservation-axios";
 
@@ -33,7 +33,7 @@ export const getHotelDetail = (hotelId: number) => {
 }
 
 export const createReservation = (request: ReservationRequest) => {
-    return reservationApi.post<string>("/reservations", request)
+    return reservationApi.post<ReservationCreateResponse>("/reservations", request)
 }
 
 export const getRoomTypeForReservation = (hotelId: number, roomTypeId: number, startDate: string, endDate: string, numberOfRooms: number) => {

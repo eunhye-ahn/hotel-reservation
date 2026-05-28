@@ -6,7 +6,7 @@ import { preparePayment } from "@/api/payment-service";
 import { toast } from "react-toastify";
 import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
 import { reservationInfo } from "@/api/reservation-service";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 
 export const ReservationPage = () => {
     const { reservationKey } = useParams<string>();

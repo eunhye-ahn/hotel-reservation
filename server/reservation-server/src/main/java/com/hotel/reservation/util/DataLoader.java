@@ -2,8 +2,6 @@ package com.hotel.reservation.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hotel.reservation.domain.Hotel;
-import com.hotel.reservation.repository.HotelRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;

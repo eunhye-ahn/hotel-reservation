@@ -1,8 +1,8 @@
 import type { PaymentConfirmRequest, PaymentConfirmResponse, PaymentPrepareResponse } from "@/shared/type/payment"
 import { paymentApi } from "./axios/payment-axios"
 
-export const preparePayment = (reservationKey: string, idempotencyKey: string) => {
-    return paymentApi.post<PaymentPrepareResponse>(`/payments/prepare/${reservationKey}`, {}, {
+export const preparePayment = (reservationKey: string, orderId: string, idempotencyKey: string) => {
+    return paymentApi.post<PaymentPrepareResponse>(`/payments/prepare/${reservationKey}`, {orderId}, {
         headers: {
             "Idempotency-Key": idempotencyKey
         }
@@ -15,10 +15,10 @@ export const confirmPayment = (request: PaymentConfirmRequest) => {
 }
 
 //토스 success -> 예약확인서 이동을 위한 예약키 반환 api
-export const getReservationKey = (orderId: string) => {
-    return paymentApi.get<string>(`/payments/${orderId}/reservationKey`)
-}
+// export const getReservationKey = (orderId: string) => {
+//     return paymentApi.get<string>(`/payments/${orderId}/reservationKey`)
+// }
 
-export const getPaymentStatus = (orderId: string) => {
-    return paymentApi.get<string>(`/payments/${orderId}/status`)
-}
+// export const getPaymentStatus = (orderId: string) => {
+//     return paymentApi.get<string>(`/payments/${orderId}/status`)
+// }

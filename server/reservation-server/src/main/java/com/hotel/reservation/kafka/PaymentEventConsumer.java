@@ -36,7 +36,7 @@ public class PaymentEventConsumer {
     public void consumerPaymentCompleted(PaymentCompletedMessage message){
         log.info("payment completed event subscribe - orderId: {}", message.getOrderId());
 
-        Reservation reservation = reservationRepository.findByReservationKey(message.getOrderId())
+        Reservation reservation = reservationRepository.findByOrderId(message.getOrderId())
                 .orElseThrow();
         reservation.paid(); //예약확정으로 상태변경
     }

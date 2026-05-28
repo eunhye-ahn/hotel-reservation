@@ -18,8 +18,7 @@ public class GateConfig {
     @Bean
     public RouterFunction<ServerResponse> reservationRoutes() {
         return GatewayRouterFunctions.route("reservation-service")
-                .route(RequestPredicates.path("/api/v1/hotels/**")
-                                .or(RequestPredicates.path("/api/v1/reservations/**"))
+                .route(RequestPredicates.path("/api/v1/reservations/**")
                                 .or(RequestPredicates.path("/api/v1/auth/**")),
                         HandlerFunctions.http("http://localhost:8080"))
                 .build();
@@ -34,9 +33,9 @@ public class GateConfig {
     }
 
     @Bean
-    public RouterFunction<ServerResponse> orderRoutes() {
-        return GatewayRouterFunctions.route("order-service")
-                .route(RequestPredicates.path("/api/v1/orders/**"),
+    public RouterFunction<ServerResponse> hotelRoutes() {
+        return GatewayRouterFunctions.route("hotel-service")
+                .route(RequestPredicates.path("/api/v1/hotels/**"),
                         HandlerFunctions.http("http://localhost:8082"))
                 .before(request -> {
                     String userId = (String) request.servletRequest().getAttribute("X-User-Id");
