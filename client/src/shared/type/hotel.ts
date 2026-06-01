@@ -40,3 +40,8 @@ export interface RoomTypeResponse {
     availableCount: number
 }
 
+export interface CursorResponse {
+    content: hotelResponse[],
+    nextCursor: number,
+    hasNext: boolean
+}

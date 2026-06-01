@@ -19,6 +19,9 @@ public class Hotel extends BaseTime {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column
+    private Long contentId;   //원본데이터연결용(중복저장방지)
+
     @Column(nullable = false)
     private String name;
 
@@ -42,6 +45,15 @@ public class Hotel extends BaseTime {
 
     @Column(nullable = false)
     private LocalTime checkOutTime;
+
+    @Column
+    private String lDongRegnCd; //시도코드
+
+    @Column
+    private String lDongSignguCd;   //시군구코드
+
+    @Column
+    private String lclsSystm2;  //숙소유형코드
 
     public void update(String name, String address, Double latitude, Double longitude, String imageUrl, LocalTime checkInTime, LocalTime checkOutTime) {
         if (name != null) this.name = name;

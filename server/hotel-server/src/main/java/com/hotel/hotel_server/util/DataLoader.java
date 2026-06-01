@@ -1,7 +1,11 @@
-package com.hotel.reservation.util;
+package com.hotel.hotel_server.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hotel.hotel_server.domain.Hotel;
+import com.hotel.hotel_server.domain.HotelDocument;
+import com.hotel.hotel_server.repository.HotelRepository;
+import com.hotel.hotel_server.repository.HotelSearchRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -23,9 +27,11 @@ public class DataLoader implements CommandLineRunner {
     @Autowired
     private ObjectMapper objectMapper;
 
+    private HotelSearchRepository hotelSearchRepository;
+
     @Override
     public void run(String... args) throws Exception {
-        if (true) return; //임시비활성화
+        //if (true) return; //임시비활성화
         if (hotelRepository.count() > 0) {
             log.info("already data load");
             return;
@@ -45,6 +51,7 @@ public class DataLoader implements CommandLineRunner {
                     random.nextInt(900000) + 100000);
             String firstImage = item.path("firstimage").asText();
             hotels.add(Hotel.builder()
+                            .contentId(item.path("contentId").asLong())
                     .sellerAccount(randomSellerAccount)
                     .name(item.path("title").asText())
                     .address(item.path("addr1").asText())
@@ -53,10 +60,21 @@ public class DataLoader implements CommandLineRunner {
                     .imageUrl(firstImage.isEmpty() ? "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800" : firstImage)
                     .checkInTime(LocalTime.of(14, 0))
                     .checkOutTime(LocalTime.of(11, 0))
+                            .lDongRegnCd(item.path("lDongRegnCd").asText())
+                            .lDongSignguCd(item.path("lDongSignguCd").asText())
+                            .lclsSystm2(item.path("lclsSystm2").asText())
                     .build());
         }
 
         hotelRepository.saveAll(hotels);
+
+        //es저장
+        List<HotelDocument> docs = hotels.stream()
+                .map(HotelDocument::from)
+                .toList();
+        hotelSearchRepository.saveAll(docs);
+
         log.info("저장 완료: {}건", hotels.size());
+
     }
 }

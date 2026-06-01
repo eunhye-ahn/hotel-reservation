@@ -61,6 +61,9 @@ public enum ErrorCode {
     //낙관적 락
     OPTIMISTIC_LOCK_CONFLICT(HttpStatus.CONFLICT, "요청이 충돌했습니다. 다시 시도해주세요"),
 
+    //커서
+    INVALID_CURSOR(HttpStatus.BAD_REQUEST, "유효하지 않은 커서입니다"),
+
     //user
     INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "이메일/비밀번호가 틀렸습니다"),
     DUPLICATE_EMAIL(HttpStatus.CONFLICT, "중복된 이메일 입니다"),

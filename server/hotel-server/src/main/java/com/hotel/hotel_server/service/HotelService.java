@@ -121,4 +121,21 @@ public class HotelService {
 
         return HotelUpdateResponse.from(hotel);
     }
+
+    //지역필터
+    public CursorResponse searchByRegion(String lDongRegnCd,String lDongSignguCd, Long cursorId){
+        List<Hotel> hotels = hotelRepository.findByRegionWithCursor(lDongRegnCd, lDongSignguCd, cursorId, PAGE_SIZE);
+
+        List<HotelResponse> list = hotels.stream()
+                .map(this::toResponse)
+                .toList();
+
+        return CursorResponse.of(list, PAGE_SIZE);
+    }
+
+    private HotelResponse toResponse(Hotel hotel){
+        Rate cheapestRate = rateRepository.findCheapestRate(hotel.getId(), LocalDate.now())
+                .orElse(null);
+        return HotelResponse.from(hotel, cheapestRate);
+    }
 }

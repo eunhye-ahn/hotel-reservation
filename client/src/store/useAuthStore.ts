@@ -25,3 +25,6 @@ export const useAuthStore = create<AuthStore>(
         clearAccessToken: () => set({ accessToken: null })
     })
 );
+
+//persist : 새로고침 유지
+//localStorage -> sessionStorage로 변경 (브라우저 탭 닫으면 삭제)

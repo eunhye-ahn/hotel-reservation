@@ -12,7 +12,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.time.LocalDate;
 
 
-public interface HotelRepository extends JpaRepository<Hotel,Long> {
+public interface HotelRepository extends JpaRepository<Hotel,Long>, HotelRepositoryCustom {
     /**
      * JpaRepository 기본 제공 -> findAll(Pageable)
      * 하지만 Rate있는 호텔만 필터링해야함

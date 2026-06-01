@@ -1,10 +1,10 @@
 package com.hotel.hotel_server.domain;
 
 import jakarta.persistence.Id;
+import lombok.Builder;
 import lombok.Getter;
-import org.springframework.data.elasticsearch.annotations.Document;
-import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.springframework.data.elasticsearch.annotations.*;
+import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 /**
  *     @Id
@@ -37,20 +37,46 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
  */
 @Document(indexName = "hotels")
 @Getter
+@Builder
 public class HotelDocument {
     @Id
-    private String id;
+    private String id;      //ES _id(content_id) -중복저장방지(덮어쓰기)+원본데이터 연결용
 
     @Field(type= FieldType.Long)
-    private Long hotelId; //보류
+    private Long hotelId; //커서페이징 정렬보조키 + querydsl rdb 연결용
 
     @Field(type=FieldType.Search_As_You_Type, analyzer = "nori_analyzer")
-    private String hotelName;
+    private String hotelName;   //자동완성 검색
 
     @Field(type=FieldType.Text, analyzer = "nori_analyzer")
-    private String address;
+    private String address; //부분 검색
 
     //시도 파싱 필요 <<필터링을 위해 keyword
+    @Field(type = FieldType.Keyword)
+    private String lDongRegnCd; //시도필터링
 
-    @Field
+    @Field(type = FieldType.Keyword)
+    private String lDongSignguCd;   //시군구 필터링
+
+    @Field(type = FieldType.Keyword)
+    private String lclsSystm2;      //숙박유형 필터링
+
+    @GeoPointField
+    private GeoPoint point;    //위치기반검색
+
+    public static HotelDocument from(Hotel hotel){
+        return HotelDocument.builder()
+                .id(hotel.getContentId().toString())
+                .hotelId(hotel.getId())
+                .hotelName(hotel.getName())
+                .address(hotel.getAddress())
+                .lDongRegnCd(hotel.getLDongRegnCd())
+                .lDongSignguCd(hotel.getLDongSignguCd())
+                .lclsSystm2(hotel.getLclsSystm2())
+                .point(hotel.getLatitude() != null && hotel.getLongitude() != null
+                        ? new GeoPoint(hotel.getLatitude(), hotel.getLongitude())
+                        : null)
+                .build();
+
+    }
 }

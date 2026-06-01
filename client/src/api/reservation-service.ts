@@ -1,6 +1,6 @@
 import type { AccessTokenResponse, LoginRequest, SignUpRequest } from "@/shared/type/auth";
 import axios from "axios";
-import type { HotelDetailResponse, hotelResponse, Page } from "@/shared/type/hotel";
+import type { CursorResponse, HotelDetailResponse, hotelResponse, Page } from "@/shared/type/hotel";
 import type { ReservationCreateResponse, ReservationDetailResponse, ReservationInfoResponse, ReservationRequest, ReservationResponse, RoomTypeReservationResponse } from "@/shared/type/reservation";
 import type { UserInfoResponse } from "@/shared/type/user";
 import { reservationApi } from "./axios/reservation-axios";
@@ -24,8 +24,10 @@ export const signUp = (request: SignUpRequest) => {
     return reservationApi.post<AccessTokenResponse>("/auth/signUp", request);
 }
 
-export const getHotels = () => {
-    return reservationApi.get<Page<hotelResponse>>("/hotels");
+export const getHotels = (lDongRegnCd?: string, lDongSignguCd?: string, cursorId: number =0) => {
+    return reservationApi.get<CursorResponse>("/hotels",{
+        params: {lDongRegnCd, lDongSignguCd, cursorId}
+    });
 }
 
 export const getHotelDetail = (hotelId: number) => {

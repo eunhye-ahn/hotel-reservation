@@ -45,6 +45,20 @@ services:
     networks:
       - server-network
 
+  #호텔 DB
+  hotel-postgresql:
+    image: postgres:17
+    container_name: hotel-postgresql
+    environment:
+      POSTGRES_DB: hotel
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5434:5432"
+    volumes:
+      - hotel-postgresql-data:/var/lib/postgresql/data
+    networks:
+      - server-network
 
   # 예약 DB
   reservation-postgresql:
@@ -139,6 +153,7 @@ services:
 
 volumes:
   reservation-postgresql-data:
+  hotel-postgresql-data:
   redis-data:
   payment-postgresql-data:
   es-data:
