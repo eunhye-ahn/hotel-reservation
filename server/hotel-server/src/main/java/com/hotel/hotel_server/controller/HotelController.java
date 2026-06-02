@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -69,14 +70,17 @@ public class HotelController {
      * 지역별 호텔 목록 조회(무한스크롤)
      * GET /api/hotels?lDongRegnCd=11&cursorId=10
      *
-     * @param lDongRegnCd   지역 코드 (필수)
+     * @param lDongRegnCd   지역 코드 (전체조회에서는 없어야하고 필터에서는 필수인데.)..
      * @return cursorId     마지막으로 조회한 호텔 ID (첫 요청 시 null)
      */
     @GetMapping
     public ResponseEntity<CursorResponse> searchByRegion(@RequestParam(required = false) String lDongRegnCd,
                                                          @RequestParam(required = false) String lDongSignguCd,
+                                                         @RequestParam(required = false) LocalDate startDate,
+                                                         @RequestParam(required = false) LocalDate endDate,
+                                                         @RequestParam(required = false) int numberOfGuests,
                                                          @RequestParam(required = false) Long cursorId){
-        CursorResponse result = hotelService.searchByRegion(lDongRegnCd, lDongSignguCd, cursorId);
+        CursorResponse result = hotelService.searchByRegion(lDongRegnCd, lDongSignguCd, startDate, endDate, numberOfGuests, cursorId);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

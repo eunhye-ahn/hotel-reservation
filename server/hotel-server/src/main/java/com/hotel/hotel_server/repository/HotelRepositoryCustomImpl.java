@@ -13,7 +13,8 @@ public class HotelRepositoryCustomImpl implements HotelRepositoryCustom{
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<Hotel> findByRegionWithCursor(String lDongRegnCd, String lDongSignguCd, Long cursorId, int size) {
+    public List<Hotel> findByRegionWithCursor(String lDongRegnCd, String lDongSignguCd,
+                                              Long cursorId, int size) {
         QHotel hotel = QHotel.hotel;
 
         return queryFactory
@@ -21,6 +22,7 @@ public class HotelRepositoryCustomImpl implements HotelRepositoryCustom{
                 .where(
                         regionCondition(hotel, lDongRegnCd),
                         signguCondition(hotel, lDongSignguCd),
+
                         cursorCondition(hotel, cursorId)
                 )
                 .orderBy(hotel.id.asc())    //커서 기준과 정렬기준 일치

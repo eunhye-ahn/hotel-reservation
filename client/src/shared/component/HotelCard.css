@@ -3,9 +3,8 @@
     display: flex;
     gap: 16px;
     flex-wrap: wrap;
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 24px;
+    max-width: 1000px;
+    padding: 24px 50px;
 }
 
 .hotel-card {

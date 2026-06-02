@@ -1,13 +1,14 @@
-import '@/pages/MainPage.css';
+import '@/shared/component/HotelCard.css';
 import { useNavigate } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { getHotels } from "@/api/reservation-service";
-import type { CursorResponse, hotelResponse, Page } from '@/shared/type/hotel';
-import { useEffect, useState } from 'react';
-import { getDisplayName, REGIONS, type Region, type SubRegion } from '@/constants/Region';
+import type { CursorResponse} from '@/shared/type/hotel';
+import { useState } from 'react';
+import { getDisplayName, type Region, type SubRegion } from '@/constants/Region';
 import { RegionSelector } from '@/shared/component/RegionSelector';
 import { Modal } from '@/shared/component/Modal';
 import { useRegionStore } from '@/store/useRegionStore';
+import { HotelCard } from '@/shared/component/HotelCard';
 
 //호텔정보페이지
 export const MainPage = () => {
@@ -39,7 +40,9 @@ export const MainPage = () => {
         setRegion(getDisplayName(newRegionCode, newSubRegionCode), newRegionCode, newSubRegionCode);
         setIsOpen(false);
 
-        navigate(`/hotels/list?lDongRegnCd=${newRegionCode}${newSubRegionCode ? `&lDongSignguCd=${newSubRegionCode}` : ""}`);
+        const today = new Date().toLocaleDateString('en-CA')
+        const tomorrow = new Date(Date.now() + 86400000).toLocaleDateString('en-CA');
+        navigate(`/hotels/list?lDongRegnCd=${newRegionCode}${newSubRegionCode ? `&lDongSignguCd=${newSubRegionCode}` : ""}&startDate=${today}&endDate=${tomorrow}&numberOfGuests=3&numberOfRooms=1`);
     }
 
     if(isLoading) return <p>loading...</p>
@@ -66,32 +69,7 @@ export const MainPage = () => {
                 </div>
             )}
 
-        <div className="hotel-list">
-            {data?.content.length === 0 && <p>호텔이 없습니다</p>}
-            {data?.content.map((hotel) => (
-                <div 
-                key={hotel.hotelId} className="hotel-card"
-                onClick={() => navigate(`/hotels/${hotel.hotelId}`)} >
-                    <img className="hotel-img" src={hotel.imageUrl} />
-                    <p className="hotel-name">{hotel.name}</p>
-                    <p className="hotel-address">{hotel.address}</p>
-                    <p className="hotel-checkin">숙박 {hotel.checkInTime.substring(0,5)}~</p>
-                    <div className="hotel-price-row">
-                        {hotel.maxRate && hotel.demandRate ? (
-                            <>
-                                <span className="hotel-original">{hotel.maxRate.toLocaleString()}</span>
-                                <span className="hotel-discount">{hotel.discountRate}%</span>
-                            </>
-                        ) : (
-                            <span>요금 준비 중</span>
-                        )}
-                    </div>
-                    <p className="hotel-demand">
-                        {hotel.demandRate ? `${hotel.demandRate.toLocaleString()}원` : ""}
-                    </p>
-                </div>
-            ))}
-        </div>
+        <HotelCard data={data} />
         </div>
     )
 }

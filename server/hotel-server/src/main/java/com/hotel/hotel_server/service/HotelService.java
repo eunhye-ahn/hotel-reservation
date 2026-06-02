@@ -6,6 +6,7 @@ import com.hotel.hotel_server.domain.RoomTypeInventory;
 import com.hotel.hotel_server.dto.*;
 import com.hotel.hotel_server.exception.CustomException;
 import com.hotel.hotel_server.exception.ErrorCode;
+import com.hotel.hotel_server.mapper.RateMapper;
 import com.hotel.hotel_server.repository.HotelRepository;
 import com.hotel.hotel_server.repository.RateRepository;
 import com.hotel.hotel_server.repository.RoomTypeInventoryRepository;
@@ -28,6 +29,7 @@ public class HotelService {
     private final RateRepository rateRepository;
     private final RoomTypeRepository roomTypeRepository;
     private final RoomTypeInventoryRepository roomTypeInventoryRepository;
+    private final RateMapper rateMapper;
 
     LocalDate today = LocalDate.now();
 
@@ -122,20 +124,35 @@ public class HotelService {
         return HotelUpdateResponse.from(hotel);
     }
 
-    //지역필터
-    public CursorResponse searchByRegion(String lDongRegnCd,String lDongSignguCd, Long cursorId){
+    //조회(전체조회 / 필터조회)
+    public CursorResponse searchByRegion(String lDongRegnCd,String lDongSignguCd,
+                                         LocalDate startDate, LocalDate endDate,
+                                         int numberOfGuests, //게스트 수 처리..........
+                                         Long cursorId){
         List<Hotel> hotels = hotelRepository.findByRegionWithCursor(lDongRegnCd, lDongSignguCd, cursorId, PAGE_SIZE);
 
         List<HotelResponse> list = hotels.stream()
-                .map(this::toResponse)
+                .map(hotel -> startDate != null && endDate != null
+                    ? toResponse(hotel, startDate, endDate) //날짜 있으면 기간 계산
+                    : toResponse(hotel))                    //없으면 오늘 기준(기간내합산로직X)
                 .toList();
 
         return CursorResponse.of(list, PAGE_SIZE);
     }
 
+    //전체조회 -오늘날짜 기준 가장 저렴한 객실의 가격 반환
     private HotelResponse toResponse(Hotel hotel){
         Rate cheapestRate = rateRepository.findCheapestRate(hotel.getId(), LocalDate.now())
                 .orElse(null);
         return HotelResponse.from(hotel, cheapestRate);
+    }
+    //기간 내 객실 타입별 요금 합산 후 가장 저렴한 금액 반환
+    private HotelResponse toResponse(Hotel hotel, LocalDate startDate, LocalDate endDate){
+        CheapestRateResult rate = rateMapper.findCheapestTotalRate(
+                hotel.getId(),
+                startDate,
+                endDate
+        );
+        return HotelResponse.from(hotel, rate);
     }
 }

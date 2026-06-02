@@ -47,4 +47,17 @@ public class HotelResponse {
                 .imageUrl(hotel.getImageUrl())
                 .build();
     }
+
+    public static HotelResponse from(Hotel hotel, CheapestRateResult cheapestRate) {
+        return HotelResponse.builder()
+                .hotelId(hotel.getId())
+                .name(hotel.getName())
+                .maxRate(cheapestRate != null ? cheapestRate.getTotalMaxRate() : null)
+                .demandRate(cheapestRate != null ? cheapestRate.getTotalDemandRate() : null)
+                .discountRate(cheapestRate != null ? cheapestRate.calculateDiscountRate() : null)
+                .checkInTime(hotel.getCheckInTime())
+                .address(hotel.getAddress())
+                .imageUrl(hotel.getImageUrl())
+                .build();
+    }
 }

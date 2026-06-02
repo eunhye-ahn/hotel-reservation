@@ -24,9 +24,9 @@ export const signUp = (request: SignUpRequest) => {
     return reservationApi.post<AccessTokenResponse>("/auth/signUp", request);
 }
 
-export const getHotels = (lDongRegnCd?: string, lDongSignguCd?: string, cursorId: number =0) => {
+export const getHotels = (lDongRegnCd?: string, lDongSignguCd?: string, startDate?:string, endDate?:string, numberOfGuests?:number, cursorId: number =0) => {
     return reservationApi.get<CursorResponse>("/hotels",{
-        params: {lDongRegnCd, lDongSignguCd, cursorId}
+        params: {lDongRegnCd, lDongSignguCd, startDate, endDate, numberOfGuests, cursorId}
     });
 }
 

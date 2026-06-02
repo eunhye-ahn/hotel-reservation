@@ -23,6 +23,9 @@ spring:
       - org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchRestClientAutoConfiguration
       - org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchDataAutoConfiguration
       - org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchRepositoriesAutoConfiguration
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-pakage: com.hotel.hotel_server.domain
 
 server:
   port: 8082
