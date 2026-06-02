@@ -2,10 +2,13 @@ package com.hotel.hotel_server.repository;
 
 import com.hotel.hotel_server.domain.Hotel;
 import com.hotel.hotel_server.domain.QHotel;
+import com.hotel.hotel_server.domain.QRoomType;
+import com.hotel.hotel_server.domain.QRoomTypeInventory;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -14,11 +17,21 @@ public class HotelRepositoryCustomImpl implements HotelRepositoryCustom{
 
     @Override
     public List<Hotel> findByRegionWithCursor(String lDongRegnCd, String lDongSignguCd,
+                                              LocalDate startDate, LocalDate endDate,
+                                              int numberOfGuests,
                                               Long cursorId, int size) {
         QHotel hotel = QHotel.hotel;
+        QRoomType roomType = QRoomType.roomType;
+        QRoomTypeInventory inventory = QRoomTypeInventory.roomTypeInventory;
 
         return queryFactory
                 .selectFrom(hotel)
+                .join(roomType).on(roomType.hotel.id.eq(hotel.id))
+                .join(inventory).on(
+                        inventory.roomType.eq(roomType),
+                        dateCondition(startDate, endDate),
+                        inventory.avail
+                )
                 .where(
                         regionCondition(hotel, lDongRegnCd),
                         signguCondition(hotel, lDongSignguCd),
@@ -45,5 +58,9 @@ public class HotelRepositoryCustomImpl implements HotelRepositoryCustom{
 
     private BooleanExpression cursorCondition(QHotel hotel, Long cursorId){
         return cursorId != null? hotel.id.gt(cursorId):null;
+    }
+
+    private BooleanExpression dateCondition(LocalDate startDate,LocalDate endDate){
+
     }
 }

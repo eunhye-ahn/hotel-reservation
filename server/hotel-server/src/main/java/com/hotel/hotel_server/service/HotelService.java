@@ -129,7 +129,7 @@ public class HotelService {
                                          LocalDate startDate, LocalDate endDate,
                                          int numberOfGuests, //게스트 수 처리..........
                                          Long cursorId){
-        List<Hotel> hotels = hotelRepository.findByRegionWithCursor(lDongRegnCd, lDongSignguCd, cursorId, PAGE_SIZE);
+        List<Hotel> hotels = hotelRepository.findByRegionWithCursor(lDongRegnCd, lDongSignguCd, int numberOfGuests, cursorId, PAGE_SIZE);
 
         List<HotelResponse> list = hotels.stream()
                 .map(hotel -> startDate != null && endDate != null
