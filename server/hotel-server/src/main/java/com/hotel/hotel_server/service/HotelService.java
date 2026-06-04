@@ -6,6 +6,7 @@ import com.hotel.hotel_server.domain.RoomTypeInventory;
 import com.hotel.hotel_server.dto.*;
 import com.hotel.hotel_server.exception.CustomException;
 import com.hotel.hotel_server.exception.ErrorCode;
+import com.hotel.hotel_server.mapper.HotelMapper;
 import com.hotel.hotel_server.mapper.RateMapper;
 import com.hotel.hotel_server.repository.HotelRepository;
 import com.hotel.hotel_server.repository.RateRepository;
@@ -13,9 +14,6 @@ import com.hotel.hotel_server.repository.RoomTypeInventoryRepository;
 import com.hotel.hotel_server.repository.RoomTypeRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -30,20 +28,9 @@ public class HotelService {
     private final RoomTypeRepository roomTypeRepository;
     private final RoomTypeInventoryRepository roomTypeInventoryRepository;
     private final RateMapper rateMapper;
+    private final HotelMapper hotelMapper;
 
     LocalDate today = LocalDate.now();
-
-    //호텔조회
-    public Page<HotelResponse> getHotels(int page){
-
-        Pageable pageable = PageRequest.of(page,PAGE_SIZE);
-        return hotelRepository.findAllWithRate(today, pageable)
-                .map(hotel -> {
-                    Rate cheapestRate = rateRepository.findCheapestRate(hotel.getId(), today)
-                            .orElse(null);
-                    return HotelResponse.from(hotel, cheapestRate);
-                });
-    }
 
     //호텔 내 객실 조회
     public HotelDetailResponse getHotelDetail(Long hotelId) {
@@ -125,12 +112,32 @@ public class HotelService {
     }
 
     //조회(전체조회 / 필터조회)
-    public CursorResponse searchByRegion(String lDongRegnCd,String lDongSignguCd,
+    public CursorResponse searchByFilter(String lDongRegnCd,String lDongSignguCd,
                                          LocalDate startDate, LocalDate endDate,
-                                         int numberOfGuests, //게스트 수 처리..........
+//                                         Integer numberOfGuests, //게스트 수 처리..........
+//                                         Integer numberOfRooms,
                                          Long cursorId){
-        List<Hotel> hotels = hotelRepository.findByRegionWithCursor(lDongRegnCd, lDongSignguCd, int numberOfGuests, cursorId, PAGE_SIZE);
 
+        //available
+        //totalDays
+
+        //List<Hotel> hotels = hotelRepository.findByRegionWithCursor(lDongRegnCd, lDongSignguCd, int numberOfGuests, cursorId, PAGE_SIZE);
+        //여기서 mybatis로 동적쿼리 필터링으로 변경할 것
+        HotelSearchParam param = HotelSearchParam.builder()
+                .lDongRegnCd(lDongRegnCd)
+                .lDongSignguCd(lDongSignguCd)
+                .startDate(startDate)
+                .endDate(endDate)
+//                .numberOfGuests(numberOfGuests)
+//                .numberOfRooms(numberOfRooms)
+                .cursorId(cursorId)
+                .today(LocalDate.now())
+                .size(PAGE_SIZE)
+                .build();
+
+        List<Hotel> hotels = hotelMapper.findByHotelFilter(param);
+
+        //요금계산
         List<HotelResponse> list = hotels.stream()
                 .map(hotel -> startDate != null && endDate != null
                     ? toResponse(hotel, startDate, endDate) //날짜 있으면 기간 계산

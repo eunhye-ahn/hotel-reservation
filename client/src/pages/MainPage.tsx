@@ -1,6 +1,6 @@
 import '@/shared/component/HotelCard.css';
 import { useNavigate } from "react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { getHotels } from "@/api/reservation-service";
 import type { CursorResponse} from '@/shared/type/hotel';
 import { useState } from 'react';
@@ -25,14 +25,15 @@ export const MainPage = () => {
      */
 
     //useQuery: api 자동호출, isLoading/isError 상태 자동관리 /캐싱키
-    const {data, isLoading, isError} = useQuery<CursorResponse>({
-        queryKey: ["hotels", regionCode, subRegionCode],     //지역바뀌면 자동재조회
-        queryFn: () => getHotels(
-           regionCode,
-            subRegionCode,
-            0
-        ).then((res)=>res.data)
+    const {data, isLoading, isError, fetchNextPage, hasNextPage} = useInfiniteQuery<CursorResponse>({
+        queryKey: ["hotels"],     //지역바뀌면 자동재조회
+        queryFn: ({pageParam}) => getHotels(pageParam as number | undefined)
+        .then((res)=>res.data),
+        initialPageParam: undefined,
+        getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined
     })
+
+    const hotels = data?.pages.flatMap(page=>page.content) ?? [];
 
     const handleSelect = (region : Region, subRegion?: SubRegion) => {
         const newRegionCode = region.code;
@@ -69,7 +70,11 @@ export const MainPage = () => {
                 </div>
             )}
 
-        <HotelCard data={data} />
+        <HotelCard 
+        data={hotels}
+        fetchNextPage={fetchNextPage}
+        hasNextPage={hasNextPage}
+        />
         </div>
     )
 }

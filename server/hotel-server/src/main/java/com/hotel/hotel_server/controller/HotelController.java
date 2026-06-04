@@ -74,13 +74,16 @@ public class HotelController {
      * @return cursorId     마지막으로 조회한 호텔 ID (첫 요청 시 null)
      */
     @GetMapping
-    public ResponseEntity<CursorResponse> searchByRegion(@RequestParam(required = false) String lDongRegnCd,
+    public ResponseEntity<CursorResponse> searchByFilter(@RequestParam(required = false) String lDongRegnCd,
                                                          @RequestParam(required = false) String lDongSignguCd,
                                                          @RequestParam(required = false) LocalDate startDate,
                                                          @RequestParam(required = false) LocalDate endDate,
-                                                         @RequestParam(required = false) int numberOfGuests,
+//                                                         @RequestParam(required = false) Integer numberOfGuests,
+//                                                         @RequestParam(required = false) Integer numberOfRooms,
                                                          @RequestParam(required = false) Long cursorId){
-        CursorResponse result = hotelService.searchByRegion(lDongRegnCd, lDongSignguCd, startDate, endDate, numberOfGuests, cursorId);
+        CursorResponse result = hotelService.searchByFilter(lDongRegnCd, lDongSignguCd, startDate, endDate,
+//                numberOfGuests, numberOfRooms,
+                cursorId);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

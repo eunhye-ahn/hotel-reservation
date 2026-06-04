@@ -1,8 +1,10 @@
 import { useNavigate } from "react-router";
-import type { CursorResponse } from "../type/hotel"
+import type { CursorResponse, hotelResponse } from "../type/hotel"
 
 interface HotelCardProps {
-    data: CursorResponse | undefined;
+    data: hotelResponse[];
+    fetchNextPage: ()=> void;
+    hasNextPage: boolean;
 }
 
 export const HotelCard = ({data}: HotelCardProps) => {
@@ -10,8 +12,8 @@ const navigate = useNavigate();
 
     return (
         <div className="hotel-list">
-            {data?.content.length === 0 && <p>호텔이 없습니다</p>}
-            {data?.content.map((hotel) => (
+            {data?.length === 0 && <p>호텔이 없습니다</p>}
+            {data?.map((hotel) => (
                 <div
                     key={hotel.hotelId}
                     className="hotel-card"

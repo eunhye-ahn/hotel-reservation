@@ -28,9 +28,7 @@ public class HotelRepositoryCustomImpl implements HotelRepositoryCustom{
                 .selectFrom(hotel)
                 .join(roomType).on(roomType.hotel.id.eq(hotel.id))
                 .join(inventory).on(
-                        inventory.roomType.eq(roomType),
-                        dateCondition(startDate, endDate),
-                        inventory.avail
+                        inventory.roomType.eq(roomType)
                 )
                 .where(
                         regionCondition(hotel, lDongRegnCd),
@@ -60,7 +58,4 @@ public class HotelRepositoryCustomImpl implements HotelRepositoryCustom{
         return cursorId != null? hotel.id.gt(cursorId):null;
     }
 
-    private BooleanExpression dateCondition(LocalDate startDate,LocalDate endDate){
-
-    }
 }

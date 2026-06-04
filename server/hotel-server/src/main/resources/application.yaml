@@ -25,7 +25,10 @@ spring:
       - org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchRepositoriesAutoConfiguration
 mybatis:
   mapper-locations: classpath:mapper/*.xml
-  type-aliases-pakage: com.hotel.hotel_server.domain
+  type-aliases-package: com.hotel.hotel_server.domain, com.hotel.hotel_server.dto
+  configuration:
+    map-underscore-to-camel-case: true
+
 
 server:
   port: 8082

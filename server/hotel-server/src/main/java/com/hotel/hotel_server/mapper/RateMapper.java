@@ -1,10 +1,14 @@
 package com.hotel.hotel_server.mapper;
 
+import com.hotel.hotel_server.domain.Hotel;
 import com.hotel.hotel_server.dto.CheapestRateResult;
+import com.hotel.hotel_server.dto.HotelResponse;
+import com.hotel.hotel_server.dto.HotelSearchParam;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * //날짜 필터링 조회 -기간 내 가장 저렴한 객실의 가격 반환

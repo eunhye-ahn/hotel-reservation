@@ -1,0 +1,22 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hotel.hotel_server.mapper.HotelMapper">
+    <select id="findByHotelFilter" parameterType="HotelSearchParam" resultType="Hotel">
+        SELECT DISTINCT h.*
+        FROM hotel h
+        JOIN room_type rt ON rt.hotel_id = h.id
+        JOIN room_type_inventory i ON i.room_type_id = rt.id
+        <where>
+            <choose>
+                <when test="startDate != null and endDate != null">
+                    AND i.date BETWEEN #{startDate} AND #{endDate}
+                </when>
+                <otherwise>
+                    AND i.date = #{today}
+                </otherwise>
+            </choose>
+        </where>
+        ORDER BY h.id ASC
+        LIMIT #{size}+1
+    </select>
+</mapper>
