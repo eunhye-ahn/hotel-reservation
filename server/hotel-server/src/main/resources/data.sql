@@ -5,9 +5,9 @@
 
 INSERT INTO hotel (name, address, seller_account, latitude, longitude, image_url, check_in_time, check_out_time, l_dong_regn_cd, l_dong_signgu_cd, lcls_systm2, created_at, updated_at)
 VALUES
-    ('롯데호텔 서울', '서울 중구 을지로 30', '11111', 37.5665, 126.9780, null, '14:00:00', '11:00:00', '11', '140', 'B02011600', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('신라호텔', '서울 중구 장충동', '22222', 37.5512, 126.9882, null, '15:00:00', '11:00:00', '11', '140', 'B02011600', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('제주 신화월드', '제주 서귀포시 안덕면', '33333', 33.3617, 126.3016, null, '14:00:00', '12:00:00', '50', '130', 'B02011600', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+    ('롯데호텔 서울', '서울 중구 을지로 30', '11111', 37.5665, 126.9780, null, '14:00:00', '11:00:00', '11', '140', 'AC01', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ('신라 펜션', '서울 중구 장충동', '22222', 37.5512, 126.9882, null, '15:00:00', '11:00:00', '11', '140', 'AC03', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ('제주 신화월드', '제주 서귀포시 안덕면', '33333', 33.3617, 126.3016, null, '14:00:00', '12:00:00', '50', '130', 'AC01', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 INSERT INTO room_type (hotel_id, name, max_occupancy, image_url, created_at, updated_at)
 VALUES

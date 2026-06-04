@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -113,24 +114,30 @@ public class HotelService {
 
     //조회(전체조회 / 필터조회)
     public CursorResponse searchByFilter(String lDongRegnCd,String lDongSignguCd,
+                                         String lclsSystm2,
                                          LocalDate startDate, LocalDate endDate,
                                          Integer numberOfGuests, //게스트 수 처리..........
                                          Integer numberOfRooms,
                                          Long cursorId){
 
         //available
-        //totalDays
+        //totalDays 계산
+        int totalDays = (startDate != null && endDate != null)
+        ?((int) ChronoUnit.DAYS.between(startDate, endDate)) : 0;
+
 
         //List<Hotel> hotels = hotelRepository.findByRegionWithCursor(lDongRegnCd, lDongSignguCd, int numberOfGuests, cursorId, PAGE_SIZE);
         //여기서 mybatis로 동적쿼리 필터링으로 변경할 것
         HotelSearchParam param = HotelSearchParam.builder()
                 .lDongRegnCd(lDongRegnCd)
                 .lDongSignguCd(lDongSignguCd)
+                .lclsSystm2(lclsSystm2)
                 .startDate(startDate)
                 .endDate(endDate)
                 .numberOfGuests(numberOfGuests)
                 .numberOfRooms(numberOfRooms)
                 .cursorId(cursorId)
+                .totalDays(totalDays)
                 .today(LocalDate.now())
                 .size(PAGE_SIZE+1)
                 .build();

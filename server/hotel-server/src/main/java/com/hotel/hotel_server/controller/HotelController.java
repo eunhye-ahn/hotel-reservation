@@ -76,12 +76,13 @@ public class HotelController {
     @GetMapping
     public ResponseEntity<CursorResponse> searchByFilter(@RequestParam(required = false) String lDongRegnCd,
                                                          @RequestParam(required = false) String lDongSignguCd,
+                                                         @RequestParam(required = false) String lclsSystm2,
                                                          @RequestParam(required = false) LocalDate startDate,
                                                          @RequestParam(required = false) LocalDate endDate,
                                                          @RequestParam(required = false) Integer numberOfGuests,
                                                          @RequestParam(required = false) Integer numberOfRooms,
                                                          @RequestParam(required = false) Long cursorId){
-        CursorResponse result = hotelService.searchByFilter(lDongRegnCd, lDongSignguCd, startDate, endDate,
+        CursorResponse result = hotelService.searchByFilter(lDongRegnCd, lDongSignguCd, lclsSystm2, startDate, endDate,
                 numberOfGuests, numberOfRooms,
                 cursorId);
 

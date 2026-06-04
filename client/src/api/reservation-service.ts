@@ -26,20 +26,23 @@ export const signUp = (request: SignUpRequest) => {
 
 //호텔전체조회
 export const getHotels = (cursorId?: number) => {
-    return reservationApi.get<CursorResponse>("/hotels",{
-        params: {cursorId}
+    return reservationApi.get<CursorResponse>("/hotels", {
+        params: { cursorId }
     })
 }
 
 //호텔필터조회
-export const getHotelsByFilter = (lDongRegnCd?: string, lDongSignguCd?: string, startDate?:string, endDate?:string, numberOfGuests?:number, numberOfRooms?:number,cursorId: number =0) => {
-    return reservationApi.get<CursorResponse>("/hotels",{
-        params: {lDongRegnCd, lDongSignguCd, 
+export const getHotelsByFilter = (lDongRegnCd?: string, lDongSignguCd?: string, lclsSystm2?: string,
+    startDate?: string, endDate?: string, numberOfGuests?: number, numberOfRooms?: number, cursorId: number = 0) => {
+    return reservationApi.get<CursorResponse>("/hotels", {
+        params: {
+            lDongRegnCd, lDongSignguCd, lclsSystm2,
             startDate,
             endDate,
             numberOfGuests,
             numberOfRooms,
-            cursorId}
+            cursorId
+        }
     });
 }
 
@@ -52,8 +55,8 @@ export const createReservation = (request: ReservationRequest) => {
 }
 
 export const getRoomTypeForReservation = (hotelId: number, roomTypeId: number, startDate: string, endDate: string, numberOfRooms: number) => {
-    return reservationApi.get<RoomTypeReservationResponse>(`/hotels/${hotelId}/roomTypes/${roomTypeId}/reservation`,{
-        params: {startDate, endDate, numberOfRooms}
+    return reservationApi.get<RoomTypeReservationResponse>(`/hotels/${hotelId}/roomTypes/${roomTypeId}/reservation`, {
+        params: { startDate, endDate, numberOfRooms }
     })
 }
 
@@ -66,8 +69,8 @@ export const getMyInfo = () => {
 }
 
 export const getMyReservations = (status: string) => {
-    return reservationApi.get<ReservationResponse[]>("/reservations",{
-        params: {status}
+    return reservationApi.get<ReservationResponse[]>("/reservations", {
+        params: { status }
     })
 }
 
