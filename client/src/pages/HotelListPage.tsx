@@ -1,9 +1,9 @@
-import { getHotels } from "@/api/reservation-service";
+import { getHotels, getHotelsByFilter } from "@/api/reservation-service";
 import { HotelCard } from "@/shared/component/HotelCard";
 import { SearchFilterBar } from "@/shared/component/SearchFilterBar";
 import type { CursorResponse } from "@/shared/type/hotel";
 import { useRegionStore } from "@/store/useRegionStore";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router";
 import '@/pages/HotelListPage.css'
@@ -21,8 +21,8 @@ export function HotelListPage () {
 
     const checkIn = searchParams.get("startDate") ?? today;
     const checkOut = searchParams.get("endDate") ?? tomorrow;
-    const guestToReserve = Number(searchParams.get("numberOfGuests") ?? 3);
-    const roomToReserve = Number(searchParams.get("roomToReserve") ?? 1);
+    const numberOfGuests = Number(searchParams.get("numberOfGuests") ?? 3);
+    const numberOfRooms = Number(searchParams.get("roomToReserve") ?? 1);
 
     const [isDateOpen, setIsDateOpen] = useState<boolean>(false);
     const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
@@ -33,17 +33,24 @@ export function HotelListPage () {
     //displayName
     const {displayName, resetRegion} = useRegionStore();
 
-    const {data, isLoading, isError} = useQuery<CursorResponse>({
-        queryKey: ["hotels", regionCode, subRegionCode, checkIn, checkOut, guestToReserve],     //지역바뀌면 자동재조회
-        queryFn: () => getHotels(
+    const {data, isLoading, isError, fetchNextPage, hasNextPage} = useInfiniteQuery<CursorResponse>({
+        queryKey: ["hotels", regionCode, subRegionCode, checkIn, checkOut, numberOfGuests, numberOfRooms],     //지역바뀌면 자동재조회
+        queryFn: () => getHotelsByFilter(
             regionCode?? "",
             subRegionCode?? "",
             checkIn,
             checkOut,
-            guestToReserve,
+            numberOfGuests,
+            numberOfRooms,
             0
-        ).then((res)=>res.data)
+        ).then((res)=>res.data),
+        initialPageParam: undefined,
+        getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined
     });
+
+    
+    const hotels = data?.pages.flatMap(page=>page.content) ?? [];
+
 
     useEffect(()=>{
         return () => {
@@ -60,8 +67,8 @@ export function HotelListPage () {
             <SearchFilterBar 
                 checkIn={checkIn}
                 checkOut={checkOut}
-                guestToReserve={guestToReserve}
-                roomToReserve={roomToReserve}
+                guestToReserve={numberOfGuests}
+                roomToReserve={numberOfRooms}
                 onDateClick={()=>setIsDateOpen(true)}
                 onFilterClick={()=>setIsFilterOpen(true)}
                 onSortClick={()=>setIsSortOpen(true)}
@@ -71,7 +78,12 @@ export function HotelListPage () {
                     <DateGuestSelector onClose={()=>setIsDateOpen(false)}/>
                 </Modal>
             )}
-            <HotelCard data={data} />
+
+            <HotelCard 
+            data={hotels}
+            fetchNextPage={fetchNextPage}
+            hasNextPage={hasNextPage}
+            />
         </div>
     )
 }

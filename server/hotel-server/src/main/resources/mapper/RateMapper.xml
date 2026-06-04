@@ -1,7 +1,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hotel.hotel_server.mapper.RateMapper">
-    <select id="findCheapestTotalRate" resultType="int">
+    <select id="findCheapestTotalRate" resultType="CheapestRateResult">
         SELECT
             SUM(r.demand_rate) as totalDemandRate,
             SUM(r.max_rate) as totalMaxRate

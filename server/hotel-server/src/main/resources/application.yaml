@@ -24,11 +24,13 @@ spring:
       - org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchDataAutoConfiguration
       - org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchRepositoriesAutoConfiguration
 mybatis:
+  #xml 위치(sql이 저장된)
   mapper-locations: classpath:mapper/*.xml
+  #칼럼명의 aliases 위치 설정
   type-aliases-package: com.hotel.hotel_server.domain, com.hotel.hotel_server.dto
+  #snake-case(DB) -> camel-case(Java) 자동매핑 설정
   configuration:
     map-underscore-to-camel-case: true
-
 
 server:
   port: 8082

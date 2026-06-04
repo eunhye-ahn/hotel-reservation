@@ -78,11 +78,11 @@ public class HotelController {
                                                          @RequestParam(required = false) String lDongSignguCd,
                                                          @RequestParam(required = false) LocalDate startDate,
                                                          @RequestParam(required = false) LocalDate endDate,
-//                                                         @RequestParam(required = false) Integer numberOfGuests,
-//                                                         @RequestParam(required = false) Integer numberOfRooms,
+                                                         @RequestParam(required = false) Integer numberOfGuests,
+                                                         @RequestParam(required = false) Integer numberOfRooms,
                                                          @RequestParam(required = false) Long cursorId){
         CursorResponse result = hotelService.searchByFilter(lDongRegnCd, lDongSignguCd, startDate, endDate,
-//                numberOfGuests, numberOfRooms,
+                numberOfGuests, numberOfRooms,
                 cursorId);
 
         return ResponseEntity

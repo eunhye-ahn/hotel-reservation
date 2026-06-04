@@ -114,8 +114,8 @@ public class HotelService {
     //조회(전체조회 / 필터조회)
     public CursorResponse searchByFilter(String lDongRegnCd,String lDongSignguCd,
                                          LocalDate startDate, LocalDate endDate,
-//                                         Integer numberOfGuests, //게스트 수 처리..........
-//                                         Integer numberOfRooms,
+                                         Integer numberOfGuests, //게스트 수 처리..........
+                                         Integer numberOfRooms,
                                          Long cursorId){
 
         //available
@@ -128,11 +128,11 @@ public class HotelService {
                 .lDongSignguCd(lDongSignguCd)
                 .startDate(startDate)
                 .endDate(endDate)
-//                .numberOfGuests(numberOfGuests)
-//                .numberOfRooms(numberOfRooms)
+                .numberOfGuests(numberOfGuests)
+                .numberOfRooms(numberOfRooms)
                 .cursorId(cursorId)
                 .today(LocalDate.now())
-                .size(PAGE_SIZE)
+                .size(PAGE_SIZE+1)
                 .build();
 
         List<Hotel> hotels = hotelMapper.findByHotelFilter(param);

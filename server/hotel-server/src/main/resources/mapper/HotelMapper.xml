@@ -7,6 +7,7 @@
         JOIN room_type rt ON rt.hotel_id = h.id
         JOIN room_type_inventory i ON i.room_type_id = rt.id
         <where>
+            <!-- 날짜필터 : 없으면 오늘 기준 조회 (예약가능여부 판단 X) -->
             <choose>
                 <when test="startDate != null and endDate != null">
                     AND i.date BETWEEN #{startDate} AND #{endDate}
@@ -15,8 +16,21 @@
                     AND i.date = #{today}
                 </otherwise>
             </choose>
+
+            <!-- 지역필터 -->
+            <if test="lDongRegnCd != null and lDongRegnCd != ''">
+                AND h.l_dong_regn_cd = #{lDongRegnCd}
+            </if>
+            <if test="lDongSignguCd != null and lDongSignguCd != ''">
+                AND h.l_dong_signgu_cd = #{lDongSignguCd}
+            </if>
+
+            <!--커서 페이지네이션-->
+            <if test="cursorId != null">
+                AND h.id > #{cursorId}
+            </if>
         </where>
         ORDER BY h.id ASC
-        LIMIT #{size}+1
+        LIMIT #{size}
     </select>
 </mapper>

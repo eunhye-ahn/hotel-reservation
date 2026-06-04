@@ -24,12 +24,14 @@ export const signUp = (request: SignUpRequest) => {
     return reservationApi.post<AccessTokenResponse>("/auth/signUp", request);
 }
 
+//호텔전체조회
 export const getHotels = (cursorId?: number) => {
     return reservationApi.get<CursorResponse>("/hotels",{
         params: {cursorId}
     })
 }
 
+//호텔필터조회
 export const getHotelsByFilter = (lDongRegnCd?: string, lDongSignguCd?: string, startDate?:string, endDate?:string, numberOfGuests?:number, numberOfRooms?:number,cursorId: number =0) => {
     return reservationApi.get<CursorResponse>("/hotels",{
         params: {lDongRegnCd, lDongSignguCd, 
