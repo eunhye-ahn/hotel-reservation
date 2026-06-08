@@ -28,6 +28,7 @@ export const Header = () => {
                     : <span onClick={() => navigate("/login")}>Login</span>
                 }
                 <span onClick={() => navigate("/mypage")}>Mypage</span>
+                <span onClick={()=> navigate("/recent-product/list")}></span>
             </nav>
         </header>
     )

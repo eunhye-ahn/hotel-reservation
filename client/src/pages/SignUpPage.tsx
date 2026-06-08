@@ -19,6 +19,7 @@ export const SignUpPage = () => {
         mutationFn: signUp,
         onSuccess: (res)=>{
             setAccessToken(res.data.accessToken)
+            navigate("/")
             return <NotFoundPage />
         },
         onError : (err: any)=>{

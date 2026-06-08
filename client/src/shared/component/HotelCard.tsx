@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router";
 import type { CursorResponse, hotelResponse } from "../type/hotel"
+import { useRecentHotelStore } from "@/store/useRecentHotelStore";
 
 interface HotelCardProps {
     data: hotelResponse[];
@@ -9,6 +10,7 @@ interface HotelCardProps {
 
 export const HotelCard = ({data}: HotelCardProps) => {
 const navigate = useNavigate();
+const {saveRecentHotel} = useRecentHotelStore();
 
     return (
         <div className="hotel-list">
@@ -17,7 +19,19 @@ const navigate = useNavigate();
                 <div
                     key={hotel.hotelId}
                     className="hotel-card"
-                    onClick={() => navigate(`/hotels/${hotel.hotelId}`)}
+                    onClick={() => {
+                        saveRecentHotel({
+                            hotelId: hotel.hotelId,
+                            name: hotel.name,
+                            imageUrl: hotel.imageUrl,
+                            address: hotel.address,
+                            checkInTime: hotel.checkInTime,
+                            maxRate: hotel.maxRate,
+                            demandRate: hotel.demandRate,
+                            discountRate: hotel.discountRate,
+                        })
+                        navigate(`/hotels/${hotel.hotelId}`)
+                }}
                 >
                     <img className="hotel-img" src={hotel.imageUrl} />
                     <p className="hotel-name">{hotel.name}</p>

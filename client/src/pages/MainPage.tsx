@@ -9,11 +9,12 @@ import { RegionSelector } from '@/shared/component/RegionSelector';
 import { Modal } from '@/shared/component/Modal';
 import { useRegionStore } from '@/store/useRegionStore';
 import { HotelCard } from '@/shared/component/HotelCard';
+import '@/pages/MainPage.css'
 
 //호텔정보페이지
 export const MainPage = () => {
     const navigate = useNavigate();
-    const {setRegion, regionCode, subRegionCode, displayName, resetRegion} = useRegionStore();
+    const {setRegion, regionCode, subRegionCode, displayName, resetRegion, recentRegions, saveRecentRegion, removeRecentRegion} = useRegionStore();
     const [isOpen, setIsOpen] = useState(false);
 
     /**
@@ -39,6 +40,7 @@ export const MainPage = () => {
         const newRegionCode = region.code;
         const newSubRegionCode = subRegion?.code;
         setRegion(getDisplayName(newRegionCode, newSubRegionCode), newRegionCode, newSubRegionCode);
+        saveRecentRegion(region, subRegion)
         setIsOpen(false);
 
         const today = new Date().toLocaleDateString('en-CA')
@@ -52,7 +54,7 @@ export const MainPage = () => {
     return (
         <div>
             <div className="search-wrap">
-                <h3 className='search-title'>어디로 갈까요?</h3>
+                <h2 className='search-title'>어디로 갈까요?</h2>
                 <div className='search-row'>
                     <button onClick={()=> setIsOpen(true)}
                         className='region-btn'>
@@ -60,7 +62,20 @@ export const MainPage = () => {
                     </button>
                     <button  className="nearby-btn">내주변</button>
                 </div>
+                <div className='recent-wrap'>
+                <h3 className='recent-label'>최근 선택 지역</h3>
+                <div className='recent-list'>
+                    {recentRegions.map((r)=>(
+                        <span key={r.code} className='recent-tag'>
+                            {r.subRegion?.name ?? r.name}
+                            <button className='recent-remove' 
+                            onClick={()=>removeRecentRegion(r.code)}>X</button>
+                        </span>
+                    ))}
+                </div>
+                </div>
             </div>
+            
 
             {isOpen && (
                 <div>
