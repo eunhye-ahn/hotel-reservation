@@ -43,6 +43,13 @@
         </choose>
         ) i ON i.room_type_id = rt.id
         <where>
+            <!--검색어 es결과반환-->
+            <if test="hotelIds != null and !hotelIds.isEmpty()">
+                h.id IN
+                <foreach collection="hotelIds" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
             <!-- 지역필터 -->
             <if test="lDongRegnCd != null and lDongRegnCd != ''">
                 AND h.l_dong_regn_cd = #{lDongRegnCd}

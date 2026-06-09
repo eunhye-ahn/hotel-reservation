@@ -31,11 +31,23 @@ export const getHotels = (cursorId?: number) => {
     })
 }
 
+/**
+ * 
+ * 
+// 순서 기반 - q 자리 undefined로 채워야 함
+getHotelsByFilter(undefined, regionCode, ...)
+
+// 객체 기반 - q 그냥 생략
+getHotelsByFilter({ lDongRegnCd: regionCode, ... })
+
+=> 객체기반으로 변경작업필요
+ */
 //호텔필터조회
-export const getHotelsByFilter = (lDongRegnCd?: string, lDongSignguCd?: string, lclsSystm2?: string,
+export const getHotelsByFilter = (q?: string, lDongRegnCd?: string, lDongSignguCd?: string, lclsSystm2?: string,
     startDate?: string, endDate?: string, numberOfGuests?: number, numberOfRooms?: number, cursorId: number = 0) => {
     return reservationApi.get<CursorResponse>("/hotels", {
         params: {
+            q,
             lDongRegnCd, lDongSignguCd, lclsSystm2,
             startDate,
             endDate,

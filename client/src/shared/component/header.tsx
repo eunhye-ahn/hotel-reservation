@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom"
 import './header.css'
 import { useAuthStore } from "@/store/useAuthStore"
 import { logout } from "@/api/reservation-service"
+import { SearchBar } from "./SearchBar"
 
 export const Header = () => {
     const navigate = useNavigate()
@@ -20,7 +21,7 @@ export const Header = () => {
             <span className="header-logo" onClick={() => navigate("/")}>
                 hotel_reserve
             </span>
-
+            <SearchBar />
             <nav className="header-nav">
                 <span onClick={() => navigate("/")}>Home</span>
                 {accessToken ?
@@ -28,7 +29,7 @@ export const Header = () => {
                     : <span onClick={() => navigate("/login")}>Login</span>
                 }
                 <span onClick={() => navigate("/mypage")}>Mypage</span>
-                <span onClick={()=> navigate("/recent-product/list")}></span>
+                <span onClick={()=> navigate("/recent-hotel/list")}>최근본상품</span>
             </nav>
         </header>
     )

@@ -4,10 +4,12 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Builder
 public class HotelSearchParam {
+    private List<Long> hotelIds;    //텍스트 검색 결과
     private String lDongRegnCd; //시도코드
     private String lDongSignguCd;  //시군구코드
     private String lclsSystm2;  //숙박유형코드

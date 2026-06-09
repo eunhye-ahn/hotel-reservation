@@ -4,7 +4,7 @@ import com.hotel.hotel.domain.HotelDocument;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Repository;
 
-//@Repository
+@Repository
 public interface HotelSearchRepository extends ElasticsearchRepository<HotelDocument, String> {
 
 }

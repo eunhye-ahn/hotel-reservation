@@ -4,11 +4,12 @@ import { useRecentHotelStore } from "@/store/useRecentHotelStore";
 
 interface HotelCardProps {
     data: hotelResponse[];
-    fetchNextPage: ()=> void;
-    hasNextPage: boolean;
+    fetchNextPage?: ()=> void;
+    hasNextPage?: boolean;
+    onRemove?: (hotelId: number) => void
 }
 
-export const HotelCard = ({data}: HotelCardProps) => {
+export const HotelCard = ({data, onRemove}: HotelCardProps) => {
 const navigate = useNavigate();
 const {saveRecentHotel} = useRecentHotelStore();
 
@@ -33,6 +34,14 @@ const {saveRecentHotel} = useRecentHotelStore();
                         navigate(`/hotels/${hotel.hotelId}`)
                 }}
                 >
+                    {onRemove && (
+                        <button className="hotel-remove-btn" onClick={(e)=>{
+                            e.stopPropagation();
+                            onRemove(hotel.hotelId)
+                        }}>
+                            x
+                        </button>
+                    )}
                     <img className="hotel-img" src={hotel.imageUrl} />
                     <p className="hotel-name">{hotel.name}</p>
                     <p className="hotel-address">{hotel.address}</p>

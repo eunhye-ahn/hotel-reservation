@@ -16,6 +16,7 @@ export function HotelListPage() {
     const [searchParams, setSearchParams] = useSearchParams();
     const regionCode = searchParams.get("lDongRegnCd") ?? "";
     const subRegionCode = searchParams.get("lDongSignguCd") ?? "";
+    const q = searchParams.get("q") ?? "";
 
     const today = new Date().toLocaleDateString('en-CA')
     const tomorrow = new Date(Date.now() + 86400000).toLocaleDateString('en-CA');
@@ -37,8 +38,9 @@ export function HotelListPage() {
     const { displayName, resetRegion } = useRegionStore();
 
     const { data, isLoading, isError, fetchNextPage, hasNextPage } = useInfiniteQuery<CursorResponse>({
-        queryKey: ["hotels", regionCode, subRegionCode, checkIn, checkOut, numberOfGuests, numberOfRooms, lclsSystm2],     //지역바뀌면 자동재조회
+        queryKey: ["hotels", q, regionCode, subRegionCode, checkIn, checkOut, numberOfGuests, numberOfRooms, lclsSystm2],     //지역바뀌면 자동재조회
         queryFn: () => getHotelsByFilter(
+            q || undefined,
             regionCode ?? "",
             subRegionCode ?? "",
             lclsSystm2 ?? "",

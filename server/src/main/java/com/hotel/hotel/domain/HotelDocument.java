@@ -51,32 +51,12 @@ public class HotelDocument {
     @Field(type=FieldType.Text, analyzer = "nori_analyzer")
     private String address; //부분 검색
 
-    //시도 파싱 필요 <<필터링을 위해 keyword
-    @Field(type = FieldType.Keyword)
-    private String lDongRegnCd; //시도필터링
-
-    @Field(type = FieldType.Keyword)
-    private String lDongSignguCd;   //시군구 필터링
-
-    @Field(type = FieldType.Keyword)
-    private String lclsSystm2;      //숙박유형 필터링
-
-    @GeoPointField
-    private GeoPoint point;    //위치기반검색
-
     public static HotelDocument from(Hotel hotel){
         return HotelDocument.builder()
                 .id(hotel.getContentId().toString())
                 .hotelId(hotel.getId())
                 .hotelName(hotel.getName())
                 .address(hotel.getAddress())
-                .lDongRegnCd(hotel.getLDongRegnCd())
-                .lDongSignguCd(hotel.getLDongSignguCd())
-                .lclsSystm2(hotel.getLclsSystm2())
-                .point(hotel.getLatitude() != null && hotel.getLongitude() != null
-                        ? new GeoPoint(hotel.getLatitude(), hotel.getLongitude())
-                        : null)
                 .build();
-
     }
 }

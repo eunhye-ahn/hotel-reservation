@@ -8,13 +8,11 @@ import com.hotel.hotel.domain.RoomTypeInventory;
 import com.hotel.hotel.dto.*;
 import com.hotel.hotel.mapper.HotelMapper;
 import com.hotel.hotel.mapper.RateMapper;
-import com.hotel.hotel.repository.HotelRepository;
-import com.hotel.hotel.repository.RateRepository;
-import com.hotel.hotel.repository.RoomTypeInventoryRepository;
-import com.hotel.hotel.repository.RoomTypeRepository;
+import com.hotel.hotel.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -30,6 +28,7 @@ public class HotelService {
     private final RoomTypeInventoryRepository roomTypeInventoryRepository;
     private final RateMapper rateMapper;
     private final HotelMapper hotelMapper;
+    private final HotelSearchQueryRepository hotelSearchQueryRepository;
 
     LocalDate today = LocalDate.now();
 
@@ -113,12 +112,19 @@ public class HotelService {
     }
 
     //조회(전체조회 / 필터조회)
-    public CursorResponse searchByFilter(String lDongRegnCd,String lDongSignguCd,
+    public CursorResponse searchByFilter(String q,
+                                         String lDongRegnCd,String lDongSignguCd,
                                          String lclsSystm2,
                                          LocalDate startDate, LocalDate endDate,
                                          Integer numberOfGuests, //게스트 수 처리..........
                                          Integer numberOfRooms,
                                          Long cursorId){
+
+        //검색어 있는 경우
+        List<Long> hotelIds = null;
+        if(StringUtils.hasText(q)){
+            hotelIds = hotelSearchQueryRepository.search(q);
+        }
 
         //available
         //totalDays 계산
@@ -129,6 +135,7 @@ public class HotelService {
         //List<Hotel> hotels = hotelRepository.findByRegionWithCursor(lDongRegnCd, lDongSignguCd, int numberOfGuests, cursorId, PAGE_SIZE);
         //여기서 mybatis로 동적쿼리 필터링으로 변경할 것
         HotelSearchParam param = HotelSearchParam.builder()
+                .hotelIds(hotelIds)
                 .lDongRegnCd(lDongRegnCd)
                 .lDongSignguCd(lDongSignguCd)
                 .lclsSystm2(lclsSystm2)
