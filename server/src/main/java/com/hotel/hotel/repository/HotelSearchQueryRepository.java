@@ -1,7 +1,9 @@
 package com.hotel.hotel.repository;
 
+import co.elastic.clients.elasticsearch._types.query_dsl.TextQueryType;
 import com.hotel.hotel.domain.HotelDocument;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.client.elc.NativeQuery;
@@ -14,15 +16,19 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 
 /**
+ * [쿼리] : ElasticsearchOperations 사용
+ *
  * repository에서 query 빌드
  *      => service는 비즈니스 로직만 담당하도록 책임 분리
  *  es(검색) => id 반환 => querydsl(메인) -가격/인원/예약 가능여부
  */
 @Repository
 @RequiredArgsConstructor
+@Slf4j
 public class HotelSearchQueryRepository {
     private final ElasticsearchOperations operations;
 
+    //검색
     public List<Long> search(String q) {
         NativeQuery query = NativeQuery.builder()
                 .withQuery(qe -> qe
@@ -53,6 +59,31 @@ public class HotelSearchQueryRepository {
                 .map(hit -> hit.getContent().getHotelId())
                 .toList();
 
+        log.info("es result hotelIds: {}", hotelIds);
+
         return hotelIds;
+    }
+
+    //자동완성
+    public List<String> autocomplete(String q){
+        NativeQuery query = NativeQuery.builder()
+                .withQuery(qe -> qe
+                        .multiMatch(mm-> mm
+                                .query(q)
+                                .type(TextQueryType.BoolPrefix)
+                                .fields("hotelName",
+                                        "hotelName.autocomplete",
+                                        "hotelName.autocomplete._2gram",
+                                        "hotelName.autocomplete._3gram")
+                        )
+                )
+                .withPageable(PageRequest.of(0,8))
+                .build();
+        return operations.search(query,HotelDocument.class)
+                .getSearchHits()
+                .stream()
+                .map((hit)-> hit.getContent().getHotelName())
+                .distinct()
+                .toList();
     }
 }

@@ -95,5 +95,11 @@ export const reservationInfo = (reservationKey: string) => {
 }
 
 export const getReservationStatus = (reservationKey: string) => {
-    return reservationApi.get<String>(`/reservations/${reservationKey}/status`)
+    return reservationApi.get<string>(`/reservations/${reservationKey}/status`)
+}
+
+export const getSearchAutocomplete = (q?: string) => {
+    return reservationApi.get<string[]>("/hotels/autocomplete", {
+        params : {q}
+    })
 }

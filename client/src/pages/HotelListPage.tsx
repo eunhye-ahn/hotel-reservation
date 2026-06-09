@@ -69,7 +69,7 @@ export function HotelListPage() {
 
     return (
         <div className="hotel-list-page">
-            <h3>{displayName}</h3>
+            {displayName && <h3>{displayName}</h3>}
             <SearchFilterBar
                 checkIn={checkIn}
                 checkOut={checkOut}

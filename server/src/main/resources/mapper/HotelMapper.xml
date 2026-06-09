@@ -43,9 +43,10 @@
         </choose>
         ) i ON i.room_type_id = rt.id
         <where>
+            1=1
             <!--검색어 es결과반환-->
             <if test="hotelIds != null and !hotelIds.isEmpty()">
-                h.id IN
+                AND h.id IN
                 <foreach collection="hotelIds" item="id" open="(" separator="," close=")">
                     #{id}
                 </foreach>

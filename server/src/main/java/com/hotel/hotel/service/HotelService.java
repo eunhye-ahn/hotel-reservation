@@ -11,6 +11,7 @@ import com.hotel.hotel.mapper.RateMapper;
 import com.hotel.hotel.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -20,6 +21,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class HotelService {
     private final int PAGE_SIZE = 21;
     private final HotelRepository hotelRepository;
@@ -125,6 +127,7 @@ public class HotelService {
         if(StringUtils.hasText(q)){
             hotelIds = hotelSearchQueryRepository.search(q);
         }
+        log.info("es result hotelIds: {}", hotelIds);
 
         //available
         //totalDays 계산
@@ -175,5 +178,13 @@ public class HotelService {
                 endDate
         );
         return HotelResponse.from(hotel, rate);
+    }
+
+
+
+    //ES
+    //자동완성
+    public List<String> autocomplete(String q){
+        return hotelSearchQueryRepository.autocomplete(q);
     }
 }

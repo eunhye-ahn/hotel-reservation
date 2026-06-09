@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -85,6 +86,16 @@ public class HotelController {
         CursorResponse result = hotelService.searchByFilter(q, lDongRegnCd, lDongSignguCd, lclsSystm2, startDate, endDate,
                 numberOfGuests, numberOfRooms,
                 cursorId);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(result);
+    }
+
+    //자동완성
+    @GetMapping("/autocomplete")
+    public ResponseEntity<List<String>> getSearchAutocomplete(@RequestParam(required = false) String q){
+        List<String> result = hotelService.autocomplete(q);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

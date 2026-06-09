@@ -35,7 +35,7 @@ import org.springframework.data.elasticsearch.core.geo.GeoPoint;
  *     @Column(nullable = false)
  *     private LocalTime checkOutTime;
  */
-//@Document(indexName = "hotels")
+@Document(indexName = "hotels")
 @Getter
 @Builder
 public class HotelDocument {
@@ -53,7 +53,7 @@ public class HotelDocument {
 
     public static HotelDocument from(Hotel hotel){
         return HotelDocument.builder()
-                .id(hotel.getContentId().toString())
+                .id(hotel.getId().toString())
                 .hotelId(hotel.getId())
                 .hotelName(hotel.getName())
                 .address(hotel.getAddress())
