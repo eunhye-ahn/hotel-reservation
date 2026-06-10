@@ -1,17 +1,16 @@
 package com.hotel.payment.service;
 
-import com.hotel.common.exception.CustomException;
-import com.hotel.common.exception.ErrorCode;
+import com.hotel.payment.client.ReservationClient;
 import com.hotel.payment.client.TossPaymentClient;
 import com.hotel.payment.domain.PaymentEvent;
 import com.hotel.payment.domain.PaymentOrder;
 import com.hotel.payment.domain.PaymentOrderStatus;
 import com.hotel.payment.dto.*;
+import com.hotel.payment.exception.CustomException;
+import com.hotel.payment.exception.ErrorCode;
+import com.hotel.payment.kafka.PaymentEventProducer;
 import com.hotel.payment.repository.PaymentEventRepository;
 import com.hotel.payment.repository.PaymentOrderRepository;
-import com.hotel.reservation.domain.PaymentStatus;
-import com.hotel.reservation.domain.Reservation;
-import com.hotel.reservation.repository.ReservationRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +18,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Base64;
-import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -46,38 +44,27 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Service
 public class PaymentService {
+    private final ReservationClient reservationClient;
     private final PaymentEventRepository paymentEventRepository;
     private final PaymentOrderRepository paymentOrderRepository;
     private final TossPaymentClient tossPaymentClient;
-    private final ReservationRepository reservationRepository;
+    private final PaymentEventProducer paymentEventProducer;
 
     @Value("${psp.toss.secret-key}")
     private String secretKey;
 
     @Transactional
-    public PaymentPrepareResponse preparePayment(String reservationKey, String orderId, HttpServletRequest request){
+    public PaymentPrepareResponse preparePayment(String reservationKey, HttpServletRequest request){
         //예약 유효성 확인
-        Reservation reservation = reservationRepository.findByReservationKey(reservationKey)
-                .orElseThrow();
+        ReservationFeignResponse reservation = reservationClient.getReservationForPayment(reservationKey);
+
 
         //paymentStatus PENDING 확인
-        if(!reservation.getPaymentStatus().equals(PaymentStatus.PENDING)){
+        if(!reservation.getPaymentStatus().equals("PENDING")){
             throw new IllegalStateException("결제 가능한 예약이 아닙니다.");
         }
 
-        //기존 paymentEvent있으면 재사용 :결제창닫고 다시 결제를 열 경우 예약ID unique 방지
-        Optional<PaymentEvent> existingEvent = paymentEventRepository.findByReservationId(reservation.getId());
-        if(existingEvent.isPresent()){
-            PaymentOrder existingOrder = paymentOrderRepository.findByCheckoutId(existingEvent.get().getCheckoutId())
-                    .orElseThrow();
-            return PaymentPrepareResponse.builder()
-                    .paymentOrderId(existingOrder.getPaymentOrderId())
-                    .amount(existingOrder.getAmount())
-                    .userId(reservation.getUser().getId())
-                    .build();
-        }
-
-        //checkoutId 가져오기 (클라-서버 멱등키)
+        //checkoutId 생성 (클라-서버 멱등키)
         String checkoutId = request.getHeader("Idempotency-Key");
 
         if(checkoutId == null) {
@@ -90,9 +77,8 @@ public class PaymentService {
         //PaymentEvent 저장
         PaymentEvent paymentEvent = PaymentEvent.builder()
                 .checkoutId(checkoutId)
-                .userId(reservation.getUser().getId())
-                .orderId(orderId)
-                .reservationId(reservation.getId())
+                .userId(reservation.getUserId())
+                .reservationId(reservation.getReservationId())
                 .reservationKey(reservationKey)
                 .pspType("TOSS")
                 .build();
@@ -103,8 +89,8 @@ public class PaymentService {
                 .builder()
                 .paymentOrderId(paymentOrderId)
                 .checkoutId(checkoutId)
-                .sellerAccount(reservation.getHotel().getSellerAccount())
-                .amount(reservation.getTotalPrice())
+                .sellerAccount(reservation.getSellerAccount())
+                .amount(reservation.getAmount())
                 .paymentOrderStatus(PaymentOrderStatus.NOT_STARTED)
                 .build();
         paymentOrderRepository.save(paymentOrder);
@@ -113,7 +99,7 @@ public class PaymentService {
         return PaymentPrepareResponse
                 .builder()
                 .paymentOrderId(paymentOrderId)
-                .amount(reservation.getTotalPrice())
+                .amount(reservation.getAmount())
                 .build();
     }
 
@@ -135,8 +121,7 @@ public class PaymentService {
             throw new CustomException(ErrorCode.PAYMENT_ALREADY_PROCESSED);
         }
 
-        //금액위변조 감지
-        //db에 저장된 amount와 클라이언트가 보낸 amount 비교
+        //금액 위조검증
         if(paymentOrder.getAmount() != request.getAmount()){
             throw new CustomException(ErrorCode.PAYMENT_AMOUNT_MISMATCH);
         }
