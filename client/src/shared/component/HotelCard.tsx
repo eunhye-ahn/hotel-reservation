@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router";
 import type { CursorResponse, hotelResponse } from "../type/hotel"
 import { useRecentHotelStore } from "@/store/useRecentHotelStore";
+import { useEffect, useRef } from "react";
 
 interface HotelCardProps {
     data: hotelResponse[];
@@ -9,9 +10,24 @@ interface HotelCardProps {
     onRemove?: (hotelId: number) => void
 }
 
-export const HotelCard = ({data, onRemove}: HotelCardProps) => {
+export const HotelCard = ({data, fetchNextPage, hasNextPage, onRemove}: HotelCardProps) => {
 const navigate = useNavigate();
 const {saveRecentHotel} = useRecentHotelStore();
+
+const observerRef = useRef<HTMLDivElement>(null)
+
+ useEffect(() => {
+    const target = observerRef.current;
+    if(!target) return;
+    const observer = new IntersectionObserver((entries)=>{
+        if(entries[0].isIntersecting && hasNextPage){
+            fetchNextPage?.()
+        }
+    })
+    observer.observe(target)
+    //클린업
+    return ()=> observer.disconnect()
+},[fetchNextPage, hasNextPage])
 
     return (
         <div className="hotel-list">
@@ -61,6 +77,9 @@ const {saveRecentHotel} = useRecentHotelStore();
                     </p>
                 </div>
             ))}
+
+            {/* 스크롤 감지 타겟  */}
+            <div ref={observerRef} style={{height:"1px"}}></div>
         </div>
     );
 }

@@ -39,7 +39,7 @@ export function HotelListPage() {
 
     const { data, isLoading, isError, fetchNextPage, hasNextPage } = useInfiniteQuery<CursorResponse>({
         queryKey: ["hotels", q, regionCode, subRegionCode, checkIn, checkOut, numberOfGuests, numberOfRooms, lclsSystm2],     //지역바뀌면 자동재조회
-        queryFn: () => getHotelsByFilter(
+        queryFn: ({pageParam}) => getHotelsByFilter(
             q || undefined,
             regionCode ?? "",
             subRegionCode ?? "",
@@ -48,7 +48,7 @@ export function HotelListPage() {
             checkOut,
             numberOfGuests,
             numberOfRooms,
-            0
+            pageParam as number ?? 0
         ).then((res) => res.data),
         initialPageParam: undefined,
         getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined

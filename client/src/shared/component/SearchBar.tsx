@@ -1,7 +1,7 @@
 import { getSearchAutocomplete } from "@/api/reservation-service";
 import { Search } from "lucide-react";
-import { useRef, useState } from "react"
-import { useNavigate } from "react-router";
+import { useEffect, useRef, useState } from "react"
+import { useLocation, useNavigate } from "react-router";
 
 export const SearchBar = () => {
     const [q, setQ] = useState<string>();
@@ -9,11 +9,21 @@ export const SearchBar = () => {
     const [suggestions, setSuggestions] = useState<string[]>([])
     const timerRef = useRef<ReturnType<typeof setTimeout>>(0)
     const [open, setOpen] = useState<boolean>(false)
+    const location = useLocation()
 
+    useEffect(() => {
+        if (!location.pathname.startsWith("/hotels")) {
+        setQ("")
+        setSuggestions([])
+        setOpen(false)
+        }
+    }, [location.pathname])
 
     const handleSearch =(keyword?: string)=>{
         const target = keyword ?? q
         if(!target?.trim()) return;
+        setOpen(false)
+        setSuggestions([])
         navigate(`/hotels/list?q=${target}`)
     }
 
