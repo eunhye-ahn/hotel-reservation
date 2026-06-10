@@ -18,6 +18,7 @@ import { useAuthStore } from './store/useAuthStore'
 import PaymentSuccess from './pages/PaymentSuccess'
 import PaymentFail from './pages/PaymentFail'
 import { HotelListPage } from './pages/HotelListPage'
+import { RecentHotelPage } from './pages/RecentHotelPage'
 
 /**
  * [tanstack query 흐름] : 서버 상태관리 라이브러리 : 비동기데이터
@@ -64,6 +65,7 @@ function App() {
             {/* <Route path="/hotels/:hotelId/rooms/:roomTypeId" element={<ReservationPage />} /> */}
             <Route path="/reservations/:reservationKey/reservation-info" element={<ReservationPage />} />
             <Route path="/mypage" element={<MyPage />} />
+            <Route path="/recent-hotel/list" element={<RecentHotelPage />} />
             <Route path="/hotels/list" element={<HotelListPage />} />
           </Route>
           <Route path="*" element={<NotFoundPage />} />

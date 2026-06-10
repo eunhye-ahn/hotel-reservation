@@ -16,6 +16,7 @@ export function HotelListPage() {
     const [searchParams, setSearchParams] = useSearchParams();
     const regionCode = searchParams.get("lDongRegnCd") ?? "";
     const subRegionCode = searchParams.get("lDongSignguCd") ?? "";
+    const q = searchParams.get("q") ?? "";
 
     const today = new Date().toLocaleDateString('en-CA')
     const tomorrow = new Date(Date.now() + 86400000).toLocaleDateString('en-CA');
@@ -37,8 +38,9 @@ export function HotelListPage() {
     const { displayName, resetRegion } = useRegionStore();
 
     const { data, isLoading, isError, fetchNextPage, hasNextPage } = useInfiniteQuery<CursorResponse>({
-        queryKey: ["hotels", regionCode, subRegionCode, checkIn, checkOut, numberOfGuests, numberOfRooms, lclsSystm2],     //지역바뀌면 자동재조회
-        queryFn: () => getHotelsByFilter(
+        queryKey: ["hotels", q, regionCode, subRegionCode, checkIn, checkOut, numberOfGuests, numberOfRooms, lclsSystm2],     //지역바뀌면 자동재조회
+        queryFn: ({pageParam}) => getHotelsByFilter(
+            q || undefined,
             regionCode ?? "",
             subRegionCode ?? "",
             lclsSystm2 ?? "",
@@ -46,7 +48,7 @@ export function HotelListPage() {
             checkOut,
             numberOfGuests,
             numberOfRooms,
-            0
+            pageParam as number ?? 0
         ).then((res) => res.data),
         initialPageParam: undefined,
         getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined
@@ -67,7 +69,7 @@ export function HotelListPage() {
 
     return (
         <div className="hotel-list-page">
-            <h3>{displayName}</h3>
+            {displayName && <h3>{displayName}</h3>}
             <SearchFilterBar
                 checkIn={checkIn}
                 checkOut={checkOut}

@@ -15,7 +15,7 @@ export const logout = () => {
 
 //새로고침,at만료 시(401반환 시 -인증실패) 호출 - 무한루프 방지
 export const reissue = () => {
-    return axios.post<AccessTokenResponse>("http://localhost:8000/api/v1/auth/reissue", null, {
+    return axios.post<AccessTokenResponse>("http://localhost:8080/api/v1/auth/reissue", null, {
         withCredentials: true
     });
 }
@@ -31,11 +31,23 @@ export const getHotels = (cursorId?: number) => {
     })
 }
 
+/**
+ * 
+ * 
+// 순서 기반 - q 자리 undefined로 채워야 함
+getHotelsByFilter(undefined, regionCode, ...)
+
+// 객체 기반 - q 그냥 생략
+getHotelsByFilter({ lDongRegnCd: regionCode, ... })
+
+=> 객체기반으로 변경작업필요
+ */
 //호텔필터조회
-export const getHotelsByFilter = (lDongRegnCd?: string, lDongSignguCd?: string, lclsSystm2?: string,
+export const getHotelsByFilter = (q?: string, lDongRegnCd?: string, lDongSignguCd?: string, lclsSystm2?: string,
     startDate?: string, endDate?: string, numberOfGuests?: number, numberOfRooms?: number, cursorId: number = 0) => {
     return reservationApi.get<CursorResponse>("/hotels", {
         params: {
+            q,
             lDongRegnCd, lDongSignguCd, lclsSystm2,
             startDate,
             endDate,
@@ -83,5 +95,11 @@ export const reservationInfo = (reservationKey: string) => {
 }
 
 export const getReservationStatus = (reservationKey: string) => {
-    return reservationApi.get<String>(`/reservations/${reservationKey}/status`)
+    return reservationApi.get<string>(`/reservations/${reservationKey}/status`)
+}
+
+export const getSearchAutocomplete = (q?: string) => {
+    return reservationApi.get<string[]>("/hotels/autocomplete", {
+        params : {q}
+    })
 }

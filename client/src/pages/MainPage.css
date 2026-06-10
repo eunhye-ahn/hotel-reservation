@@ -1,0 +1,110 @@
+/* MainPage.css */
+
+.search-wrap {
+    padding: 24px 16px;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+.search-title {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 20px;
+}
+
+/* 지역선택 버튼 + 내주변 버튼 행 */
+.search-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+/* 지역선택 버튼 */
+.region-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fff;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.region-placeholder {
+    color: #999;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.region-text {
+    color: #000;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* 내주변 버튼 */
+.nearby-btn {
+    width: 52px;
+    height: 52px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fff;
+    cursor: pointer;
+    font-size: 11px;
+    gap: 2px;
+    color: #666;
+}
+
+/* 최근 선택 지역 */
+.recent-wrap {
+    margin-top: 20px;
+}
+
+.recent-label {
+    font-size: 13px;
+    color: #999;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.recent-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+}
+
+.recent-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    font-size: 13px;
+    cursor: pointer;
+    background: #fff;
+}
+
+.recent-remove {
+    color: #999;
+    font-size: 12px;
+    border: none;
+     background: #fff;
+}
+
+.recent-remove:hover {
+    color: #333;
+}

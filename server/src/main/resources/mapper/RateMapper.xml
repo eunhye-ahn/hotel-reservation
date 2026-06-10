@@ -1,0 +1,16 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hotel.hotel.mapper.RateMapper">
+    <select id="findCheapestTotalRate" resultType="CheapestRateResult">
+        SELECT
+            SUM(r.demand_rate) as totalDemandRate,
+            SUM(r.max_rate) as totalMaxRate
+        FROM rate r
+        WHERE r.hotel_id = #{hotelId}
+            AND r.date >= #{startDate}
+            AND r.date &lt; #{endDate}
+        GROUP BY r.room_type_id
+        ORDER BY totalDemandRate ASC
+        LIMIT 1
+    </select>
+</mapper>

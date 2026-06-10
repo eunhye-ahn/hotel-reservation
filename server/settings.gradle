@@ -1,7 +1,1 @@
 rootProject.name = 'server'
-
-include 'reservation-server'
-include 'payment-server'
-include 'order-server'
-include 'api-gateway'
-include 'hotel-server'

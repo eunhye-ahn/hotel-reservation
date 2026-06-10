@@ -1,0 +1,52 @@
+spring:
+  application:
+    name: reservation-server
+  config:
+    import: optional:file:.env[.properties]
+  datasource:
+    url: jdbc:postgresql://localhost:5432/hotel_db
+    username: root
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+  sql:
+    init:
+      mode: never
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  elasticsearch:
+    uris: http://localhost:9200
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: reservation-group
+      auto-offset-reset: earliest
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+        spring.json.value.default.type: com.hotel.reservation.dto.PaymentCompletedMessage
+        spring.json.use.type.headers: false
+jwt:
+  secret: ${JWT_SECRET}
+  access-expiration: 1800000
+  refresh-expiration: 86400000
+
+mybatis:
+  #xml 위치(sql이 저장된)
+  mapper-locations: classpath:mapper/*.xml
+  #칼럼명의 aliases 위치 설정
+  type-aliases-package: com.hotel.hotel.domain, com.hotel.hotel.dto
+  #snake-case(DB) -> camel-case(Java) 자동매핑 설정
+  configuration:
+    map-underscore-to-camel-case: true
+psp:
+  toss:
+    secret-key: ${TOSS_SECRET_KEY}
+server:
+  port: 8080

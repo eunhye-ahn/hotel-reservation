@@ -1,14 +1,33 @@
 import { useNavigate } from "react-router";
 import type { CursorResponse, hotelResponse } from "../type/hotel"
+import { useRecentHotelStore } from "@/store/useRecentHotelStore";
+import { useEffect, useRef } from "react";
 
 interface HotelCardProps {
     data: hotelResponse[];
-    fetchNextPage: ()=> void;
-    hasNextPage: boolean;
+    fetchNextPage?: ()=> void;
+    hasNextPage?: boolean;
+    onRemove?: (hotelId: number) => void
 }
 
-export const HotelCard = ({data}: HotelCardProps) => {
+export const HotelCard = ({data, fetchNextPage, hasNextPage, onRemove}: HotelCardProps) => {
 const navigate = useNavigate();
+const {saveRecentHotel} = useRecentHotelStore();
+
+const observerRef = useRef<HTMLDivElement>(null)
+
+ useEffect(() => {
+    const target = observerRef.current;
+    if(!target) return;
+    const observer = new IntersectionObserver((entries)=>{
+        if(entries[0].isIntersecting && hasNextPage){
+            fetchNextPage?.()
+        }
+    })
+    observer.observe(target)
+    //클린업
+    return ()=> observer.disconnect()
+},[fetchNextPage, hasNextPage])
 
     return (
         <div className="hotel-list">
@@ -17,8 +36,28 @@ const navigate = useNavigate();
                 <div
                     key={hotel.hotelId}
                     className="hotel-card"
-                    onClick={() => navigate(`/hotels/${hotel.hotelId}`)}
+                    onClick={() => {
+                        saveRecentHotel({
+                            hotelId: hotel.hotelId,
+                            name: hotel.name,
+                            imageUrl: hotel.imageUrl,
+                            address: hotel.address,
+                            checkInTime: hotel.checkInTime,
+                            maxRate: hotel.maxRate,
+                            demandRate: hotel.demandRate,
+                            discountRate: hotel.discountRate,
+                        })
+                        navigate(`/hotels/${hotel.hotelId}`)
+                }}
                 >
+                    {onRemove && (
+                        <button className="hotel-remove-btn" onClick={(e)=>{
+                            e.stopPropagation();
+                            onRemove(hotel.hotelId)
+                        }}>
+                            x
+                        </button>
+                    )}
                     <img className="hotel-img" src={hotel.imageUrl} />
                     <p className="hotel-name">{hotel.name}</p>
                     <p className="hotel-address">{hotel.address}</p>
@@ -38,6 +77,9 @@ const navigate = useNavigate();
                     </p>
                 </div>
             ))}
+
+            {/* 스크롤 감지 타겟  */}
+            <div ref={observerRef} style={{height:"1px"}}></div>
         </div>
     );
 }
