@@ -4,11 +4,15 @@ import co.elastic.clients.elasticsearch._types.query_dsl.TextQueryType;
 import com.hotel.hotel.domain.HotelDocument;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bouncycastle.math.raw.Nat;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.client.elc.NativeQuery;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHit;
+import org.springframework.data.elasticsearch.core.SearchHitSupport;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -59,8 +63,6 @@ public class HotelSearchQueryRepository {
                 .map(hit -> hit.getContent().getHotelId())
                 .toList();
 
-        log.info("es result hotelIds: {}", hotelIds);
-
         return hotelIds;
     }
 
@@ -85,5 +87,34 @@ public class HotelSearchQueryRepository {
                 .map((hit)-> hit.getContent().getHotelName())
                 .distinct()
                 .toList();
+    }
+
+    //최근 본 호텔
+    public List<Long> searchSimilar(String lclsSystm2, String lDongRegnCd, String excludeId){
+        NativeQuery query = NativeQuery.builder()
+                .withQuery(q -> q
+                        .bool(b->b
+                                .must(m->m.term(
+                                        t->t.field("lclsSysm2").value(lclsSystm2)))
+                                .must(m->m.term(
+                                        t->t.field("lDongRegnCd").value(lDongRegnCd)))
+                                .mustNot(mn->mn.term(t->t.field("_id").value(excludeId)))
+                        ))
+                .withSort(Sort.by(
+                        Sort.Order.desc("_score"),
+                        Sort.Order.asc("hotelId")
+                ))
+                .withPageable(PageRequest.of(0, 30))
+                .build();
+
+        SearchHits<HotelDocument> hits = operations.search(query, HotelDocument.class);
+        List<SearchHit<HotelDocument>> hitList = hits.getSearchHits();
+
+
+        List<Long> hotelIds = hitList.stream()
+                .map(hit -> hit.getContent().getHotelId())
+                .toList();
+
+        return hotelIds;
     }
 }

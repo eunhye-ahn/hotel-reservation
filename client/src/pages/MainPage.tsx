@@ -1,7 +1,7 @@
 import '@/shared/component/HotelCard.css';
 import { useNavigate } from "react-router";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import { getHotels } from "@/api/reservation-service";
+import { getHotels, getSimilarHotel } from "@/api/reservation-service";
 import type { CursorResponse} from '@/shared/type/hotel';
 import { useState } from 'react';
 import { getDisplayName, type Region, type SubRegion } from '@/constants/Region';
@@ -10,6 +10,7 @@ import { Modal } from '@/shared/component/Modal';
 import { useRegionStore } from '@/store/useRegionStore';
 import { HotelCard } from '@/shared/component/HotelCard';
 import '@/pages/MainPage.css'
+import { useRecentHotelStore } from '@/store/useRecentHotelStore';
 
 //호텔정보페이지
 export const MainPage = () => {

@@ -12,6 +12,9 @@ import com.hotel.hotel.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -186,5 +189,19 @@ public class HotelService {
     //자동완성
     public List<String> autocomplete(String q){
         return hotelSearchQueryRepository.autocomplete(q);
+    }
+
+    //최근 호텔
+    public Page<HotelResponse> getSimilarHotel(int page, Long hotelId){
+        //id받고
+        Hotel hotel = hotelRepository.findById(hotelId)
+                .orElseThrow(()->new CustomException(ErrorCode.HOTEL_NOT_FOUND));
+        //id로 비슷한 호텔 es 검색 후 id반환
+        List<Long> hotelIds = hotelSearchQueryRepository.searchSimilar(hotel.getLclsSystm2(), hotel.getLDongRegnCd(), hotel.getId().toString());
+        //반환된 id로 page로 묶어서 호텔카드 정보 반환
+        Pageable pageable = PageRequest.of(page,6);
+        Page<Hotel> hotels = hotelRepository.findByIn(hotelIds, pageable);
+
+        return hotels.map(this::toResponse);
     }
 }

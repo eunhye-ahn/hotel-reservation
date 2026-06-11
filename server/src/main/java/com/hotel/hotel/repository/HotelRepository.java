@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 
 
 import java.time.LocalDate;
+import java.util.List;
 
 
 public interface HotelRepository extends JpaRepository<Hotel,Long>, HotelRepositoryCustom {
@@ -26,4 +27,5 @@ public interface HotelRepository extends JpaRepository<Hotel,Long>, HotelReposit
     boolean existsByAddress(String address);
 
 
+    Page<Hotel> findByIn(List<Long> hotelIds, Pageable pageable);
 }

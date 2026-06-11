@@ -3,6 +3,7 @@ package com.hotel.hotel.controller;
 import com.hotel.hotel.dto.*;
 import com.hotel.hotel.service.HotelService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -96,6 +97,17 @@ public class HotelController {
     @GetMapping("/autocomplete")
     public ResponseEntity<List<String>> getSearchAutocomplete(@RequestParam(required = false) String q){
         List<String> result = hotelService.autocomplete(q);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(result);
+    }
+
+    //최근본 호텔 기준
+    @GetMapping("/similarHotel")
+    public ResponseEntity<?> getSimilarHotel(@RequestParam(required = false, defaultValue = "0") int page,
+                                             @RequestParam(required = true) Long hotelId){
+        Page<HotelResponse> result = hotelService.getSimilarHotel(page, hotelId);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
