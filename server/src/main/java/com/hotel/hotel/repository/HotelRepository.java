@@ -26,6 +26,10 @@ public interface HotelRepository extends JpaRepository<Hotel,Long>, HotelReposit
 
     boolean existsByAddress(String address);
 
-
-    Page<Hotel> findByIn(List<Long> hotelIds, Pageable pageable);
+    @Query("SELECT h FROM Hotel h WHERE h.lclsSystm2 = :lclsSystm2 AND h.lDongRegnCd=:lDongRegnCd AND h.id != :excludeId")
+    Page<Hotel> findByLclsSystm2AndLDongRegnCdAndIdNot(
+            @Param("lclsSystm2") String lclsSystm2,
+            @Param("lDongRegnCd") String lDongRegnCd,
+            @Param("excludeId") Long excludeId,
+            Pageable pageable);
 }

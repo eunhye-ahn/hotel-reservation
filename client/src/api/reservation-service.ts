@@ -105,7 +105,7 @@ export const getSearchAutocomplete = (q?: string) => {
 }
 
 export const getSimilarHotel = (hotelId: number, page: number) => {
-    return reservationApi.get<hotelResponse[]>("/hotels/similarHotel",{
+    return reservationApi.get<Page<hotelResponse>>("/hotels/similarHotel",{
         params: {hotelId, page}        
     })
 }

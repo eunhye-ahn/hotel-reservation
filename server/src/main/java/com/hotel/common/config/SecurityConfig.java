@@ -36,6 +36,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         //모두 접근
                         .requestMatchers(HttpMethod.GET, "/api/v1/hotels/autocomplete").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/hotels/similarHotel").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/hotels/{hotelId}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/hotels").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/**").permitAll()

@@ -88,33 +88,4 @@ public class HotelSearchQueryRepository {
                 .distinct()
                 .toList();
     }
-
-    //최근 본 호텔
-    public List<Long> searchSimilar(String lclsSystm2, String lDongRegnCd, String excludeId){
-        NativeQuery query = NativeQuery.builder()
-                .withQuery(q -> q
-                        .bool(b->b
-                                .must(m->m.term(
-                                        t->t.field("lclsSysm2").value(lclsSystm2)))
-                                .must(m->m.term(
-                                        t->t.field("lDongRegnCd").value(lDongRegnCd)))
-                                .mustNot(mn->mn.term(t->t.field("_id").value(excludeId)))
-                        ))
-                .withSort(Sort.by(
-                        Sort.Order.desc("_score"),
-                        Sort.Order.asc("hotelId")
-                ))
-                .withPageable(PageRequest.of(0, 30))
-                .build();
-
-        SearchHits<HotelDocument> hits = operations.search(query, HotelDocument.class);
-        List<SearchHit<HotelDocument>> hitList = hits.getSearchHits();
-
-
-        List<Long> hotelIds = hitList.stream()
-                .map(hit -> hit.getContent().getHotelId())
-                .toList();
-
-        return hotelIds;
-    }
 }

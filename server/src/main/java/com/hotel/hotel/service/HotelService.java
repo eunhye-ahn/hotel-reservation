@@ -196,11 +196,9 @@ public class HotelService {
         //id받고
         Hotel hotel = hotelRepository.findById(hotelId)
                 .orElseThrow(()->new CustomException(ErrorCode.HOTEL_NOT_FOUND));
-        //id로 비슷한 호텔 es 검색 후 id반환
-        List<Long> hotelIds = hotelSearchQueryRepository.searchSimilar(hotel.getLclsSystm2(), hotel.getLDongRegnCd(), hotel.getId().toString());
         //반환된 id로 page로 묶어서 호텔카드 정보 반환
         Pageable pageable = PageRequest.of(page,6);
-        Page<Hotel> hotels = hotelRepository.findByIn(hotelIds, pageable);
+        Page<Hotel> hotels = hotelRepository.findByLclsSystm2AndLDongRegnCdAndIdNot(hotel.getLclsSystm2(), hotel.getLDongRegnCd(), hotelId, pageable);
 
         return hotels.map(this::toResponse);
     }

@@ -11,6 +11,7 @@ import { useRegionStore } from '@/store/useRegionStore';
 import { HotelCard } from '@/shared/component/HotelCard';
 import '@/pages/MainPage.css'
 import { useRecentHotelStore } from '@/store/useRecentHotelStore';
+import { SimilarHotels } from '@/shared/component/SimilarHotels';
 
 //호텔정보페이지
 export const MainPage = () => {
@@ -86,11 +87,16 @@ export const MainPage = () => {
                 </div>
             )}
 
-        <HotelCard 
+        <SimilarHotels />
+
+        </div>
+    )
+}
+
+/**
+ *         <HotelCard 
         data={hotels}
         fetchNextPage={fetchNextPage}
         hasNextPage={hasNextPage}
         />
-        </div>
-    )
-}
+ */
