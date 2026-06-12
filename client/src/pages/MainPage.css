@@ -108,3 +108,50 @@
 .recent-remove:hover {
     color: #333;
 }
+
+/* SimilarHotels.css */
+
+.similar-section {
+    padding: 32px 16px;
+}
+
+.similar-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.similar-subtitle {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 16px;
+}
+
+/* 페이지네이션 */
+.similar-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.similar-pagination button {
+    background: none;
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.similar-pagination button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.similar-pagination span {
+    font-size: 14px;
+    color: #333;
+}

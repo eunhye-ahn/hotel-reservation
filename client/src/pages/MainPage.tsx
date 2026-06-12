@@ -88,15 +88,12 @@ export const MainPage = () => {
             )}
 
         <SimilarHotels />
-
-        </div>
-    )
-}
-
-/**
- *         <HotelCard 
+        <HotelCard 
         data={hotels}
         fetchNextPage={fetchNextPage}
         hasNextPage={hasNextPage}
         />
- */
+
+        </div>
+    )
+}

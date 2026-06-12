@@ -6,6 +6,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import NotFoundPage from "./NotFoundPage";
 import { createReservation, getHotelDetail } from "@/api/reservation-service";
+import { Map } from "@/shared/component/map";
 
 export const HotelDetailPage = () => {
     //한국 기준 오늘날짜 설정 -date기본값
@@ -167,6 +168,11 @@ export const HotelDetailPage = () => {
                     </div>
                 </div>
             ))}
+
+            <div>
+                 <div className="room-select-title">위치</div>
+                <Map hotelName={data?.hotelName ?? ""} hotelAddress={data?.address ?? ""} />
+            </div>
         </div>
     )
 }

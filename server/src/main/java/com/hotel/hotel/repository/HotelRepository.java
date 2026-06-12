@@ -26,8 +26,8 @@ public interface HotelRepository extends JpaRepository<Hotel,Long>, HotelReposit
 
     boolean existsByAddress(String address);
 
-    @Query("SELECT h FROM Hotel h WHERE h.lclsSystm2 = :lclsSystm2 AND h.lDongRegnCd=:lDongRegnCd AND h.id != :excludeId")
-    Page<Hotel> findByLclsSystm2AndLDongRegnCdAndIdNot(
+    @Query("SELECT h FROM Hotel h WHERE h.lclsSystm2 = :lclsSystm2 AND h.lDongRegnCd = :lDongRegnCd AND h.id != :excludeId")
+    List<Hotel> findSimilarTop30(
             @Param("lclsSystm2") String lclsSystm2,
             @Param("lDongRegnCd") String lDongRegnCd,
             @Param("excludeId") Long excludeId,

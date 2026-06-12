@@ -1,3 +1,5 @@
+declare const kakao: any;
+
 export interface hotelResponse {
     hotelId: number,
     name: string,
@@ -45,3 +47,4 @@ export interface CursorResponse {
     nextCursor: number,
     hasNext: boolean
 }
+

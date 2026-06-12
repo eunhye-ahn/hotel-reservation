@@ -13,6 +13,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -196,10 +197,19 @@ public class HotelService {
         //id받고
         Hotel hotel = hotelRepository.findById(hotelId)
                 .orElseThrow(()->new CustomException(ErrorCode.HOTEL_NOT_FOUND));
-        //반환된 id로 page로 묶어서 호텔카드 정보 반환
-        Pageable pageable = PageRequest.of(page,6);
-        Page<Hotel> hotels = hotelRepository.findByLclsSystm2AndLDongRegnCdAndIdNot(hotel.getLclsSystm2(), hotel.getLDongRegnCd(), hotelId, pageable);
+        //우선 조건에 맞는 호텔 30개 반환
+        List<Hotel> hotels = hotelRepository.findSimilarTop30(hotel.getLclsSystm2(), hotel.getLDongRegnCd(), hotelId, PageRequest.of(0,30));
+        final int SUB_PAGE = 5;
+        //30개를 6개씩 페이징
+        Pageable pageable = PageRequest.of(page,SUB_PAGE);
+        //호텔리스트 subList
+        int start = page*SUB_PAGE;
+        int end = Math.min(start+SUB_PAGE, hotels.size());
 
-        return hotels.map(this::toResponse);
+        return new PageImpl<>(
+                hotels.subList(start,end).stream().map(this::toResponse).toList(),
+                pageable,
+                hotels.size()
+        );
     }
 }
