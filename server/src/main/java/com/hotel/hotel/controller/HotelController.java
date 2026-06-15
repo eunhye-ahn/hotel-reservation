@@ -27,8 +27,12 @@ public class HotelController {
 //    }
 
     @GetMapping("/{hotelId}")
-    public ResponseEntity<HotelDetailResponse> getHotelDetail(@PathVariable Long hotelId){
-        HotelDetailResponse result = hotelService.getHotelDetail(hotelId);
+    public ResponseEntity<HotelDetailResponse> getHotelDetail(@PathVariable Long hotelId,
+                                                              @RequestParam(required = false) LocalDate startDate,
+                                                              @RequestParam(required = false) LocalDate endDate,
+                                                              @RequestParam(required = false, defaultValue = "1") Integer numberOfRooms,
+                                                              @RequestParam(required = false) Integer numberOfGuests){
+        HotelDetailResponse result = hotelService.getHotelDetail(hotelId, startDate, endDate, numberOfRooms, numberOfGuests);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -81,7 +85,7 @@ public class HotelController {
                                                          @RequestParam(required = false) LocalDate startDate,
                                                          @RequestParam(required = false) LocalDate endDate,
                                                          @RequestParam(required = false) Integer numberOfGuests,
-                                                         @RequestParam(required = false) Integer numberOfRooms,
+                                                         @RequestParam(required = false, defaultValue = "1") Integer numberOfRooms,
                                                          @RequestParam(required = false) Long cursorId){
 
         CursorResponse result = hotelService.searchByFilter(q, lDongRegnCd, lDongSignguCd, lclsSystm2, startDate, endDate,

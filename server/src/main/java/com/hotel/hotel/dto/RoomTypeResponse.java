@@ -3,11 +3,15 @@ package com.hotel.hotel.dto;
 import com.hotel.hotel.domain.Rate;
 import com.hotel.hotel.domain.RoomType;
 import com.hotel.hotel.domain.RoomTypeInventory;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class RoomTypeResponse {
     private Long roomTypeId;
     private String name;

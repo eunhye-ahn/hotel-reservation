@@ -6,7 +6,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import NotFoundPage from "./NotFoundPage";
 import { createReservation, getHotelDetail } from "@/api/reservation-service";
-import { Map } from "@/shared/component/map";
+import { Map } from "@/shared/component/Map";
 
 export const HotelDetailPage = () => {
     //한국 기준 오늘날짜 설정 -date기본값
@@ -25,8 +25,8 @@ export const HotelDetailPage = () => {
     const reservationKey = useRef(crypto.randomUUID());
 
     const {data, isLoading, isError, error} = useQuery<HotelDetailResponse>({
-        queryKey: ["hotelDetails", hotelId],    //호텔id별로 캐시관리
-        queryFn: () => getHotelDetail(Number(hotelId)).then((res)=>res.data)
+        queryKey: ["hotelDetails", hotelId, startDate, endDate, numberOfRooms, numberOfGuests],    //호텔id별로 캐시관리
+        queryFn: () => getHotelDetail(Number(hotelId), startDate, endDate, numberOfRooms, numberOfGuests).then((res)=>res.data)
     });
     
         const {mutate : createReservationMutate, isPending} = useMutation({
@@ -83,7 +83,7 @@ export const HotelDetailPage = () => {
         createReservationMutate({
                 reservationKey: reservationKey.current,
                 hotelId: Number(hotelId),
-                roomTypeId: selectedRoomTypeIdRef.current!,
+                roomTypeId,
                 startDate,
                 endDate,
                 numberOfGuests,

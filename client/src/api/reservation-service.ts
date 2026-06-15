@@ -58,8 +58,10 @@ export const getHotelsByFilter = (q?: string, lDongRegnCd?: string, lDongSignguC
     });
 }
 
-export const getHotelDetail = (hotelId: number) => {
-    return reservationApi.get<HotelDetailResponse>(`/hotels/${hotelId}`);
+export const getHotelDetail = (hotelId: number, startDate?: string, endDate?: string, numberOfRooms?: number, numberOfGuests?: number) => {
+    return reservationApi.get<HotelDetailResponse>(`/hotels/${hotelId}`, {
+        params: {startDate, endDate, numberOfRooms, numberOfGuests}
+    });
 }
 
 export const createReservation = (request: ReservationRequest) => {

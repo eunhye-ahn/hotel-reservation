@@ -8,6 +8,7 @@ import com.hotel.hotel.domain.RoomTypeInventory;
 import com.hotel.hotel.dto.*;
 import com.hotel.hotel.mapper.HotelMapper;
 import com.hotel.hotel.mapper.RateMapper;
+import com.hotel.hotel.mapper.RoomTypeMapper;
 import com.hotel.hotel.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -34,23 +35,41 @@ public class HotelService {
     private final RoomTypeInventoryRepository roomTypeInventoryRepository;
     private final RateMapper rateMapper;
     private final HotelMapper hotelMapper;
+    private final RoomTypeMapper roomTypeMapper;
     private final HotelSearchQueryRepository hotelSearchQueryRepository;
 
     LocalDate today = LocalDate.now();
 
     //호텔 내 객실 조회
-    public HotelDetailResponse getHotelDetail(Long hotelId) {
+    public HotelDetailResponse getHotelDetail(Long hotelId, LocalDate startDate,LocalDate endDate, Integer numberOfRooms, Integer numberOfGuests) {
         Hotel hotel = hotelRepository.findById(hotelId)
                 .orElseThrow(()->new CustomException(ErrorCode.HOTEL_NOT_FOUND));
 
-        List<RoomTypeResponse> roomTypes = roomTypeRepository.findByHotelId(hotelId)
-                .stream().map(rt -> {
-                    Rate rate = rateRepository.findByRoomTypeAndDate(rt, today)
-                            .orElseThrow(()->new CustomException(ErrorCode.RATE_NOT_FOUND));
-                    RoomTypeInventory inventory = roomTypeInventoryRepository.findByRoomTypeAndDate(rt, today)
-                            .orElseThrow(()->new CustomException(ErrorCode.ROOM_INVENTORY_NOT_FOUND));
-                    return RoomTypeResponse.from(rt, rate, inventory);
-                }).toList();
+        //n+1문제
+//        List<RoomTypeResponse> roomTypes = roomTypeRepository.findByHotelId(hotelId)
+//                .stream().map(rt -> {
+//                    Rate rate = rateRepository.findByRoomTypeAndDate(rt, today)
+//                            .orElseThrow(()->new CustomException(ErrorCode.RATE_NOT_FOUND));
+//                    RoomTypeInventory inventory = roomTypeInventoryRepository.findByRoomTypeAndDate(rt, today)
+//                            .orElseThrow(()->new CustomException(ErrorCode.ROOM_INVENTORY_NOT_FOUND));
+//                    return RoomTypeResponse.from(rt, rate, inventory);
+//                }).toList();
+
+        //totalDays 계산
+        int totalDays = (startDate != null && endDate != null)
+                ?((int) ChronoUnit.DAYS.between(startDate, endDate)) : 0;
+
+        //매퍼
+        RoomTypeInventoryParam param = RoomTypeInventoryParam.builder()
+                .hotelId(hotelId)
+                .today(today)
+                .numberOfGuests(numberOfGuests)
+                .numberOfRooms(numberOfRooms)
+                .totalDays(totalDays)
+                .build();
+        List<RoomTypeResponse> roomTypes = roomTypeMapper.findByRoomTypeFilter(param);
+
+
 
         return HotelDetailResponse.builder()
                 .hotelId(hotelId)

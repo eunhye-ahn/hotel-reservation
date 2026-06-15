@@ -1,11 +1,12 @@
 package com.hotel.hotel.mapper;
 
-import com.hotel.hotel.domain.Hotel;
-import com.hotel.hotel.domain.RoomType;
-import com.hotel.hotel.dto.HotelSearchParam;
+import com.hotel.hotel.dto.RoomTypeInventoryParam;
+import com.hotel.hotel.dto.RoomTypeResponse;
+import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 
+@Mapper
 public interface RoomTypeMapper {
-    List<RoomType> findByRoomTypeFilter(RoomTypeInventoryParam param);
+    List<RoomTypeResponse> findByRoomTypeFilter(RoomTypeInventoryParam param);
 }
