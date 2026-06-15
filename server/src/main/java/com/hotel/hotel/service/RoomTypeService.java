@@ -1,0 +1,117 @@
+package com.hotel.hotel.service;
+
+import com.hotel.common.exception.CustomException;
+import com.hotel.common.exception.ErrorCode;
+import com.hotel.hotel.domain.*;
+import com.hotel.hotel.dto.*;
+import com.hotel.hotel.repository.*;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class RoomTypeService {
+
+    private final HotelRepository hotelRepository;
+    private final RoomTypeRepository roomTypeRepository;
+    private final RateRepository rateRepository;
+    private final RoomTypeInventoryRepository roomTypeInventoryRepository;
+    private final RoomRepository roomRepository;
+
+    //룸타입 생성
+    @Transactional
+    public RoomTypeCreateResponse addRoomType(Long hotelId, RoomTypeCreateRequest request){
+        //유효성검사
+        Hotel hotel = hotelRepository.findById(hotelId)
+                .orElseThrow(()-> new CustomException(ErrorCode.HOTEL_NOT_FOUND));
+
+        //이름 중복
+        if(roomTypeRepository.existsByNameAndHotel(request.getRoomTypeName(), hotel)){
+            throw new CustomException(ErrorCode.ROOM_TYPE_ALREADY_EXISTS);
+        }
+
+        //db저장
+        RoomType roomType = roomTypeRepository.save(RoomType.builder()
+                .name(request.getRoomTypeName())
+                .maxOccupancy(request.getMaxOccupancy())
+                .imageUrl(request.getImageUrl())
+                .hotel(hotel)
+                .build());
+
+        return RoomTypeCreateResponse.from(roomType);
+    }
+
+    //름 삭제 -staff,관리자
+    @Transactional
+    public void deleteRoomType(Long hotelId, Long roomTypeId){
+        //엔티티검사
+        RoomType roomType = roomTypeRepository.findByIdAndHotelId(roomTypeId, hotelId)
+                .orElseThrow(()-> new CustomException(ErrorCode.ROOM_TYPE_NOT_FOUND));
+
+        //room삭제
+        roomTypeInventoryRepository.deleteByRoomType(roomType);
+        rateRepository.deleteByRoomType(roomType);
+        roomTypeRepository.delete(roomType);
+    }
+
+    //room수정 -staff,관리자
+    @Transactional
+    public RoomTypeUpdateResponse updateRoomType(Long hotelId, Long roomTypeId, RoomTypeUpdateRequest request){
+        //엔티티검사
+        RoomType roomType = roomTypeRepository.findByIdAndHotelId(roomTypeId, hotelId)
+                .orElseThrow(()-> new CustomException(ErrorCode.ROOM_TYPE_NOT_FOUND));
+
+        //hotel수정
+        roomType.update(
+                request.getRoomTypeName(),
+                request.getMaxOccupancy(),
+                request.getImageUrl()
+        );
+
+        return RoomTypeUpdateResponse.from(roomType);
+    }
+
+    //룸타입디테일 조회 -관리자용
+    public RoomTypeDetailResponse getRoomTypeDetail(Long hotelId, Long roomTypeId){
+        RoomType roomType = roomTypeRepository.findByIdAndHotelId(roomTypeId, hotelId)
+                .orElseThrow(()-> new CustomException(ErrorCode.ROOM_TYPE_NOT_FOUND));
+
+        List<Room> rooms = roomRepository.findAllByRoomType(roomType);
+
+        return RoomTypeDetailResponse.from(roomType, rooms);
+    }
+
+    LocalDate today = LocalDate.now();
+
+    //예약폼 -유저용
+    public RoomTypeReservationResponse getRoomTypeForReservation(Long hotelId, Long roomTypeId,
+                                                                   LocalDate startDate, LocalDate endDate,
+                                                                 int numberOfRooms) {
+        //유효성검사
+        roomTypeRepository.findByIdAndHotelId(roomTypeId, hotelId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ROOM_TYPE_NOT_FOUND));
+
+        //잔여객실조회
+        List<RoomTypeInventory> inventories = roomTypeInventoryRepository.findByRoomTypeIdAndDateBetween(roomTypeId, startDate, endDate.minusDays(1));
+
+        //가격계산
+        List<Rate> rates = rateRepository.findByRoomTypeIdAndDateBetween(roomTypeId, startDate, endDate.minusDays(1));
+
+        long expectedDays = ChronoUnit.DAYS.between(startDate, endDate);
+        if(rates.size() != expectedDays) {
+            throw new CustomException(ErrorCode.RATE_NOT_FOUND);
+        }
+        if (inventories.size() != expectedDays) {
+            throw new CustomException(ErrorCode.ROOM_INVENTORY_NOT_FOUND);
+        }
+
+        int totalDemandRate = rates.stream().mapToInt(Rate::getDemandRate).sum();
+        int totalPrice = totalDemandRate * numberOfRooms;
+
+        return RoomTypeReservationResponse.from(inventories, totalDemandRate, totalPrice);
+    }}

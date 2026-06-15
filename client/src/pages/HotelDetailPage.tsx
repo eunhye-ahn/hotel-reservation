@@ -1,12 +1,12 @@
 import type { HotelDetailResponse } from "@/shared/type/hotel";
-import { useEffect, useState } from "react"
+import {  useRef, useState } from "react"
 import { useNavigate, useParams } from "react-router";
 import '@/pages/HotelDetailPage.css';
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import NotFoundPage from "./NotFoundPage";
-import type { ReservationRequest } from "@/shared/type/reservation";
 import { createReservation, getHotelDetail } from "@/api/reservation-service";
+import { Map } from "@/shared/component/Map";
 
 export const HotelDetailPage = () => {
     //한국 기준 오늘날짜 설정 -date기본값
@@ -20,14 +20,37 @@ export const HotelDetailPage = () => {
     const [endDate, setEndDate] = useState(tomorrow);
     const [numberOfRooms, setNumberOfRooms] = useState(1);
     const [numberOfGuests, setNumberOfGuests] = useState(1);
+    const selectedRoomTypeIdRef = useRef<number|null>(null);
+
+    const reservationKey = useRef(crypto.randomUUID());
 
     const {data, isLoading, isError, error} = useQuery<HotelDetailResponse>({
-        queryKey: ["hotelDetails", hotelId],    //호텔id별로 캐시관리
-        queryFn: () => getHotelDetail(Number(hotelId)).then((res)=>res.data)
+        queryKey: ["hotelDetails", hotelId, startDate, endDate, numberOfRooms, numberOfGuests],    //호텔id별로 캐시관리
+        queryFn: () => getHotelDetail(Number(hotelId), startDate, endDate, numberOfRooms, numberOfGuests).then((res)=>res.data)
     });
     
-        const {mutate, isPending} = useMutation({
+        const {mutate : createReservationMutate, isPending} = useMutation({
         mutationFn: createReservation,
+        onSuccess: (res)=>{
+            const {reservationKey, orderId} =res.data;
+                const roomType = data?.roomTypes.find(r => r.roomTypeId === selectedRoomTypeIdRef.current);
+               navigate(`/reservations/${reservationKey}/reservation-info`, {
+                state: {
+                    orderId,
+                    reservationKey,
+                    hotelName: data?.hotelName,
+                    hotelAddress: data?.address,
+                    roomTypeName: roomType?.name,
+                    imageUrl: roomType?.imageUrl,
+                    checkInTime: data?.checkInTime,
+                    checkOutTime: data?.checkOutTime,
+                    startDate,
+                    endDate,
+                    numberOfRooms,
+                    numberOfGuests
+                }
+            }); 
+        },
         onError: (err: any) => {
             const message = err.response.data.message;
             const code = err.response.data.code;
@@ -56,34 +79,16 @@ export const HotelDetailPage = () => {
 
     const handleReservation = (roomTypeId: number) => {
         if (!data) return;
-        const roomType = data.roomTypes.find(r=> r.roomTypeId === roomTypeId);
-        const reservationData: ReservationRequest = {
-            reservationKey: crypto.randomUUID(),
-            hotelId: Number(hotelId),
-            roomTypeId,
-            startDate,
-            endDate,
-            numberOfGuests,
-            numberOfRooms
-        };
-        mutate(reservationData, {
-            onSuccess: (res)=>{
-               navigate(`/reservations/${res.data}/reservation-info`, {
-                state: {
-                    hotelName: data.hotelName,
-                    hotelAddress: data.address,
-                    roomTypeName: roomType?.name,
-                    imageUrl: roomType?.imageUrl,
-                    checkInTime: data.checkInTime,
-                    checkOutTime: data.checkOutTime,
-                    startDate,
-                    endDate,
-                    numberOfRooms,
-                    numberOfGuests
-                }
-            }); 
-            }
-        })
+        selectedRoomTypeIdRef.current = roomTypeId;
+        createReservationMutate({
+                reservationKey: reservationKey.current,
+                hotelId: Number(hotelId),
+                roomTypeId,
+                startDate,
+                endDate,
+                numberOfGuests,
+                numberOfRooms
+            });
     }
 
         if(isLoading) return <p>Loading...</p>
@@ -163,6 +168,11 @@ export const HotelDetailPage = () => {
                     </div>
                 </div>
             ))}
+
+            <div>
+                 <div className="room-select-title">위치</div>
+                <Map hotelName={data?.hotelName ?? ""} hotelAddress={data?.address ?? ""} />
+            </div>
         </div>
     )
 }

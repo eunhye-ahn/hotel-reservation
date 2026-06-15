@@ -1,72 +1,157 @@
-/* HotelCard.css */
-.hotel-list {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-    max-width: 900px;
+/* MainPage.css */
+
+.search-wrap {
+    padding: 24px 16px;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    max-width: 480px;
     margin: 0 auto;
-    padding: 24px;
 }
 
-.hotel-card {
-    width: 180px;
-    cursor: pointer;
-    min-width: 270px;
-    flex-shrink: 0;
-}
-
-.hotel-img {
-    width: 100%;
-    height: 130px;
-    border-radius: 8px;
-    margin-bottom: 8px;
-    object-fit: cover;
-    background-color: #f0f0f0;
-}
-
-.hotel-name {
-    font-size: 14px;
+.search-title {
+    text-align: center;
+    font-size: 18px;
     font-weight: 500;
-    margin: 0 0 2px;
+    margin-bottom: 20px;
 }
 
-.hotel-address {
-    font-size: 12px;
-    color: #888;
-    margin: 0 0 2px;
+/* 지역선택 버튼 + 내주변 버튼 행 */
+.search-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
 }
 
-.hotel-rating {
-    font-size: 12px;
-    color: #888;
-    margin: 0 0 4px;
-}
-
-.hotel-checkin {
-    font-size: 12px;
-    color: #888;
-    margin: 0 0 4px;
-}
-
-.hotel-price-row {
+/* 지역선택 버튼 */
+.region-btn {
+    flex: 1;
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fff;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.region-placeholder {
+    color: #999;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.region-text {
+    color: #000;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* 내주변 버튼 */
+.nearby-btn {
+    width: 52px;
+    height: 52px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fff;
+    cursor: pointer;
+    font-size: 11px;
+    gap: 2px;
+    color: #666;
+}
+
+/* 최근 선택 지역 */
+.recent-wrap {
+    margin-top: 20px;
+}
+
+.recent-label {
+    font-size: 13px;
+    color: #999;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.recent-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+}
+
+.recent-tag {
+    display: inline-flex;
+    align-items: center;
     gap: 6px;
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    font-size: 13px;
+    cursor: pointer;
+    background: #fff;
 }
 
-.hotel-original {
+.recent-remove {
+    color: #999;
     font-size: 12px;
-    color: #aaa;
-    text-decoration: line-through;
+    border: none;
+     background: #fff;
 }
 
-.hotel-discount {
-    font-size: 12px;
-    color: #e74c3c;
+.recent-remove:hover {
+    color: #333;
 }
 
-.hotel-demand {
+/* SimilarHotels.css */
+
+.similar-section {
+    padding: 32px 16px;
+}
+
+.similar-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.similar-subtitle {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 16px;
+}
+
+/* 페이지네이션 */
+.similar-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.similar-pagination button {
+    background: none;
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
     font-size: 14px;
-    font-weight: 500;
-    margin: 0;
+}
+
+.similar-pagination button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.similar-pagination span {
+    font-size: 14px;
+    color: #333;
 }

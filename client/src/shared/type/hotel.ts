@@ -1,3 +1,5 @@
+declare const kakao: any;
+
 export interface hotelResponse {
     hotelId: number,
     name: string,
@@ -38,5 +40,11 @@ export interface RoomTypeResponse {
     demandRate: number,
     discountRate: number,
     availableCount: number
+}
+
+export interface CursorResponse {
+    content: hotelResponse[],
+    nextCursor: number,
+    hasNext: boolean
 }
 

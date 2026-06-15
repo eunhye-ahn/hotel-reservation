@@ -8,6 +8,11 @@ export interface ReservationRequest {
     numberOfRooms: number
 }
 
+export interface ReservationCreateResponse{
+    reservationKey: string,
+    orderId: string
+}
+
 export interface RoomTypeReservationResponse {
     availableCount: number,
     demandRate: number,

@@ -6,7 +6,7 @@ import { preparePayment } from "@/api/payment-service";
 import { toast } from "react-toastify";
 import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
 import { reservationInfo } from "@/api/reservation-service";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 
 export const ReservationPage = () => {
     const { reservationKey } = useParams<string>();
@@ -25,12 +25,12 @@ export const ReservationPage = () => {
         try{
             //내 서버에서 paymentOrderId, amount 받아오기
             //오픈 -> 승인 결과 받은 후에 순서대로 실행되어야함
-            const res = await preparePayment(reservationKey!, idempotencyKey.current);
+            const res = await preparePayment(reservationKey!, state.orderId, idempotencyKey.current);
             const {paymentOrderId, amount, userId} = res.data;
 
             //토스 결제창 오픈
             const tossPayments = await loadTossPayments(import.meta.env.VITE_TOSS_CLIENT_KEY);
-            const payment = tossPayments.payment({ customerKey: String(userId) });
+            const payment = tossPayments.payment({ customerKey: `USER-${userId}` });
 
             await payment.requestPayment({
                 method: "CARD",

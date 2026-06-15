@@ -1,78 +1,16 @@
 services:
 
-  #호텔예약서비스
-  reservation-service:
-    build:
-      context: ./reservation-server
-    container_name: reservation-server
-    ports:
-      - "8080:8080"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://reservation-postgresql:5432/hotel_reserve
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
-      SPRING_REDIS_HOST: redis
-      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      JWT_SECRET: ${JWT_SECRET}
-
-      PAYMENT_SERVICE_URL: http://payment-service:8081
-    depends_on:
-      - reservation-postgresql
-      - redis
-      - kafka
-    networks:
-      - server-network
-
-  #결제서비스
-  payment-service:
-    build:
-      context: ./payment-server
-    container_name: payment-server
-    ports:
-      - "8081:8081"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://payment-postgresql:5432/payment_db
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
-      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      TOSS_SECRET_KEY: ${TOSS_SECRET_KEY}
-      SPRING_REDIS_HOST: redis
-
-    depends_on:
-      - payment-postgresql
-      - kafka
-      - redis
-    networks:
-      - server-network
-
-
-  # 예약 DB
-  reservation-postgresql:
+  hotel-postgresql:
     image: postgres:17
-    container_name: reservation-postgresql
+    container_name: hotel-postgresql
     environment:
-      POSTGRES_DB: hotel_reserve
+      POSTGRES_DB: hotel_db
       POSTGRES_USER: root
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
-      - reservation-postgresql-data:/var/lib/postgresql/data
-    networks:
-      - server-network
-
-  # 결제 DB
-  payment-postgresql:
-    image: postgres:17
-    container_name: payment-postgresql
-    environment:
-      POSTGRES_DB: payment_db
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-    ports:
-      - "5433:5432"
-    volumes:
-      - payment-postgresql-data:/var/lib/postgresql/data
+      - hotel-postgresql-data:/var/lib/postgresql/data
     networks:
       - server-network
 
@@ -99,7 +37,7 @@ services:
 
   redis:
     image: redis:7.4
-    container_name: reservation-redis
+    container_name: hotel-redis
     ports:
       - "6379:6379"
     volumes:
@@ -107,11 +45,40 @@ services:
     networks:
       - server-network
 
-volumes:
-  reservation-postgresql-data:
-  redis-data:
-  payment-postgresql-data:
+  elasticsearch:
+    image: elasticsearch:8.19.0
+    container_name: hotel-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    command: >
+      bash -c "
+      bin/elasticsearch-plugin install analysis-nori --batch &&
+      bin/elasticsearch"
+    ports:
+      - "9200:9200"
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+    networks:
+      - server-network
 
-## 서비스가 확장되면 API 게이트웨이 추가 예정
+  kibana:
+    image: kibana:8.19.0
+    container_name: hotel-kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    networks:
+      - server-network
+
+volumes:
+  hotel-postgresql-data:
+  redis-data:
+  es-data:
+
 networks:
   server-network:

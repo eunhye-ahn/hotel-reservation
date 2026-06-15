@@ -1,5 +1,6 @@
 import { confirmPayment } from "@/api/payment-service";
 import { getReservationStatus } from "@/api/reservation-service";
+import { useAuthStore } from "@/store/useAuthStore";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router"
@@ -13,6 +14,7 @@ export default function PaymentSuccess () {
     const [confirmed, setConfirmed] = useState(false);
     const reservationKeyRef = useRef<string | null>(null); 
     const navigate = useNavigate();
+    const token = useAuthStore((state) => state.accessToken);
 
     const {data} = useQuery({
         queryKey: ["paymentStuats", orderId],
@@ -29,8 +31,9 @@ export default function PaymentSuccess () {
     },[data])
 
     useEffect(()=>{
+        if (!token) return;
         if (!orderId || !paymentKey || !amount) return;
-
+        
         confirmPayment({
             orderId,
             paymentKey,
@@ -46,7 +49,7 @@ export default function PaymentSuccess () {
              alert("결제 승인에 실패했습니다.");
             navigate("/");
         })
-    },[])
+    },[token])
 
     return(
         <div>

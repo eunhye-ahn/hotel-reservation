@@ -1,12 +1,23 @@
-import '@/pages/MainPage.css';
+import '@/shared/component/HotelCard.css';
 import { useNavigate } from "react-router";
-import { useQuery } from "@tanstack/react-query";
-import { getHotels } from "@/api/reservation-service";
-import type { hotelResponse, Page } from '@/shared/type/hotel';
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { getHotels, getSimilarHotel } from "@/api/reservation-service";
+import type { CursorResponse} from '@/shared/type/hotel';
+import { useState } from 'react';
+import { getDisplayName, type Region, type SubRegion } from '@/constants/Region';
+import { RegionSelector } from '@/shared/component/RegionSelector';
+import { Modal } from '@/shared/component/Modal';
+import { useRegionStore } from '@/store/useRegionStore';
+import { HotelCard } from '@/shared/component/HotelCard';
+import '@/pages/MainPage.css'
+import { useRecentHotelStore } from '@/store/useRecentHotelStore';
+import { SimilarHotels } from '@/shared/component/SimilarHotels';
 
 //호텔정보페이지
 export const MainPage = () => {
     const navigate = useNavigate();
+    const {setRegion, regionCode, subRegionCode, displayName, resetRegion, recentRegions, saveRecentRegion, removeRecentRegion} = useRegionStore();
+    const [isOpen, setIsOpen] = useState(false);
 
     /**
      * useQuery vs useMutation
@@ -17,40 +28,72 @@ export const MainPage = () => {
      */
 
     //useQuery: api 자동호출, isLoading/isError 상태 자동관리 /캐싱키
-    const {data, isLoading, isError} = useQuery<Page<hotelResponse>>({
-        queryKey: ["hotels"],
-        queryFn: () => getHotels().then((res)=>res.data)
+    const {data, isLoading, isError, fetchNextPage, hasNextPage} = useInfiniteQuery<CursorResponse>({
+        queryKey: ["hotels"],     //지역바뀌면 자동재조회
+        queryFn: ({pageParam}) => getHotels(pageParam as number | undefined)
+        .then((res)=>res.data),
+        initialPageParam: undefined,
+        getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined
     })
+
+    const hotels = data?.pages.flatMap(page=>page.content) ?? [];
+
+    const handleSelect = (region : Region, subRegion?: SubRegion) => {
+        const newRegionCode = region.code;
+        const newSubRegionCode = subRegion?.code;
+        setRegion(getDisplayName(newRegionCode, newSubRegionCode), newRegionCode, newSubRegionCode);
+        saveRecentRegion(region, subRegion)
+        setIsOpen(false);
+
+        const today = new Date().toLocaleDateString('en-CA')
+        const tomorrow = new Date(Date.now() + 86400000).toLocaleDateString('en-CA');
+        navigate(`/hotels/list?lDongRegnCd=${newRegionCode}${newSubRegionCode ? `&lDongSignguCd=${newSubRegionCode}` : ""}&startDate=${today}&endDate=${tomorrow}&numberOfGuests=3&numberOfRooms=1`);
+    }
 
     if(isLoading) return <p>loading...</p>
     if(isError) return <p>호텔 정보를 불러오는데 실패했습니다</p>
 
     return (
-        <div className="hotel-list">
-            {data?.content.length === 0 && <p>호텔이 없습니다</p>}
-            {data?.content.map((hotel) => (
-                <div 
-                key={hotel.hotelId} className="hotel-card"
-                onClick={() => navigate(`/hotels/${hotel.hotelId}`)} >
-                    <img className="hotel-img" src={hotel.imageUrl} />
-                    <p className="hotel-name">{hotel.name}</p>
-                    <p className="hotel-address">{hotel.address}</p>
-                    <p className="hotel-checkin">숙박 {hotel.checkInTime.substring(0,5)}~</p>
-                    <div className="hotel-price-row">
-                        {hotel.maxRate && hotel.demandRate ? (
-                            <>
-                                <span className="hotel-original">{hotel.maxRate.toLocaleString()}</span>
-                                <span className="hotel-discount">{hotel.discountRate}%</span>
-                            </>
-                        ) : (
-                            <span>요금 준비 중</span>
-                        )}
-                    </div>
-                    <p className="hotel-demand">
-                        {hotel.demandRate ? `${hotel.demandRate.toLocaleString()}원` : ""}
-                    </p>
+        <div>
+            <div className="search-wrap">
+                <h2 className='search-title'>어디로 갈까요?</h2>
+                <div className='search-row'>
+                    <button onClick={()=> setIsOpen(true)}
+                        className='region-btn'>
+                        {regionCode && !isOpen ? displayName : "지역선택" }
+                    </button>
+                    <button  className="nearby-btn">내주변</button>
                 </div>
-            ))}
+                <div className='recent-wrap'>
+                <h3 className='recent-label'>최근 선택 지역</h3>
+                <div className='recent-list'>
+                    {recentRegions.map((r)=>(
+                        <span key={r.code} className='recent-tag'>
+                            {r.subRegion?.name ?? r.name}
+                            <button className='recent-remove' 
+                            onClick={()=>removeRecentRegion(r.code)}>X</button>
+                        </span>
+                    ))}
+                </div>
+                </div>
+            </div>
+            
+
+            {isOpen && (
+                <div>
+                    <Modal  isOpen={isOpen} onClose={() => setIsOpen(false)} title="지역 선택">
+                        <RegionSelector onSelect={handleSelect}/>
+                    </Modal>
+                </div>
+            )}
+
+        <SimilarHotels />
+        <HotelCard 
+        data={hotels}
+        fetchNextPage={fetchNextPage}
+        hasNextPage={hasNextPage}
+        />
+
         </div>
     )
 }

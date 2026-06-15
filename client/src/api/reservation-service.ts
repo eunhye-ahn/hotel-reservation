@@ -1,7 +1,7 @@
 import type { AccessTokenResponse, LoginRequest, SignUpRequest } from "@/shared/type/auth";
 import axios from "axios";
-import type { HotelDetailResponse, hotelResponse, Page } from "@/shared/type/hotel";
-import type { ReservationDetailResponse, ReservationInfoResponse, ReservationRequest, ReservationResponse, RoomTypeReservationResponse } from "@/shared/type/reservation";
+import type { CursorResponse, HotelDetailResponse, hotelResponse, Page } from "@/shared/type/hotel";
+import type { ReservationCreateResponse, ReservationDetailResponse, ReservationInfoResponse, ReservationRequest, ReservationResponse, RoomTypeReservationResponse } from "@/shared/type/reservation";
 import type { UserInfoResponse } from "@/shared/type/user";
 import { reservationApi } from "./axios/reservation-axios";
 
@@ -24,21 +24,53 @@ export const signUp = (request: SignUpRequest) => {
     return reservationApi.post<AccessTokenResponse>("/auth/signUp", request);
 }
 
-export const getHotels = () => {
-    return reservationApi.get<Page<hotelResponse>>("/hotels");
+//호텔전체조회
+export const getHotels = (cursorId?: number) => {
+    return reservationApi.get<CursorResponse>("/hotels", {
+        params: { cursorId }
+    })
 }
 
-export const getHotelDetail = (hotelId: number) => {
-    return reservationApi.get<HotelDetailResponse>(`/hotels/${hotelId}`);
+/**
+ * 
+ * 
+// 순서 기반 - q 자리 undefined로 채워야 함
+getHotelsByFilter(undefined, regionCode, ...)
+
+// 객체 기반 - q 그냥 생략
+getHotelsByFilter({ lDongRegnCd: regionCode, ... })
+
+=> 객체기반으로 변경작업필요
+ */
+//호텔필터조회
+export const getHotelsByFilter = (q?: string, lDongRegnCd?: string, lDongSignguCd?: string, lclsSystm2?: string,
+    startDate?: string, endDate?: string, numberOfGuests?: number, numberOfRooms?: number, cursorId: number = 0) => {
+    return reservationApi.get<CursorResponse>("/hotels", {
+        params: {
+            q,
+            lDongRegnCd, lDongSignguCd, lclsSystm2,
+            startDate,
+            endDate,
+            numberOfGuests,
+            numberOfRooms,
+            cursorId
+        }
+    });
+}
+
+export const getHotelDetail = (hotelId: number, startDate?: string, endDate?: string, numberOfRooms?: number, numberOfGuests?: number) => {
+    return reservationApi.get<HotelDetailResponse>(`/hotels/${hotelId}`, {
+        params: {startDate, endDate, numberOfRooms, numberOfGuests}
+    });
 }
 
 export const createReservation = (request: ReservationRequest) => {
-    return reservationApi.post<string>("/reservations", request)
+    return reservationApi.post<ReservationCreateResponse>("/reservations", request)
 }
 
 export const getRoomTypeForReservation = (hotelId: number, roomTypeId: number, startDate: string, endDate: string, numberOfRooms: number) => {
-    return reservationApi.get<RoomTypeReservationResponse>(`/hotels/${hotelId}/roomTypes/${roomTypeId}/reservation`,{
-        params: {startDate, endDate, numberOfRooms}
+    return reservationApi.get<RoomTypeReservationResponse>(`/hotels/${hotelId}/roomTypes/${roomTypeId}/reservation`, {
+        params: { startDate, endDate, numberOfRooms }
     })
 }
 
@@ -51,8 +83,8 @@ export const getMyInfo = () => {
 }
 
 export const getMyReservations = (status: string) => {
-    return reservationApi.get<ReservationResponse[]>("/reservations",{
-        params: {status}
+    return reservationApi.get<ReservationResponse[]>("/reservations", {
+        params: { status }
     })
 }
 
@@ -65,5 +97,17 @@ export const reservationInfo = (reservationKey: string) => {
 }
 
 export const getReservationStatus = (reservationKey: string) => {
-    return reservationApi.get<String>(`/reservations/${reservationKey}/status`)
+    return reservationApi.get<string>(`/reservations/${reservationKey}/status`)
+}
+
+export const getSearchAutocomplete = (q?: string) => {
+    return reservationApi.get<string[]>("/hotels/autocomplete", {
+        params : {q}
+    })
+}
+
+export const getSimilarHotel = (hotelId: number, page: number) => {
+    return reservationApi.get<Page<hotelResponse>>("/hotels/similarHotel",{
+        params: {hotelId, page}        
+    })
 }

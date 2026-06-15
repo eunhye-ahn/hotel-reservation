@@ -1,0 +1,11 @@
+.hotel-list-page {
+    display: flex;
+    flex-direction: column;
+}
+
+.hotel-list-page h3 {
+    font-size: 18px;
+    font-weight: 500;
+    padding: 16px 0 8px;
+    margin: 0 auto;
+}
