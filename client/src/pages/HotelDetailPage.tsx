@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import NotFoundPage from "./NotFoundPage";
 import { createReservation, getHotelDetail } from "@/api/reservation-service";
 import { Map } from "@/shared/component/Map";
+import { ShoppingCart } from "lucide-react";
 
 export const HotelDetailPage = () => {
     //한국 기준 오늘날짜 설정 -date기본값
@@ -162,9 +163,10 @@ export const HotelDetailPage = () => {
                             <span className="hotel-discount">{roomType.discountRate}%</span>
                         </div>
                         <p className="hotel-demand">{roomType.demandRate.toLocaleString()}원</p>
+                        <button><ShoppingCart size={24} /></button>
                         <button onClick={()=>handleReservation(roomType.roomTypeId)} disabled={isPending}>
                         {isPending ? "Loading..." : "예약하기"}
-                            </button>
+                        </button>
                     </div>
                 </div>
             ))}

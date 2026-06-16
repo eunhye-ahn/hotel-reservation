@@ -10,6 +10,9 @@ public enum ErrorCode {
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다"),
     LOGOUT_TOKEN(HttpStatus.UNAUTHORIZED, "로그아웃된 토큰입니다."),
 
+    //redis
+    CART_FULL(HttpStatus.BAD_REQUEST, "장바구니는 최대 20개까지 담을 수 있습니다"),
+
     //valid
     INVALID_INPUT(HttpStatus.BAD_REQUEST, "잘못된 입력입니다"),
 

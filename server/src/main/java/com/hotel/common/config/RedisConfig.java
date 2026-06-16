@@ -41,13 +41,23 @@ public class RedisConfig {
         return new LettuceConnectionFactory(host, port);
     }
 
-    // JWT용 (AuthService)
+    // RedisTemplate<String, String> : 문자열 (AuthService)
     @Bean
     public RedisTemplate<String, String> redisTemplate() {
         RedisTemplate<String, String> template = new RedisTemplate<>();
         template.setConnectionFactory(redisConnectionFactory());
         template.setKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(new StringRedisSerializer());
+        return template;
+    }
+
+    // RedisTemplate<String, Object>: 객체 (IdempotencyRedisService)
+    @Bean
+    public RedisTemplate<String, Object> objectRedisTemplate() {
+        RedisTemplate<String, Object> template = new RedisTemplate<>();
+        template.setConnectionFactory(redisConnectionFactory());
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(new GenericJackson2JsonRedisSerializer(redisObjectMapper()));
         return template;
     }
 
@@ -59,15 +69,5 @@ public class RedisConfig {
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         return objectMapper;
-    }
-
-    // 멱등키용 (IdempotencyRedisService)
-    @Bean
-    public RedisTemplate<String, Object> objectRedisTemplate() {
-        RedisTemplate<String, Object> template = new RedisTemplate<>();
-        template.setConnectionFactory(redisConnectionFactory());
-        template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(new GenericJackson2JsonRedisSerializer(redisObjectMapper()));
-        return template;
     }
 }
