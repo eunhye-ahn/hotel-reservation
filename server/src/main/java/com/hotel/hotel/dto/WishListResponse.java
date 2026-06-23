@@ -8,9 +8,10 @@ import lombok.Getter;
 @AllArgsConstructor
 public class WishListResponse {
     private Long wishListItemId;
+    private String hotelName;
     private String hotelImageUrl;
 
     public static WishListResponse from(WishList wishList){
-        return new WishListResponse(wishList.getId(), wishList.getHotel().getImageUrl());
+        return new WishListResponse(wishList.getId(), wishList.getHotel().getName(), wishList.getHotel().getImageUrl());
     }
 }

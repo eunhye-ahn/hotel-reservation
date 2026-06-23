@@ -30,12 +30,12 @@ public class WishService {
     public List<WishListCollectionResponse> getCollections(Long userId){
         User user = userRepository.findById(userId).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
         //유저의 컬렉션 가져오기
-        List<WishCollection> collections = wishCollectionRepository.findByUserIdOrderByCreatedDesc(user.getId());
+        List<WishCollection> collections = wishCollectionRepository.findByUserIdOrderByCreatedAtDesc(user.getId());
         //컬렉션이 이미 리스트인데 여기서 내부리스트를 어떻게 또 가져오지????
         //=> 컬렉션 하나하나마다 내부 위시리스트 조회해서 DTO로 변환
         return collections.stream()
                 .map(collection -> {
-                    List<WishList> wishLists = wishListRepository.findCollectionId(collection.getId());
+                    List<WishList> wishLists = wishListRepository.findByWishCollectionId(collection.getId());
                     return WishListCollectionResponse.builder()
                             .collectionId(collection.getId())
                             .name(collection.getName())
@@ -74,7 +74,7 @@ public class WishService {
             wishCollection = createCollection(userId, "기본");
         }
         else{
-            wishCollection = wishCollectionRepository.findTop1ByUserIdOrderByCreatedDesc(userId)
+            wishCollection = wishCollectionRepository.findTop1ByUserIdOrderByCreatedAtDesc(userId)
                     .orElseThrow(()->new CustomException(ErrorCode.COLLECTION_NOT_FOUND));
         }
 

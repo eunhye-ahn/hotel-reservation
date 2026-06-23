@@ -1,6 +1,8 @@
 package com.hotel.hotel.controller;
 
+import com.hotel.hotel.dto.AddWishListResponse;
 import com.hotel.hotel.dto.WishListCollectionResponse;
+import com.hotel.hotel.dto.WishListResponse;
 import com.hotel.hotel.service.WishService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -36,4 +38,13 @@ public class WishController {
                 .body(result);
     }
 
+    //위시리스트 아이템 추가
+    @PostMapping("/list")
+    public ResponseEntity<AddWishListResponse> addWishList(@AuthenticationPrincipal Long userId, @RequestBody Long hotelId) {
+        AddWishListResponse result = wishService.addWishList(userId, hotelId);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(result);
+    }
 }
