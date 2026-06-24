@@ -83,4 +83,12 @@ public class WishService {
         return new AddWishListResponse(wishCollection.getName(), wishList.getHotel().getImageUrl());
     }
 
+    //그룹 상세조회
+    public WishListCollectionResponse getCollection(Long userId, Long collectionId){
+        //그룹 찾기
+        WishCollection wishCollection = wishCollectionRepository.findById(collectionId)
+                .orElseThrow(()->new CustomException(ErrorCode.COLLECTION_NOT_FOUND));
+        WishListCollectionResponse lists = WishListCollectionResponse.from(wishCollection, )
+    }
+
 }

@@ -1,8 +1,6 @@
 package com.hotel.hotel.controller;
 
-import com.hotel.hotel.dto.AddWishListResponse;
-import com.hotel.hotel.dto.WishListCollectionResponse;
-import com.hotel.hotel.dto.WishListResponse;
+import com.hotel.hotel.dto.*;
 import com.hotel.hotel.service.WishService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,15 +18,15 @@ public class WishController {
 
     //위시리스트 그룹 추가
     @PostMapping("/collection")
-    public ResponseEntity<Void> createCollection(@AuthenticationPrincipal Long userId, @RequestBody String collectionName){
-        wishService.createCollection(userId, collectionName);
+    public ResponseEntity<Void> createCollection(@AuthenticationPrincipal Long userId, @RequestBody WIshCollectionsRequest request){
+        wishService.createCollection(userId, request.getCollectionName());
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .build();
     }
 
-    //위시리스트 그룹 조회
+    //위시 그룹 전체 조회
     @GetMapping("/collection")
     public ResponseEntity<List<WishListCollectionResponse>> getCollections(@AuthenticationPrincipal Long userId){
         List<WishListCollectionResponse> result = wishService.getCollections(userId);
@@ -38,10 +36,19 @@ public class WishController {
                 .body(result);
     }
 
+    //위시 그룹 상세조회
+    @GetMapping("/collection")
+    public ResponseEntity<WishListCollectionResponse> getCollection(@AuthenticationPrincipal Long userId, @RequestParam Long collectionId){
+        WishListCollectionResponse result = wishService.getCollection(userId, collectionId);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(result);
+    }
+
     //위시리스트 아이템 추가
     @PostMapping("/list")
-    public ResponseEntity<AddWishListResponse> addWishList(@AuthenticationPrincipal Long userId, @RequestBody Long hotelId) {
-        AddWishListResponse result = wishService.addWishList(userId, hotelId);
+    public ResponseEntity<AddWishListResponse> addWishList(@AuthenticationPrincipal Long userId, @RequestBody AddWishListRequest request) {
+        AddWishListResponse result = wishService.addWishList(userId, request.getHotelId());
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
