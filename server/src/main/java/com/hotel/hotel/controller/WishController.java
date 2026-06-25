@@ -27,7 +27,7 @@ public class WishController {
     }
 
     //위시 그룹 전체 조회
-    @GetMapping("/collection")
+    @GetMapping("/collection/all")
     public ResponseEntity<List<WishListCollectionResponse>> getCollections(@AuthenticationPrincipal Long userId){
         List<WishListCollectionResponse> result = wishService.getCollections(userId);
 

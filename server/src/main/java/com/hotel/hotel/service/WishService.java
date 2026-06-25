@@ -88,7 +88,9 @@ public class WishService {
         //그룹 찾기
         WishCollection wishCollection = wishCollectionRepository.findById(collectionId)
                 .orElseThrow(()->new CustomException(ErrorCode.COLLECTION_NOT_FOUND));
-        WishListCollectionResponse lists = WishListCollectionResponse.from(wishCollection, )
+        //리스트 찾기
+        List<WishList> items = wishListRepository.findByWishCollectionId(collectionId);
+        return WishListCollectionResponse.from(wishCollection,items);
     }
 
 }
