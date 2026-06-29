@@ -3,14 +3,13 @@ import { useNavigate } from "react-router";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { getHotels, getSimilarHotel } from "@/api/reservation-service";
 import type { CursorResponse} from '@/shared/type/hotel';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getDisplayName, type Region, type SubRegion } from '@/constants/Region';
 import { RegionSelector } from '@/shared/component/RegionSelector';
 import { Modal } from '@/shared/component/Modal';
 import { useRegionStore } from '@/store/useRegionStore';
 import { HotelCard } from '@/shared/component/HotelCard';
 import '@/pages/MainPage.css'
-import { useRecentHotelStore } from '@/store/useRecentHotelStore';
 import { SimilarHotels } from '@/shared/component/SimilarHotels';
 
 //호텔정보페이지

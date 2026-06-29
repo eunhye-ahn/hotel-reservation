@@ -93,4 +93,12 @@ public class WishService {
         return WishListCollectionResponse.from(wishCollection,items);
     }
 
+    //리스트 그룹 이동
+    public AddWishListResponse moveCollection(Long listId, Long collectionId){
+        WishList list = wishListRepository.findById(listId)
+                .orElseThrow(()->new CustomException(ErrorCode.WISHLIST_NOT_FOUND));
+
+
+    }
+
 }

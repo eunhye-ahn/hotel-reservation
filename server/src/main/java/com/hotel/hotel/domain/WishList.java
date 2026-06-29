@@ -29,4 +29,8 @@ public class WishList extends BaseTime {
         this.wishCollection = wishCollection;
         this.hotel = hotel;
     }
+
+    public void update(WishList wishList,WishCollection wishCollection){
+        this.wishCollection = wishCollection;
+    }
 }

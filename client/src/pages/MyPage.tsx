@@ -2,18 +2,26 @@
 import type { ReservationResponse, ReservationStatus } from "@/shared/type/reservation";
 import type { UserInfoResponse } from "@/shared/type/user";
 import '@/pages/MyPage.css';
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
 import { useAuthStore } from "@/store/useAuthStore";
 import { cancelReservation, getMyInfo, getMyReservations } from "@/api/reservation-service";
+import { WishList } from "@/shared/component/WIshList";
 
 
 export const MyPage = () => {
     const [status, setStatus] = useState<ReservationStatus>('BEFORE_USE');
     const navigate = useNavigate();
     const {accessToken} = useAuthStore();
+    
+    useEffect(()=>{
+        if(!accessToken){
+            navigate("/login")
+        }
+    },[])
+
     const {data, isLoading, isError} = useQuery<UserInfoResponse>({
         queryKey: ["myInfo"],
         queryFn: ()=> getMyInfo().then((res)=> res.data),
@@ -56,6 +64,7 @@ return (
             <p className="mypage-email">{data?.email}</p>
             <p className="mypage-phone">{data?.phone}</p>
         </div>
+        <WishList />
         <div className="mypage-reservations">
             <div className="mypage-tabs">
                 <button

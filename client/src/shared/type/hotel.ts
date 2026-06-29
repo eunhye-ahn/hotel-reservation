@@ -48,3 +48,28 @@ export interface CursorResponse {
     hasNext: boolean
 }
 
+export interface WishCollectionsRequest {
+    collectionName: string
+}
+
+export interface WishListResponse {
+    wishListItemId: number,
+    hotelName: string,
+    hotelImageUrl: string,
+    hotelAddress: string
+}
+
+export interface WishListCollectionResponse {
+    collectionId: number,
+    name: string,
+    items: WishListResponse[]
+}
+
+export interface AddWishListRequest {
+    hotelId: number
+}
+
+export interface AddWishListResponse {
+    collectionName: string,
+    hotelImageUrl: string
+}

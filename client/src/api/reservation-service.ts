@@ -1,6 +1,6 @@
 import type { AccessTokenResponse, LoginRequest, SignUpRequest } from "@/shared/type/auth";
 import axios from "axios";
-import type { CursorResponse, HotelDetailResponse, hotelResponse, Page } from "@/shared/type/hotel";
+import type { AddWishListRequest, AddWishListResponse, CursorResponse, HotelDetailResponse, hotelResponse, Page, WishCollectionsRequest, WishListCollectionResponse } from "@/shared/type/hotel";
 import type { ReservationCreateResponse, ReservationDetailResponse, ReservationInfoResponse, ReservationRequest, ReservationResponse, RoomTypeReservationResponse } from "@/shared/type/reservation";
 import type { UserInfoResponse } from "@/shared/type/user";
 import { reservationApi } from "./axios/reservation-axios";
@@ -110,4 +110,22 @@ export const getSimilarHotel = (hotelId: number, page: number) => {
     return reservationApi.get<Page<hotelResponse>>("/hotels/similarHotel",{
         params: {hotelId, page}        
     })
+}
+
+export const createCollection = (request: WishCollectionsRequest) => {
+    return reservationApi.post<void>("/wish/collection", request)
+}
+
+export const getCollections = () => {
+    return reservationApi.get<WishListCollectionResponse[]>("/wish/collection/all")
+}
+
+export const getCollection = (collectionId: number) => {
+    return reservationApi.get<WishListCollectionResponse>("/wish/collection", {
+        params: {collectionId}
+    })
+}
+
+export const addWishList = (request: AddWishListRequest) => {
+    return reservationApi.post<AddWishListResponse>("/wish/list", request)
 }

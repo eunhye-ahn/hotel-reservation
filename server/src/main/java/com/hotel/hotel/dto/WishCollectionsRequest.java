@@ -5,6 +5,6 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class WIshCollectionsRequest {
+public class WishCollectionsRequest {
     private String collectionName;
 }

@@ -13,6 +13,7 @@ public enum ErrorCode {
     //wish
     COLLECTION_ALREADY_EXISTS(HttpStatus.CONFLICT, "같은 이름의 콜렉션이 존재합니다"),
     COLLECTION_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "위시리스트를 조회하는데 오류가 발생했습니다"),
+    WISHLIST_NOT_FOUND(HttpStatus.BAD_REQUEST, "존재하지 않은 위시리스트입니다"),
     //redis
     CART_FULL(HttpStatus.BAD_REQUEST, "장바구니는 최대 20개까지 담을 수 있습니다"),
 

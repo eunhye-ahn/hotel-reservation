@@ -18,7 +18,7 @@ public class WishController {
 
     //위시리스트 그룹 추가
     @PostMapping("/collection")
-    public ResponseEntity<Void> createCollection(@AuthenticationPrincipal Long userId, @RequestBody WIshCollectionsRequest request){
+    public ResponseEntity<Void> createCollection(@AuthenticationPrincipal Long userId, @RequestBody WishCollectionsRequest request){
         wishService.createCollection(userId, request.getCollectionName());
 
         return ResponseEntity
@@ -53,5 +53,11 @@ public class WishController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(result);
+    }
+
+    //리스트 그룹 이동
+    @PostMapping("/move")
+    public ResponseEntity<?> moveCollection(@AuthenticationPrincipal Long userId, @RequestParam Long collectionId, @RequestParam Long ){
+
     }
 }

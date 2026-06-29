@@ -20,7 +20,12 @@ public class WishListCollectionResponse {
                 .name(collection.getName())
                 .items((wishList.stream()
                         .map((item)->
-                                new WishListResponse(item.getId(), item.getHotel().getName() , item.getHotel().getImageUrl()))).toList())
+                                new WishListResponse(
+                                        item.getId(),
+                                        item.getHotel().getName() ,
+                                        item.getHotel().getImageUrl(),
+                                        item.getHotel().getAddress()
+                                        ))).toList())
                 .build();
     }
 }
