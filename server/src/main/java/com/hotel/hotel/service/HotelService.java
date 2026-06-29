@@ -10,6 +10,8 @@ import com.hotel.hotel.mapper.HotelMapper;
 import com.hotel.hotel.mapper.RateMapper;
 import com.hotel.hotel.mapper.RoomTypeMapper;
 import com.hotel.hotel.repository.*;
+import com.hotel.reservation.domain.User;
+import com.hotel.reservation.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +39,7 @@ public class HotelService {
     private final HotelMapper hotelMapper;
     private final RoomTypeMapper roomTypeMapper;
     private final HotelSearchQueryRepository hotelSearchQueryRepository;
+    private final UserRepository userRepository;
 
     LocalDate today = LocalDate.now();
 
@@ -69,6 +72,7 @@ public class HotelService {
                 .build();
         List<RoomTypeResponse> roomTypes = roomTypeMapper.findByRoomTypeFilter(param);
 
+        //위시리스트 여부 가져오기
 
 
         return HotelDetailResponse.builder()

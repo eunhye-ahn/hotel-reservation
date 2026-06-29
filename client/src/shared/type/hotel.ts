@@ -62,7 +62,8 @@ export interface WishListResponse {
 export interface WishListCollectionResponse {
     collectionId: number,
     name: string,
-    items: WishListResponse[]
+    items: WishListResponse[],
+    count: number
 }
 
 export interface AddWishListRequest {
@@ -70,6 +71,16 @@ export interface AddWishListRequest {
 }
 
 export interface AddWishListResponse {
+    collectionName: string,
+    hotelImageUrl: string
+}
+
+export interface MoveWishRequest {
+    collectionId: number,
+    listId: number
+}
+
+export interface MoveWishResponse {
     collectionName: string,
     hotelImageUrl: string
 }

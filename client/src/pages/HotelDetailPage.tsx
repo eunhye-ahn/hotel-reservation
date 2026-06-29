@@ -2,12 +2,12 @@ import type { HotelDetailResponse } from "@/shared/type/hotel";
 import {  useRef, useState } from "react"
 import { useNavigate, useParams } from "react-router";
 import '@/pages/HotelDetailPage.css';
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import NotFoundPage from "./NotFoundPage";
-import { createReservation, getHotelDetail } from "@/api/reservation-service";
+import { addWishList, cancelWishList, createReservation, getHotelDetail } from "@/api/reservation-service";
 import { Map } from "@/shared/component/Map";
-import { ShoppingCart } from "lucide-react";
+import { Heart, ShoppingCart } from "lucide-react";
 
 export const HotelDetailPage = () => {
     //한국 기준 오늘날짜 설정 -date기본값
@@ -22,13 +22,35 @@ export const HotelDetailPage = () => {
     const [numberOfRooms, setNumberOfRooms] = useState(1);
     const [numberOfGuests, setNumberOfGuests] = useState(1);
     const selectedRoomTypeIdRef = useRef<number|null>(null);
+    const [isWished, setIsWished] = useState<boolean>(false);
 
     const reservationKey = useRef(crypto.randomUUID());
-
+    const queryClient = useQueryClient();
     const {data, isLoading, isError, error} = useQuery<HotelDetailResponse>({
         queryKey: ["hotelDetails", hotelId, startDate, endDate, numberOfRooms, numberOfGuests],    //호텔id별로 캐시관리
         queryFn: () => getHotelDetail(Number(hotelId), startDate, endDate, numberOfRooms, numberOfGuests).then((res)=>res.data)
     });
+
+    const {mutate : addWishMutation} = useMutation({
+        mutationFn: addWishList,
+        onSuccess: (res)=>{
+            setIsWished(true)
+            queryClient.invalidateQueries({ queryKey: ["wishList"] })
+        },
+        onError: (err:any)=>{
+            console.log(err)
+        }
+    })
+    const {mutate : cancelWishMutation} = useMutation({
+        mutationFn: cancelWishList,
+        onSuccess: (res)=>{
+            setIsWished(false)
+            queryClient.invalidateQueries({ queryKey: ["wishList"] })
+        },
+        onError: (err:any)=>{
+            console.log(err)
+        }
+    })
     
         const {mutate : createReservationMutate, isPending} = useMutation({
         mutationFn: createReservation,
@@ -77,6 +99,18 @@ export const HotelDetailPage = () => {
             }
         }
     })
+
+    const handleWish = (hotelId: number|undefined) => {
+        if(!hotelId) return
+        if(isWished) {
+            addWishMutation({hotelId})
+            return
+        }
+        else{
+            cancelWishList(hotelId)
+            return
+        }
+    }
 
     const handleReservation = (roomTypeId: number) => {
         if (!data) return;
@@ -147,6 +181,9 @@ export const HotelDetailPage = () => {
                     <p>{data?.hotelName}</p>
                     <p>{data?.address}</p>
                 </div>
+                <button onClick={()=>handleWish(data?.hotelId)}>
+                    <Heart size={24} fill={isWished ? "red":"none"} color={isWished ? "red" : "white"} />
+                </button>
             </div>
             <div className="room-select-title">객실선택</div>
             {data?.roomTypes.map((roomType) => (

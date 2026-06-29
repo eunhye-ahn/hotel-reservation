@@ -13,19 +13,22 @@ public class WishListCollectionResponse {
     private Long collectionId;
     private String name;
     private List<WishListResponse> items;
+    private int count;
 
     public static WishListCollectionResponse from(WishCollection collection, List<WishList> wishList){
+        List<WishListResponse> items = wishList.stream()
+                .map(item->new WishListResponse(
+                        item.getId(),
+                        item.getHotel().getName(),
+                        item.getHotel().getImageUrl(),
+                        item.getHotel().getAddress()
+                )).toList();
+
         return WishListCollectionResponse.builder()
                 .collectionId(collection.getId())
                 .name(collection.getName())
-                .items((wishList.stream()
-                        .map((item)->
-                                new WishListResponse(
-                                        item.getId(),
-                                        item.getHotel().getName() ,
-                                        item.getHotel().getImageUrl(),
-                                        item.getHotel().getAddress()
-                                        ))).toList())
+                .items(items)
+                .count(items.size())
                 .build();
     }
 }

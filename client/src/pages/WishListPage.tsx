@@ -2,7 +2,8 @@ import { getCollection } from "@/api/reservation-service";
 import { SearchFilterBar } from "@/shared/component/SearchFilterBar";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { useParams, useSearchParams } from "react-router"
+import { useNavigate, useParams, useSearchParams } from "react-router"
+import '@/pages/WishListPage.css'
 
 export function WishListPage(){
     const {collectionId} = useParams();
@@ -10,6 +11,7 @@ export function WishListPage(){
     const [isDateOpen, setIsDateOpen] = useState(false);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [isSortOpen, setIsSortOpen] = useState(false);
+    const navigate = useNavigate();
 
     const today = new Date().toLocaleDateString('en-CA')
     const tomorrow = new Date(Date.now() + 86400000).toLocaleDateString('en-CA');
@@ -24,7 +26,7 @@ export function WishListPage(){
 
 
     const {data,isLoading, isError} = useQuery({
-        queryKey:[],
+        queryKey:["wishList"],
         queryFn:()=>getCollection(Number(collectionId)).then(res=>{
             console.log(res.data)
             return res.data
@@ -46,14 +48,19 @@ export function WishListPage(){
                             onSortClick={() => setIsSortOpen(true)}
                         />
             <h2>{data?.name}</h2>
-            <div>
-            {data?.items.map(item=>(
-                <div>
-                    <img src={item.hotelImageUrl}/>
-                    <p>{item.hotelName}</p>
+           <div className="wishlist-detail-container">
+                <h2>{data?.name}</h2>
+                <div className="wishlist-detail-grid">
+                    {data?.items.map((item, index) => (
+                        <div className="wishlist-detail-card" key={index} onClick={()=>navigate(`/hotels/${item.wishListItemId}`)}>
+                            <img className="wishlist-detail-image" src={item.hotelImageUrl} />
+                            <div className="wishlist-detail-info">
+                                <p>{item.hotelName}</p>
+                            </div>
+                        </div>
+                    ))}
                 </div>
-            ))}
             </div>
-        </div>
+        </div> 
     )
 }

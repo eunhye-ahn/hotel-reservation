@@ -57,7 +57,21 @@ public class WishController {
 
     //리스트 그룹 이동
     @PostMapping("/move")
-    public ResponseEntity<?> moveCollection(@AuthenticationPrincipal Long userId, @RequestParam Long collectionId, @RequestParam Long ){
+    public ResponseEntity<MoveWishResponse> moveCollection(@RequestBody MoveWishRequest request){
+        MoveWishResponse result = wishService.moveCollection(request);
 
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(result);
+    }
+
+    //위시리스트 취소
+    @DeleteMapping("/cancle")
+    public ResponseEntity<Void> cancelWishList(@RequestParam Long wishListId){
+        wishService.cancelWishList(wishListId);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .build();
     }
 }

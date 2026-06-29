@@ -5,9 +5,7 @@ import com.hotel.common.exception.ErrorCode;
 import com.hotel.hotel.domain.Hotel;
 import com.hotel.hotel.domain.WishCollection;
 import com.hotel.hotel.domain.WishList;
-import com.hotel.hotel.dto.AddWishListResponse;
-import com.hotel.hotel.dto.WishListCollectionResponse;
-import com.hotel.hotel.dto.WishListResponse;
+import com.hotel.hotel.dto.*;
 import com.hotel.hotel.repository.HotelRepository;
 import com.hotel.hotel.repository.WishCollectionRepository;
 import com.hotel.hotel.repository.WishListRepository;
@@ -15,6 +13,7 @@ import com.hotel.reservation.domain.User;
 import com.hotel.reservation.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -49,6 +48,7 @@ public class WishService {
     }
 
     //컬렉션 생성
+    @Transactional
     public WishCollection createCollection(Long userId, String collectionName){
         //이름 중복검사
         if(wishCollectionRepository.existsByUserIdAndName(userId, collectionName)){
@@ -62,6 +62,7 @@ public class WishService {
     }
 
     //리스트 생성
+    @Transactional
     public AddWishListResponse addWishList(Long userId, Long hotelId){
         //호텔아이디검사
         Hotel hotel = hotelRepository.findById(hotelId)
@@ -94,11 +95,24 @@ public class WishService {
     }
 
     //리스트 그룹 이동
-    public AddWishListResponse moveCollection(Long listId, Long collectionId){
-        WishList list = wishListRepository.findById(listId)
+    @Transactional
+    public MoveWishResponse moveCollection(MoveWishRequest request){
+        WishList list = wishListRepository.findById(request.getListId())
                 .orElseThrow(()->new CustomException(ErrorCode.WISHLIST_NOT_FOUND));
+        WishCollection collection = wishCollectionRepository.findById(request.getCollectionId())
+                .orElseThrow(()->new CustomException(ErrorCode.COLLECTION_NOT_FOUND));
 
+        list.updateCollection(collection);
 
+        return new MoveWishResponse(collection.getName(), list.getHotel().getImageUrl());
     }
 
+    //위시리스트 취소
+    @Transactional
+    public void cancelWishList(Long wishListId){
+        WishList list = wishListRepository.findById(wishListId)
+                .orElseThrow(()->new CustomException(ErrorCode.WISHLIST_NOT_FOUND));
+
+        wishListRepository.delete(list);
+    }
 }

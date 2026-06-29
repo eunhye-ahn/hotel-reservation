@@ -1,6 +1,6 @@
 import type { AccessTokenResponse, LoginRequest, SignUpRequest } from "@/shared/type/auth";
 import axios from "axios";
-import type { AddWishListRequest, AddWishListResponse, CursorResponse, HotelDetailResponse, hotelResponse, Page, WishCollectionsRequest, WishListCollectionResponse } from "@/shared/type/hotel";
+import type { AddWishListRequest, AddWishListResponse, CursorResponse, HotelDetailResponse, hotelResponse, MoveWishRequest, MoveWishResponse, Page, WishCollectionsRequest, WishListCollectionResponse } from "@/shared/type/hotel";
 import type { ReservationCreateResponse, ReservationDetailResponse, ReservationInfoResponse, ReservationRequest, ReservationResponse, RoomTypeReservationResponse } from "@/shared/type/reservation";
 import type { UserInfoResponse } from "@/shared/type/user";
 import { reservationApi } from "./axios/reservation-axios";
@@ -128,4 +128,14 @@ export const getCollection = (collectionId: number) => {
 
 export const addWishList = (request: AddWishListRequest) => {
     return reservationApi.post<AddWishListResponse>("/wish/list", request)
+}
+
+export const moveCollection = (request: MoveWishRequest) => {
+    return reservationApi.post<MoveWishResponse>("/move",request)
+}
+
+export const cancelWishList = (wishListId: number) => {
+    return reservationApi.delete<void>("/cancel", {
+        params: {wishListId}
+    })
 }

@@ -30,7 +30,7 @@ public class WishList extends BaseTime {
         this.hotel = hotel;
     }
 
-    public void update(WishList wishList,WishCollection wishCollection){
+    public void updateCollection(WishCollection wishCollection){
         this.wishCollection = wishCollection;
     }
 }
