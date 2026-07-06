@@ -22,6 +22,7 @@ export const HotelDetailPage = () => {
     const [numberOfRooms, setNumberOfRooms] = useState(1);
     const [numberOfGuests, setNumberOfGuests] = useState(1);
     const selectedRoomTypeIdRef = useRef<number|null>(null);
+    //이렇게하면 안되고 내 데이터를 가져와야해
     const [isWished, setIsWished] = useState<boolean>(false);
 
     const reservationKey = useRef(crypto.randomUUID());

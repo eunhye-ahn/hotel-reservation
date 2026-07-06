@@ -2,7 +2,6 @@ package com.hotel.hotel.repository;
 
 import com.hotel.hotel.domain.WishCollection;
 import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -11,4 +10,6 @@ public interface WishCollectionRepository extends JpaRepository<WishCollection, 
     boolean existsByUserId(Long userId);
     Optional<WishCollection> findTop1ByUserIdOrderByCreatedAtDesc(Long userId);
     List<WishCollection> findByUserIdOrderByCreatedAtDesc(Long userId);
+
+    Optional<WishCollection> findByIdAndUserId(Long collectionId, Long userId);
 }

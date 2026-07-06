@@ -5,8 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class AddWishListResponse {
+public class CreateWishListResponse {
     private Long collectionId;
     private String collectionName;
-    private String hotelImageUrl;
 }
