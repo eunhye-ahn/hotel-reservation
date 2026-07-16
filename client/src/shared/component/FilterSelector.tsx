@@ -1,7 +1,7 @@
 import { HOTEL_TYPES } from "@/constants/HotelType";
 import { useState } from "react";
 import { useSearchParams } from "react-router"
-import '@/shared/component/FilterSelector.css'
+import '@/css/FilterSelector.css'
 
 interface FilterSelectorProps {
     onClose: () => void

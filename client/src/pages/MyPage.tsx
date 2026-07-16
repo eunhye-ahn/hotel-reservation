@@ -1,13 +1,13 @@
 
 import type { ReservationResponse, ReservationStatus } from "@/shared/type/reservation";
 import type { UserInfoResponse } from "@/shared/type/user";
-import '@/pages/MyPage.css';
+import '@/css/MyPage.css';
 import { useEffect, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
 import { useAuthStore } from "@/store/useAuthStore";
-import { cancelReservation, getMyInfo, getMyReservations } from "@/api/reservation-service";
+import { cancelReservation, getMyInfo, getMyReservations } from "@/api/api";
 import { WishList } from "@/shared/component/WIshList";
 
 

@@ -2,11 +2,11 @@
 import type { ReservationDetailResponse } from "@/shared/type/reservation";
 import { useNavigate, useParams } from "react-router"
 import dayjs from 'dayjs';
-import '@/pages/ReservationConfirmPage.css';
+import '@/css/ReservationConfirmPage.css'
 import { useQuery } from "@tanstack/react-query";
 import NotFoundPage from "./NotFoundPage";
 import { toast } from "react-toastify";
-import { reservationConfirm } from "@/api/reservation-service";
+import { reservationConfirm } from "@/api/api";
 
 export const ReservationConfirmPage = () => {
     const {reservationKey} = useParams();

@@ -4,7 +4,7 @@ import "react-day-picker/style.css";
 import { ko } from "date-fns/locale";
 import { useState } from "react";
 import { useSearchParams } from "react-router";
-import '@/shared/component/DateGuestSelector.css'
+import '@/css/DateGuestSelector.css'
 import { CalendarIcon } from "lucide-react";
 
 interface DateGuestSelector {

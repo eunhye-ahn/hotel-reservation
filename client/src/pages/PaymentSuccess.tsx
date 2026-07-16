@@ -1,5 +1,4 @@
-import { confirmPayment } from "@/api/payment-service";
-import { getReservationStatus } from "@/api/reservation-service";
+import { getReservationStatus, confirmPayment } from "@/api/api";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";

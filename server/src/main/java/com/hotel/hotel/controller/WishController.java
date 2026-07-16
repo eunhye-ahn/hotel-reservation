@@ -58,9 +58,9 @@ public class WishController {
     //위시리스트 아이템 추가
     @PostMapping("/list")
     public ResponseEntity<AddWishListResponse> addWishList(@AuthenticationPrincipal Long userId,
-                                                           @RequestBody AddWishListRequest request,
+                                                           @RequestParam Long hotelId,
                                                            @CookieValue(value = "wish-collection", required = false) Long collectionId) {
-        AddWishListResponse result = wishService.addWishList(userId, request.getHotelId(), collectionId);
+        AddWishListResponse result = wishService.addWishList(userId, hotelId, collectionId);
 
         //쿠키저장
         ResponseCookie cookie = cookieUtil.createWishCollectionCookie(result.getCollectionId());
@@ -81,7 +81,7 @@ public class WishController {
                 .body(result);
     }
 
-    //위시리스트 취소
+    //위시리스트 취소 => wishListId => hotelId로 변경 필요
     @DeleteMapping("/cancle")
     public ResponseEntity<Void> cancelWishList(@RequestParam Long wishListId){
         wishService.cancelWishList(wishListId);
@@ -91,8 +91,13 @@ public class WishController {
                 .build();
     }
 
-    @GetMapping("/status")
-    public ResponseEntity<?> getWishedStatus(@AuthenticationPrincipal Long userId, @RequestParam Long hotelId){
-        wishService.getWishedStatus(userId, hotelId);
+    //위시여부확인
+    @GetMapping("/check")
+    public ResponseEntity<Boolean> getWishedChecked(@AuthenticationPrincipal Long userId, @RequestParam Long hotelId){
+        boolean wCheck = wishService.getWishedStatus(userId, hotelId);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(wCheck);
     }
 }

@@ -1,4 +1,4 @@
-import { getHotels, getHotelsByFilter } from "@/api/reservation-service";
+import { getHotels, getHotelsByFilter } from "@/api/api";
 import { HotelCard } from "@/shared/component/HotelCard";
 import { SearchFilterBar } from "@/shared/component/SearchFilterBar";
 import type { CursorResponse } from "@/shared/type/hotel";
@@ -6,8 +6,8 @@ import { useRegionStore } from "@/store/useRegionStore";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router";
-import '@/pages/HotelListPage.css'
-import '@/shared/component/HotelCard.css';
+import '@/css/HotelListPage.css'
+import '@/css/HotelCard.css';
 import { DateGuestSelector } from "@/shared/component/DateGuestSelector";
 import { Modal } from "@/shared/component/Modal";
 import { FilterSelector } from "@/shared/component/FilterSelector";

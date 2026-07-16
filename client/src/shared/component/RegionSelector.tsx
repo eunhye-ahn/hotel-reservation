@@ -1,6 +1,6 @@
 import { REGIONS, type Region, type SubRegion } from "@/constants/Region";
 import { useState } from "react";
-import '@/shared/component/RegionSelector.css'
+import '@/css/RegionSelector.css'
 
 interface RegionSelectorProps {
     onSelect: (region: Region, subRegion?: SubRegion) => void;

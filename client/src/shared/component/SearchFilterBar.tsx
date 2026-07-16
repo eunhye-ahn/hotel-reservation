@@ -1,5 +1,5 @@
 import { CalendarIcon, FilterIcon, SortAscIcon } from "lucide-react";
-import '@/shared/component/SearchFilterBar.css'
+import '@/css/SearchFilterBar.css'
 
 interface SearchFilterBarProps {
     checkIn: string,

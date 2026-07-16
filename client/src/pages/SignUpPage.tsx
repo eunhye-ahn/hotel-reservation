@@ -2,12 +2,12 @@
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
 import type { SignUpRequest } from "@/shared/type/auth";
-import './SignUpPage.css'
+import '@/css/SignUpPage.css'
 import { toast } from "react-toastify";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import NotFoundPage from "./NotFoundPage";
-import { signUp } from "@/api/reservation-service";
+import { signUp } from "@/api/api";
 
 export const SignUpPage = () => {
     const {register, handleSubmit, formState: {errors}} = useForm<SignUpRequest>();

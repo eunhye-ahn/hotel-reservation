@@ -1,5 +1,3 @@
-declare const kakao: any;
-
 export interface hotelResponse {
     hotelId: number,
     name: string,

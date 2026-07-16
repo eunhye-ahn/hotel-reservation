@@ -1,16 +1,17 @@
 import type { AccessTokenResponse, LoginRequest, SignUpRequest } from "@/shared/type/auth";
 import axios from "axios";
-import type { AddWishListRequest, AddWishListResponse, CursorResponse, HotelDetailResponse, hotelResponse, MoveWishRequest, MoveWishResponse, Page, WishCollectionsRequest, WishListCollectionResponse } from "@/shared/type/hotel";
+import type { AddWishListRequest, AddWishListResponse, CursorResponse, HotelDetailResponse, hotelResponse,  MoveWishRequest,  MoveWishResponse,  Page, WishCollectionsRequest, WishListCollectionResponse} from "@/shared/type/hotel";
 import type { ReservationCreateResponse, ReservationDetailResponse, ReservationInfoResponse, ReservationRequest, ReservationResponse, RoomTypeReservationResponse } from "@/shared/type/reservation";
 import type { UserInfoResponse } from "@/shared/type/user";
-import { reservationApi } from "./axios/reservation-axios";
+import { api } from "./axios";
+import type { PaymentConfirmRequest, PaymentConfirmResponse, PaymentPrepareResponse } from "@/shared/type/payment";
 
 export const login = (request: LoginRequest) => {
-    return reservationApi.post<AccessTokenResponse>("/auth/login", request);
+    return api.post<AccessTokenResponse>("/auth/login", request);
 }
 
 export const logout = () => {
-    return reservationApi.post<void>("/auth/logout");
+    return api.post<void>("/auth/logout");
 }
 
 //새로고침,at만료 시(401반환 시 -인증실패) 호출 - 무한루프 방지
@@ -21,12 +22,12 @@ export const reissue = () => {
 }
 
 export const signUp = (request: SignUpRequest) => {
-    return reservationApi.post<AccessTokenResponse>("/auth/signUp", request);
+    return api.post<AccessTokenResponse>("/auth/signUp", request);
 }
 
 //호텔전체조회
 export const getHotels = (cursorId?: number) => {
-    return reservationApi.get<CursorResponse>("/hotels", {
+    return api.get<CursorResponse>("/hotels", {
         params: { cursorId }
     })
 }
@@ -45,7 +46,7 @@ getHotelsByFilter({ lDongRegnCd: regionCode, ... })
 //호텔필터조회
 export const getHotelsByFilter = (q?: string, lDongRegnCd?: string, lDongSignguCd?: string, lclsSystm2?: string,
     startDate?: string, endDate?: string, numberOfGuests?: number, numberOfRooms?: number, cursorId: number = 0) => {
-    return reservationApi.get<CursorResponse>("/hotels", {
+    return api.get<CursorResponse>("/hotels", {
         params: {
             q,
             lDongRegnCd, lDongSignguCd, lclsSystm2,
@@ -59,83 +60,104 @@ export const getHotelsByFilter = (q?: string, lDongRegnCd?: string, lDongSignguC
 }
 
 export const getHotelDetail = (hotelId: number, startDate?: string, endDate?: string, numberOfRooms?: number, numberOfGuests?: number) => {
-    return reservationApi.get<HotelDetailResponse>(`/hotels/${hotelId}`, {
+    return api.get<HotelDetailResponse>(`/hotels/${hotelId}`, {
         params: {startDate, endDate, numberOfRooms, numberOfGuests}
     });
 }
 
 export const createReservation = (request: ReservationRequest) => {
-    return reservationApi.post<ReservationCreateResponse>("/reservations", request)
+    return api.post<ReservationCreateResponse>("/reservations", request)
 }
 
 export const getRoomTypeForReservation = (hotelId: number, roomTypeId: number, startDate: string, endDate: string, numberOfRooms: number) => {
-    return reservationApi.get<RoomTypeReservationResponse>(`/hotels/${hotelId}/roomTypes/${roomTypeId}/reservation`, {
+    return api.get<RoomTypeReservationResponse>(`/hotels/${hotelId}/roomTypes/${roomTypeId}/reservation`, {
         params: { startDate, endDate, numberOfRooms }
     })
 }
 
 export const reservationConfirm = (reservationKey: string) => {
-    return reservationApi.get<ReservationDetailResponse>(`/reservations/${reservationKey}`)
+    return api.get<ReservationDetailResponse>(`/reservations/${reservationKey}`)
 }
 
 export const getMyInfo = () => {
-    return reservationApi.get<UserInfoResponse>("/user/myInfo")
+    return api.get<UserInfoResponse>("/user/myInfo")
 }
 
 export const getMyReservations = (status: string) => {
-    return reservationApi.get<ReservationResponse[]>("/reservations", {
+    return api.get<ReservationResponse[]>("/reservations", {
         params: { status }
     })
 }
 
 export const cancelReservation = (reservationKey: string) => {
-    return reservationApi.delete<void>(`/reservations/${reservationKey}`)
+    return api.delete<void>(`/reservations/${reservationKey}`)
 }
 
 export const reservationInfo = (reservationKey: string) => {
-    return reservationApi.get<ReservationInfoResponse>(`/reservations/${reservationKey}/reservation-info`)
+    return api.get<ReservationInfoResponse>(`/reservations/${reservationKey}/reservation-info`)
 }
 
 export const getReservationStatus = (reservationKey: string) => {
-    return reservationApi.get<string>(`/reservations/${reservationKey}/status`)
+    return api.get<string>(`/reservations/${reservationKey}/status`)
 }
 
 export const getSearchAutocomplete = (q?: string) => {
-    return reservationApi.get<string[]>("/hotels/autocomplete", {
+    return api.get<string[]>("/hotels/autocomplete", {
         params : {q}
     })
 }
 
 export const getSimilarHotel = (hotelId: number, page: number) => {
-    return reservationApi.get<Page<hotelResponse>>("/hotels/similarHotel",{
+    return api.get<Page<hotelResponse>>("/hotels/similarHotel",{
         params: {hotelId, page}        
     })
 }
 
 export const createCollection = (request: WishCollectionsRequest) => {
-    return reservationApi.post<void>("/wish/collection", request)
+    return api.post<void>("/wish/collection", request)
 }
 
 export const getCollections = () => {
-    return reservationApi.get<WishListCollectionResponse[]>("/wish/collection/all")
+    return api.get<WishListCollectionResponse[]>("/wish/collection/all")
 }
 
 export const getCollection = (collectionId: number) => {
-    return reservationApi.get<WishListCollectionResponse>("/wish/collection", {
+    return api.get<WishListCollectionResponse>("/wish/collection", {
         params: {collectionId}
     })
 }
 
-export const addWishList = (request: AddWishListRequest) => {
-    return reservationApi.post<AddWishListResponse>("/wish/list", request)
+export const addWishList = (hotelId: number) => {
+    return api.post<AddWishListResponse>("/wish/list", null, {
+        params: {hotelId}
+    })
 }
 
 export const moveCollection = (request: MoveWishRequest) => {
-    return reservationApi.post<MoveWishResponse>("/move",request)
+    return api.post<MoveWishResponse>("/wish/move",request)
 }
 
-export const cancelWishList = (wishListId: number) => {
-    return reservationApi.delete<void>("/cancel", {
-        params: {wishListId}
+export const cancelWishList = (hotelId: number) => {
+    return api.delete<void>("/wish/cancel", {
+        params: {hotelId}
     })
+}
+
+export const getWishedChecked = (hotelId: number)=>{
+    return api.get<boolean>("/wish/check",{
+        params: {hotelId}
+    })
+}
+
+export const preparePayment = (reservationKey: string, orderId: string, idempotencyKey: string) => {
+    return api.post<PaymentPrepareResponse>(`/payments/prepare/${reservationKey}`, {orderId}, {
+        headers: {
+            "Idempotency-Key": idempotencyKey
+        }
+    })
+}
+
+//결제승인처리api
+export const confirmPayment = (request: PaymentConfirmRequest) => {
+    return api.post<PaymentConfirmResponse>("/payments/confirm", request)
 }

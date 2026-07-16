@@ -1,5 +1,5 @@
 import { Outlet } from "react-router";
-import './shared/component/header.css'
+import './css/header.css'
 import { Header } from "./shared/component/header";
 import '@/Layout.css'
 

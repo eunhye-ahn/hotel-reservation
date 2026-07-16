@@ -10,6 +10,6 @@ public interface WishCollectionRepository extends JpaRepository<WishCollection, 
     boolean existsByUserId(Long userId);
     Optional<WishCollection> findTop1ByUserIdOrderByCreatedAtDesc(Long userId);
     List<WishCollection> findByUserIdOrderByCreatedAtDesc(Long userId);
-
+    List<WishCollection> findByUserId(Long userId);
     Optional<WishCollection> findByIdAndUserId(Long collectionId, Long userId);
 }

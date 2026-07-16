@@ -1,9 +1,9 @@
-import { getCollection } from "@/api/reservation-service";
+import { getCollection } from "@/api/api";
 import { SearchFilterBar } from "@/shared/component/SearchFilterBar";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router"
-import '@/pages/WishListPage.css'
+import '@/css/WishListPage.css'
 
 export function WishListPage(){
     const {collectionId} = useParams();

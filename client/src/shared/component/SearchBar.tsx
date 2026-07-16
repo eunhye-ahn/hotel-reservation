@@ -1,4 +1,4 @@
-import { getSearchAutocomplete } from "@/api/reservation-service";
+import { getSearchAutocomplete } from "@/api/api";
 import { Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react"
 import { useLocation, useNavigate } from "react-router";

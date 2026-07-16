@@ -123,6 +123,16 @@ public class WishService {
 
     //위시상태 조회
     public boolean getWishedStatus(Long userId, Long hotelId){
-        wishListRepository.
+
+        List<WishCollection> collections= wishCollectionRepository.findByUserId(userId);
+
+        boolean wCheck = false;
+        for(WishCollection collection : collections) {
+            wCheck = wishListRepository.existsByWishCollectionIdAndHotelId(collection.getId(), hotelId);
+            if(wCheck){
+                break;
+            }
+        }
+        return wCheck;
     }
 }

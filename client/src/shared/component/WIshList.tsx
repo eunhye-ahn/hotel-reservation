@@ -1,9 +1,9 @@
-import { createCollection, getCollections } from "@/api/reservation-service"
+import { createCollection, getCollections } from "@/api/api"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import type {  WishCollectionsRequest, WishListCollectionResponse } from "../type/hotel"
 import { useState } from "react"
 import { useNavigate } from "react-router"
-import '@/shared/component/WishList.css'
+import '@/css/WishList.css'
 import { toast } from "react-toastify"
 import { Modal } from "./Modal"
 import type { AxiosResponse } from "axios"

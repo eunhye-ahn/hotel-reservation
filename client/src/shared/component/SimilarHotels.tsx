@@ -1,4 +1,4 @@
-import { getSimilarHotel } from "@/api/reservation-service";
+import { getSimilarHotel } from "@/api/api";
 import { useRecentHotelStore } from "@/store/useRecentHotelStore"
 import { useQuery } from "@tanstack/react-query"
 import { useState } from "react";
