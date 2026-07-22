@@ -82,9 +82,9 @@ public class WishController {
     }
 
     //위시리스트 취소 => wishListId => hotelId로 변경 필요
-    @DeleteMapping("/cancle")
-    public ResponseEntity<Void> cancelWishList(@RequestParam Long wishListId){
-        wishService.cancelWishList(wishListId);
+    @DeleteMapping("/cancel")
+    public ResponseEntity<Void> cancelWishList(@AuthenticationPrincipal Long userId, @RequestParam Long hotelId){
+        wishService.cancelWishList(userId, hotelId);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

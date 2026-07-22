@@ -1,6 +1,6 @@
 
-import type { ReservationResponse, ReservationStatus } from "@/shared/type/reservation";
-import type { UserInfoResponse } from "@/shared/type/user";
+import type { ReservationResponse, ReservationStatus } from "@/type/reservation";
+import type { UserInfoResponse } from "@/type/user";
 import '@/css/MyPage.css';
 import { useEffect, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -8,12 +8,13 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
 import { useAuthStore } from "@/store/useAuthStore";
 import { cancelReservation, getMyInfo, getMyReservations } from "@/api/api";
-import { WishList } from "@/shared/component/WIshList";
+import { WishList } from "@/component/WIshList";
 
 
 export const MyPage = () => {
     const [status, setStatus] = useState<ReservationStatus>('BEFORE_USE');
     const navigate = useNavigate();
+    
     const {accessToken} = useAuthStore();
     
     useEffect(()=>{
@@ -22,6 +23,7 @@ export const MyPage = () => {
         }
     },[])
 
+    //내 정보조회
     const {data, isLoading, isError} = useQuery<UserInfoResponse>({
         queryKey: ["myInfo"],
         queryFn: ()=> getMyInfo().then((res)=> res.data),
@@ -29,12 +31,14 @@ export const MyPage = () => {
     });
     const queryClient = useQueryClient();
 
+    //내 예약조회
     const {data: reservation, isLoading: isReservationListLoading} =  useQuery<ReservationResponse[]>({
         queryKey: ["myReservationList", status],
         queryFn: ()=>getMyReservations(status).then((res)=>res.data),
         enabled: !!accessToken
     })
 
+    //예약 취소
     const {mutate, isPending} = useMutation({
         mutationFn: cancelReservation,
         //캐시 무효화 -> useQuery가 stale 감지 -> queryFn 자동 재실행 -> 새 데이터로 화면 업데이트
@@ -55,6 +59,19 @@ export const MyPage = () => {
         toast.error("일시적인 오류가 발생했습니다")
         navigate(-1)
         return null;   
+    }
+
+    const getPaymentStatus = (status: string) => {
+        if(status === "PENDING"){
+            console.log(status)
+            return "결제미완료"
+        }
+        else if(status === "PAID"){
+             console.log(status)
+            return "결제완료"
+        }else if(status === "EXPIRED"){
+            return "예약만료"
+        }
     }
 
 return (
@@ -80,7 +97,8 @@ return (
             {reservation?.map((reservation) => (
                     <div className="reservation-card" key={reservation.reservationKey}>
                         <div className="reservation-card-header">
-                            <span className="reservation-card-status">{status === 'AFTER_USE' ? '이용완료' : status === 'BEFORE_USE' ? '이용전' : '취소됨'}</span>
+                            <span className="reservation-card-status">{status === 'AFTER_USE' ? '이용완료' : status === 'BEFORE_USE' ? '이용전' : '취소'}</span>
+                            <span>{getPaymentStatus(reservation.paymentStatus)}</span>
                             <div className="reservation-card-btns">
                                 <button className="reservation-detail-btn" onClick={() => navigate(`/reservations/${reservation.reservationKey}`)}>상세보기</button>
                                 <button className="reservation-cancel-btn" onClick={() => mutate(reservation.reservationKey)} disabled={isPending}>

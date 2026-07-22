@@ -1,4 +1,4 @@
-import type { HotelDetailResponse } from "@/shared/type/hotel";
+import type { HotelDetailResponse } from "@/type/hotel";
 import {  useEffect, useRef, useState } from "react"
 import { useNavigate, useParams } from "react-router";
 import '@/css/HotelDetailPage.css';
@@ -6,9 +6,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import NotFoundPage from "./NotFoundPage";
 import { addWishList, cancelWishList, createReservation, getHotelDetail, getWishedChecked } from "@/api/api";
-import { Map } from "@/shared/component/Map";
+import { Map } from "@/component/Map";
 import { Heart, ShoppingCart } from "lucide-react";
 import { useWishList } from "@/hooks/useWishList";
+import { useReservation } from "@/hooks/useReservation";
 
 // 파일 분리 : 메인(조립만), 
 // 훅 : 기능(호텔 상세쿼리/날짜인원상태, 위시조회+추가/취소mutation, 예약mutation+에러코드 분기)=>훅으로 분리하기
@@ -25,84 +26,27 @@ export const HotelDetailPage = () => {
     const [endDate, setEndDate] = useState(tomorrow);
     const [numberOfRooms, setNumberOfRooms] = useState(1);
     const [numberOfGuests, setNumberOfGuests] = useState(1);
-    const selectedRoomTypeIdRef = useRef<number|null>(null);
    
-    const reservationKey = useRef(crypto.randomUUID());
-
     const {data, isLoading, isError, error} = useQuery<HotelDetailResponse>({
         queryKey: ["hotelDetails", hotelId, startDate, endDate, numberOfRooms, numberOfGuests],    //호텔id별로 캐시관리
         queryFn: () => getHotelDetail(Number(hotelId), startDate, endDate, numberOfRooms, numberOfGuests).then((res)=>res.data)
     });
 
     //hotelId가 nan 이들어가는 오류 => useWishList에서 쿼리에 방어로직 추가 enabled
+    //위시리스트
     const {isWished, handleWish} = useWishList(Number(data?.hotelId));
 
-
-        //예약
-        const {mutate : createReservationMutate, isPending} = useMutation({
-        mutationFn: createReservation,
-        onSuccess: (res)=>{
-            const {reservationKey, orderId} =res.data;
-                const roomType = data?.roomTypes.find(r => r.roomTypeId === selectedRoomTypeIdRef.current);
-               navigate(`/reservations/${reservationKey}/reservation-info`, {
-                state: {
-                    orderId,
-                    reservationKey,
-                    hotelName: data?.hotelName,
-                    hotelAddress: data?.address,
-                    roomTypeName: roomType?.name,
-                    imageUrl: roomType?.imageUrl,
-                    checkInTime: data?.checkInTime,
-                    checkOutTime: data?.checkOutTime,
-                    startDate,
-                    endDate,
-                    numberOfRooms,
-                    numberOfGuests
-                }
-            }); 
-        },
-        //에러코드분기
-        onError: (err: any) => {
-            const message = err.response.data.message;
-            const code = err.response.data.code;
-
-            switch(code){
-                case 'PRICE_TOKEN_EXPIRED':
-                case 'PRICE_TOKEN_NOT_FOUND':
-                case 'RESERVATION_CONFLICT':
-                case 'IDEMPOTENCY_NOT_FOUND':
-                case 'IDEMPOTENCY_FAILED':
-                case 'IDEMPOTENCY_REQUEST_MISMATCH':
-                case 'IDEMPOTENCY_USER_MISMATCH':
-                case 'HASH_GENERATION_FAILED':
-                case 'IDEMPOTENCY_UNKNOWN':
-                case 'IDEMPOTENCY_PROCESSING':
-                case 'INVALID_INPUT':
-                    toast.error(message);
-                    navigate(`/hotels/${hotelId}`);
-                    break;
-                default:
-                    toast.error("일시적인 오류가 발생했습니다")
-                    navigate(`/hotels/${hotelId}`)   
-            }
-        }
-    })
-
     //예약
-    const handleReservation = (roomTypeId: number) => {
-        if (!data) return;
-        selectedRoomTypeIdRef.current = roomTypeId;
-        createReservationMutate({
-                reservationKey: reservationKey.current,
-                hotelId: Number(hotelId),
-                roomTypeId,
-                startDate,
-                endDate,
-                numberOfGuests,
-                numberOfRooms
-            });
-    }
-    //
+    const {handleReservation, isPending} = useReservation({
+        hotelId,
+        data,
+        startDate,
+        endDate,
+        numberOfGuests,
+        numberOfRooms
+    });
+
+
     if(isLoading) return <p>Loading...</p>
     if(isError){
         const { code, message } = (error as any).response.data;

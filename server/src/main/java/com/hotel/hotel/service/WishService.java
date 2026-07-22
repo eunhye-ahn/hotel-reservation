@@ -114,11 +114,13 @@ public class WishService {
 
     //위시리스트 취소
     @Transactional
-    public void cancelWishList(Long wishListId){
-        WishList list = wishListRepository.findById(wishListId)
-                .orElseThrow(()->new CustomException(ErrorCode.WISHLIST_NOT_FOUND));
+    public void cancelWishList(Long userId, Long hotelId){
+        List<WishCollection> collections = wishCollectionRepository.findByUserId(userId);
 
-        wishListRepository.delete(list);
+        for(WishCollection collection : collections){
+            wishListRepository.findByWishCollectionIdAndHotelId(collection.getId(),hotelId)
+                    .ifPresent(list-> wishListRepository.delete(list));
+        }
     }
 
     //위시상태 조회

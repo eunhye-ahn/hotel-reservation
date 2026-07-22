@@ -45,7 +45,8 @@ export interface ReservationResponse {
     endDate: string,
     checkInTime: string,
     checkOutTime: string,
-    reservationStatus: string
+    reservationStatus: string,
+    paymentStatus: string
 }
 
 export interface ReservationInfoResponse{

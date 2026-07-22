@@ -1,4 +1,4 @@
-import { HotelCard } from "@/shared/component/HotelCard";
+import { HotelCard } from "@/component/HotelCard";
 import { useRecentHotelStore } from "@/store/useRecentHotelStore"
 
 export function RecentHotelPage(){

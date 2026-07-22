@@ -7,6 +7,7 @@ import '@/css/WishList.css'
 import { toast } from "react-toastify"
 import { Modal } from "./Modal"
 import type { AxiosResponse } from "axios"
+import { useWishCollections } from "@/hooks/useWishCollections"
 
 //wishcollection으로 유즈스테이트타입을 잡았어야했나 왜 프로퍼티가 null일까
 
@@ -17,13 +18,7 @@ export const WishList = () => {
 
     const queryClient = useQueryClient();
 
-    const {data, isLoading, isError} = useQuery<WishListCollectionResponse[]>({
-        queryKey: ["wishs"],
-        queryFn: () => getCollections().then(res=>{
-            console.log(res.data)
-            return res.data
-        })
-    })
+    const {data, isLoading, isError} = useWishCollections();
 
     const {mutate, isPending} = useMutation<AxiosResponse<void>, any, WishCollectionsRequest>({
         mutationFn: createCollection,

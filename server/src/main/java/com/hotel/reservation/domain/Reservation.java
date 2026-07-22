@@ -105,13 +105,6 @@ public class Reservation extends BaseTime{
     private int numberOfGuests;
 
     /**
-     * 예약 후 3시간 이내에 결제해야된다는 조건
-     */
-    @Builder.Default
-    @Column(nullable = false, name = "expires_at")
-    private LocalDateTime expiresAt = LocalDateTime.now().plusHours(3);
-
-    /**
      * 역정규화
      * room_type으로 예약 후,
      * room은 체크인 시 배정
@@ -141,6 +134,11 @@ public class Reservation extends BaseTime{
 
         this.reservationStatus = ReservationStatus.CANCELED;
         this.paymentStatus = PaymentStatus.CANCELED;
+    }
+
+    public void updateReservationExpire(){
+        this.reservationStatus = ReservationStatus.CANCELED;
+        this.paymentStatus = PaymentStatus.EXPIRED;
     }
 
     public void paid(){

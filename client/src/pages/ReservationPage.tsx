@@ -1,7 +1,7 @@
 import { useLocation, useNavigate, useParams } from "react-router"
 import '@/css/ReservationPage.css';
 import { useQuery } from "@tanstack/react-query";
-import type { ReservationInfoResponse } from "@/shared/type/reservation";
+import type { ReservationInfoResponse } from "@/type/reservation";
 import { toast } from "react-toastify";
 import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
 import { reservationInfo,preparePayment } from "@/api/api";

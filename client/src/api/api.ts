@@ -1,10 +1,10 @@
-import type { AccessTokenResponse, LoginRequest, SignUpRequest } from "@/shared/type/auth";
+import type { AccessTokenResponse, LoginRequest, SignUpRequest } from "@/type/auth";
 import axios from "axios";
-import type { AddWishListRequest, AddWishListResponse, CursorResponse, HotelDetailResponse, hotelResponse,  MoveWishRequest,  MoveWishResponse,  Page, WishCollectionsRequest, WishListCollectionResponse} from "@/shared/type/hotel";
-import type { ReservationCreateResponse, ReservationDetailResponse, ReservationInfoResponse, ReservationRequest, ReservationResponse, RoomTypeReservationResponse } from "@/shared/type/reservation";
-import type { UserInfoResponse } from "@/shared/type/user";
+import type { AddWishListRequest, AddWishListResponse, CursorResponse, HotelDetailResponse, hotelResponse,  MoveWishRequest,  MoveWishResponse,  Page, WishCollectionsRequest, WishListCollectionResponse} from "@/type/hotel";
+import type { ReservationCreateResponse, ReservationDetailResponse, ReservationInfoResponse, ReservationRequest, ReservationResponse, RoomTypeReservationResponse } from "@/type/reservation";
+import type { UserInfoResponse } from "@/type/user";
 import { api } from "./axios";
-import type { PaymentConfirmRequest, PaymentConfirmResponse, PaymentPrepareResponse } from "@/shared/type/payment";
+import type { PaymentConfirmRequest, PaymentConfirmResponse, PaymentPrepareResponse } from "@/type/payment";
 
 export const login = (request: LoginRequest) => {
     return api.post<AccessTokenResponse>("/auth/login", request);

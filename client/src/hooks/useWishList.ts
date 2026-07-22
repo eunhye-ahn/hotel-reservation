@@ -1,9 +1,12 @@
 import { addWishList, cancelWishList, getWishedChecked } from "@/api/api";
+import { useWishModalStore } from "@/store/useWishModalStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
 //위시 조회 + 추가/취소 mutation
 export const useWishList = (hotelId?: number) => {
+
+    const {open} = useWishModalStore()
 
     //상태
     const queryClient = useQueryClient();
@@ -33,7 +36,11 @@ export const useWishList = (hotelId?: number) => {
             setIsWished(true)
             queryClient.invalidateQueries({ queryKey: ["wishList"] })
         },
-        onError: (err:any)=>{
+        onError: (err:any, variables)=>{
+            console.log(err.response.data.code)
+            if(err.response.data.code === "COLLECTION_SELECT_REQUIRED"){
+                open(variables)
+            }
             console.log(err)
         }
     })
@@ -53,7 +60,7 @@ export const useWishList = (hotelId?: number) => {
     //handle
     const handleWish = (hotelId: number|undefined) => {
         if(!hotelId) return
-        isWished ? cancelWishList(hotelId) : addWishList(hotelId)
+        isWished ? cancelWishMutation(hotelId) : addWishMutation(hotelId)
     }
 
     return {isWished, handleWish}

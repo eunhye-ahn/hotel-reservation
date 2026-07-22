@@ -1,5 +1,5 @@
 
-import type { ReservationDetailResponse } from "@/shared/type/reservation";
+import type { ReservationDetailResponse } from "@/type/reservation";
 import { useNavigate, useParams } from "react-router"
 import dayjs from 'dayjs';
 import '@/css/ReservationConfirmPage.css'
@@ -31,6 +31,15 @@ export const ReservationConfirmPage = () => {
 
     const numberOfNights = dayjs(data?.endDate).diff(dayjs(data?.startDate), 'day');
 
+    const getPaymentStatus = (status: string | undefined) => {
+        if(status == "PENDING"){
+            return "결제미완료"
+        }
+        else if(status == "PAID"){
+            return "결제완료"
+        }
+    }
+
     
 
 return (
@@ -58,7 +67,7 @@ return (
                 <p>{data?.roomTypeName}</p>
             </div>
             <span className="confirm-status">
-                {data?.status === "PAID" ? "결제완료" : "결제미완료"}
+                {getPaymentStatus(data?.status)}
             </span>
         </div>
 

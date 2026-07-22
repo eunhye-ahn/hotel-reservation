@@ -99,9 +99,13 @@ public class ReservationService {
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         //내예약조회
-        return reservationRepository.findByUserAndReservationStatus(User, status)
+        List<ReservationResponse> reservations = reservationRepository.findByUserAndReservationStatusOrderByCreatedAtDesc(User, status)
                 .stream().map(ReservationResponse::from)
                 .toList();
+
+        //오늘 기준
+
+        return reservations;
     }
 
     //예약상세조회 -예약확인

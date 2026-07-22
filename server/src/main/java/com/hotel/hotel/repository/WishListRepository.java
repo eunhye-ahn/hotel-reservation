@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface WishListRepository extends JpaRepository<WishList,Long> {
     List<WishList> findByWishCollectionId(Long collectionId);
     boolean existsByWishCollectionIdAndHotelId(Long collectionId, Long hotelId);
+    Optional<WishList> findByWishCollectionIdAndHotelId(Long collectionId, Long hotelId);
 }

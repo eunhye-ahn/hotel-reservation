@@ -2,15 +2,15 @@ import '@/css/HotelCard.css';
 import { useNavigate } from "react-router";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { getHotels, getSimilarHotel } from "@/api/api";
-import type { CursorResponse} from '@/shared/type/hotel';
+import type { CursorResponse} from '@/type/hotel';
 import { useEffect, useState } from 'react';
 import { getDisplayName, type Region, type SubRegion } from '@/constants/Region';
-import { RegionSelector } from '@/shared/component/RegionSelector';
-import { Modal } from '@/shared/component/Modal';
+import { RegionSelector } from '@/component/RegionSelector';
+import { Modal } from '@/component/Modal';
 import { useRegionStore } from '@/store/useRegionStore';
-import { HotelCard } from '@/shared/component/HotelCard';
+import { HotelCard } from '@/component/HotelCard';
 import '@/css/MainPage.css'
-import { SimilarHotels } from '@/shared/component/SimilarHotels';
+import { SimilarHotels } from '@/component/SimilarHotels';
 
 //호텔정보페이지
 export const MainPage = () => {
@@ -27,6 +27,7 @@ export const MainPage = () => {
      */
 
     //useQuery: api 자동호출, isLoading/isError 상태 자동관리 /캐싱키
+    //전체 호텔 조회
     const {data, isLoading, isError, fetchNextPage, hasNextPage} = useInfiniteQuery<CursorResponse>({
         queryKey: ["hotels"],     //지역바뀌면 자동재조회
         queryFn: ({pageParam}) => getHotels(pageParam as number | undefined)
@@ -34,9 +35,10 @@ export const MainPage = () => {
         initialPageParam: undefined,
         getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined
     })
-
+    //useInfiniteQuery와 flaptMAp
     const hotels = data?.pages.flatMap(page=>page.content) ?? [];
-
+    
+    //지역선택
     const handleSelect = (region : Region, subRegion?: SubRegion) => {
         const newRegionCode = region.code;
         const newSubRegionCode = subRegion?.code;

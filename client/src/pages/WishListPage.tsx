@@ -1,5 +1,5 @@
 import { getCollection } from "@/api/api";
-import { SearchFilterBar } from "@/shared/component/SearchFilterBar";
+import { SearchFilterBar } from "@/component/SearchFilterBar";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router"

@@ -22,6 +22,7 @@ public class ReservationResponse {
     private LocalTime checkOutTime;
     private String hotelImageUrl;
     private ReservationStatus reservationStatus;
+    private PaymentStatus paymentStatus;
 
     public static ReservationResponse from(Reservation reservation){
         return ReservationResponse.builder()
@@ -34,6 +35,7 @@ public class ReservationResponse {
                 .checkOutTime(reservation.getHotel().getCheckOutTime())
                 .hotelImageUrl(reservation.getHotel().getImageUrl()) //n+1
                 .reservationStatus(reservation.getReservationStatus())
+                .paymentStatus(reservation.getPaymentStatus())
                 .build();
     }
 }

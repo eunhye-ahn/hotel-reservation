@@ -6,5 +6,5 @@ public enum PaymentStatus {
     REFUNDED,               //환불완료
     CANCELED,               //취소
     REJECTED,               //승인실패
-    EXPIRED                 //예약시간만료
+    EXPIRED
 }

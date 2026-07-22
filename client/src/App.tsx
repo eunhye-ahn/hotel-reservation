@@ -2,7 +2,7 @@ import { LoginPage } from './pages/LoginPage'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { MainPage } from './pages/MainPage'
 import { SignUpPage } from './pages/SignUpPage'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { HotelDetailPage } from './pages/HotelDetailPage'
 import { ReservationPage } from './pages/ReservationPage'
 import { ReservationConfirmPage } from './pages/ReservationConfirmPage'
@@ -20,6 +20,7 @@ import PaymentFail from './pages/PaymentFail'
 import { HotelListPage } from './pages/HotelListPage'
 import { RecentHotelPage } from './pages/RecentHotelPage'
 import { WishListPage } from './pages/WishListPage'
+import { CollectionSelectModal } from './component/CollectionSelectModal'
 
 /**
  * [tanstack query 흐름] : 서버 상태관리 라이브러리 : 비동기데이터
@@ -41,19 +42,28 @@ const queryClient = new QueryClient({
 
 function App() {
   const { setAccessToken } = useAuthStore();
+  const [reissueComplete, setReissueComplete] = useState(false);
 
   useEffect(() => {
     reissue()
       .then((res) => {
         setAccessToken(res.data.accessToken)
       })
-      .catch(() => { })
+      .catch((err) => { 
+        console.log(err)
+      })
+      .finally(()=>{
+        setReissueComplete(true)
+    })
   }, []);
+
+  if(!reissueComplete) return <p>Loading...</p>
 
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <ToastContainer position="top-right" autoClose={3000} />
+        <CollectionSelectModal />
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignUpPage />} />

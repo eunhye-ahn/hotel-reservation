@@ -1,7 +1,7 @@
 
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
-import type { SignUpRequest } from "@/shared/type/auth";
+import type { SignUpRequest } from "@/type/auth";
 import '@/css/SignUpPage.css'
 import { toast } from "react-toastify";
 import { useMutation } from "@tanstack/react-query";
