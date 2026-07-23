@@ -22,6 +22,7 @@ import { RecentHotelPage } from './pages/RecentHotelPage'
 import { WishListPage } from './pages/WishListPage'
 import { CollectionSelectModal } from './component/CollectionSelectModal'
 import { AdminPage } from './pages/AdminPage'
+import { ReservationDetail } from './pages/admin/ReservationDetailPage'
 
 /**
  * [tanstack query 흐름] : 서버 상태관리 라이브러리 : 비동기데이터
@@ -64,6 +65,7 @@ function App() {
             <Route path="/recent-hotel/list" element={<RecentHotelPage />} />
             <Route path="/hotels/list" element={<HotelListPage />} />
             <Route path="/admin" element={<AdminPage />} />
+            <Route path="/admin/reservations/:id" element={<ReservationDetail />} />
           </Route>
           <Route path="*" element={<NotFoundPage />} />
         </Routes>

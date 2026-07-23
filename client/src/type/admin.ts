@@ -19,3 +19,25 @@ export interface AdminReseervationSearchRequest {
     roomAssigned?: boolean;
     page: number;
 }
+
+export interface AdminReservationDetailResponse {
+    reservationKey: string,
+    username: string,
+    numberOfGuests: number,
+    numberOfRooms: number,
+    startDate: string,
+    endDate: string,
+    checkInTime: string,
+    checkOutTime: string,
+    totalPrice: number,
+    paymentStatus: string,
+    reservationStatus: string,
+    hotelName: string,
+    roomTypeName: string,
+    createdAt: string,
+    roomAssigned: boolean,
+    roomNumber: number,
+    roomName: string,
+    floor: number,
+    usable: boolean
+}

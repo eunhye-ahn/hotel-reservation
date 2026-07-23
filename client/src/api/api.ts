@@ -5,7 +5,7 @@ import type { ReservationCreateResponse, ReservationDetailResponse, ReservationI
 import type { UserInfoResponse } from "@/type/user";
 import { api } from "./axios";
 import type { PaymentConfirmRequest, PaymentConfirmResponse, PaymentPrepareResponse } from "@/type/payment";
-import type { AdminReseervationSearchRequest, AdminReservationSearchResponse } from "@/type/admin";
+import type { AdminReseervationSearchRequest, AdminReservationDetailResponse, AdminReservationSearchResponse } from "@/type/admin";
 
 export const login = (request: LoginRequest) => {
     return api.post<AccessTokenResponse>("/auth/login", request);
@@ -167,8 +167,16 @@ export const confirmPayment = (request: PaymentConfirmRequest) => {
 
 
 //============관리자
+
+//예약 조회(필터)
 export const getReservations = (params: AdminReseervationSearchRequest) => {
     return api.get<Page<AdminReservationSearchResponse>>("/admin/reservation", {
         params
     })
 }
+
+//예약 상세
+export const getReservationDetail = (reservationId: number) => {
+    return api.get<AdminReservationDetailResponse>(`/admin/reservation/${reservationId}`)
+}
+

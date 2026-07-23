@@ -1,3 +1,4 @@
+
 import { RoomAssignment } from "@/component/admin/RoomAssignment"
 
 export function AdminPage() {

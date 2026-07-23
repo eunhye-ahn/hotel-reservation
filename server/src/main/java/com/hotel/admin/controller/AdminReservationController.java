@@ -1,5 +1,6 @@
 package com.hotel.admin.controller;
 
+import com.hotel.admin.dto.AdminReservationDetailResponse;
 import com.hotel.admin.dto.AdminReservationSearchResponse;
 import com.hotel.admin.service.AdminReservationService;
 import com.hotel.reservation.domain.ReservationSearchType;
@@ -10,10 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 
@@ -37,6 +35,7 @@ import java.time.LocalDate;
 public class AdminReservationController {
     private final AdminReservationService adminReservationService;
 
+    //예약 조회 (필터)
     @GetMapping
     public ResponseEntity<Page<AdminReservationSearchResponse>> getReservations(@RequestParam(required = false)LocalDate startDate,
                                                                                 @RequestParam(required = false)LocalDate endDate,
@@ -47,6 +46,17 @@ public class AdminReservationController {
                                                                                 @RequestParam(required = false, defaultValue = "0")int page){
         Pageable pageable = PageRequest.of(page,10);
         Page<AdminReservationSearchResponse> result = adminReservationService.getReservations(startDate, endDate, searchType, keyword, status, roomAssigned, pageable);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(result);
+    }
+
+    //예약 상세
+    @GetMapping("/{reservationId}")
+    public ResponseEntity<AdminReservationDetailResponse> getReservationDetail(@PathVariable Long reservationId){
+
+        AdminReservationDetailResponse result = adminReservationService.getReservationDetail(reservationId);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

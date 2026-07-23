@@ -2,9 +2,11 @@ import { useReservations } from "@/hooks/admin/useReservations"
 import { useReservationsFilter } from "@/hooks/admin/useReservationsFilter"
 import { Spinner } from "../common/Spinner"
 import { ErrorMessage } from "../common/ErrorMessage"
+import { useNavigate } from "react-router"
 
 
 export const RoomAssignment = () => {
+    const navigate = useNavigate()
     const { filter, setSearchType, setKeyword, setStartDate, setEndDate, setPage, setRoomAssigned, setStatus } = useReservationsFilter()
     const { data, isLoading, isError } = useReservations(filter)
 
@@ -81,7 +83,9 @@ export const RoomAssignment = () => {
                         </thead>
                         <tbody className="divide-y divide-gray-200 bg-white">
                             {data?.content.map(r => (
-                                <tr key={r.id} className="hover:bg-gray-50">
+                                <tr key={r.id}
+                                    onClick={() => navigate(`/admin/reservations/${r.id}`)}
+                                    className="hover:bg-gray-50">
                                     <td>{r.reservationKey}</td>
                                     <td>{r.username}</td>
                                     <td>{r.hotelName}</td>
@@ -90,7 +94,18 @@ export const RoomAssignment = () => {
                                     <td>{r.endDate}</td>
                                     <td>{r.reservationStatus}</td>
                                     <td>{r.roomAssigned ? '배정완료' : '미배정'}</td>
-                                    <td></td>
+                                    <td onClick={(e) => e.stopPropagation()}>
+                                        {r.reservationStatus === "BEFORE_USE" && (
+                                            <>
+                                                <button>
+                                                    {r.roomAssigned ? "배정변경" : "배정"}
+                                                </button>
+                                                <button>
+                                                    취소
+                                                </button>
+                                            </>
+                                        )}
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>

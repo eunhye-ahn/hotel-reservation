@@ -1,6 +1,9 @@
 package com.hotel.admin.service;
 
+import com.hotel.admin.dto.AdminReservationDetailResponse;
 import com.hotel.admin.dto.AdminReservationSearchResponse;
+import com.hotel.common.exception.CustomException;
+import com.hotel.common.exception.ErrorCode;
 import com.hotel.reservation.domain.ReservationSearchType;
 import com.hotel.reservation.domain.Reservation;
 import com.hotel.reservation.domain.ReservationStatus;
@@ -22,5 +25,12 @@ public class AdminReservationService {
         Page<Reservation> result = reservationRepository.searchByReservation(startDate, endDate, searchType, keyword, status, roomAssigned,  pageable);
 
         return result.map(AdminReservationSearchResponse::from);
+    }
+
+    public AdminReservationDetailResponse getReservationDetail(Long reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(()-> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
+
+        return AdminReservationDetailResponse.from(reservation);
     }
 }
