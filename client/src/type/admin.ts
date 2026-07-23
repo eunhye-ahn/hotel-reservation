@@ -9,3 +9,13 @@ export interface AdminReservationSearchResponse {
     roomAssigned: boolean,
     createdDate: string
 }
+
+export interface AdminReseervationSearchRequest {
+    searchType?: string;
+    keyword?: string;
+    startDate?: string;
+    endDate?: string;
+    status?: string;
+    roomAssigned?: boolean;
+    page: number;
+}

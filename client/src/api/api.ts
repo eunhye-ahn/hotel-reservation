@@ -5,7 +5,7 @@ import type { ReservationCreateResponse, ReservationDetailResponse, ReservationI
 import type { UserInfoResponse } from "@/type/user";
 import { api } from "./axios";
 import type { PaymentConfirmRequest, PaymentConfirmResponse, PaymentPrepareResponse } from "@/type/payment";
-import type { AdminReservationSearchResponse } from "@/type/admin";
+import type { AdminReseervationSearchRequest, AdminReservationSearchResponse } from "@/type/admin";
 
 export const login = (request: LoginRequest) => {
     return api.post<AccessTokenResponse>("/auth/login", request);
@@ -167,15 +167,8 @@ export const confirmPayment = (request: PaymentConfirmRequest) => {
 
 
 //============관리자
-export const getReservations = (startDate?: string, endDate?: string, searchType?: string, keyword?: string, status?: string, page?: number) => {
+export const getReservations = (params: AdminReseervationSearchRequest) => {
     return api.get<Page<AdminReservationSearchResponse>>("/admin/reservation", {
-        params: {
-            startDate,
-            endDate,
-            searchType,
-            keyword,
-            status,
-            page
-        }
+        params
     })
 }

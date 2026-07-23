@@ -2,7 +2,7 @@ package com.hotel.admin.controller;
 
 import com.hotel.admin.dto.AdminReservationSearchResponse;
 import com.hotel.admin.service.AdminReservationService;
-import com.hotel.hotel.domain.ReservationSearchType;
+import com.hotel.reservation.domain.ReservationSearchType;
 import com.hotel.reservation.domain.ReservationStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -43,9 +43,10 @@ public class AdminReservationController {
                                                                                 @RequestParam(required = false)ReservationSearchType searchType,
                                                                                 @RequestParam(required = false)String keyword,
                                                                                 @RequestParam(required = false)ReservationStatus status,
+                                                                                @RequestParam(required = false) Boolean roomAssigned,
                                                                                 @RequestParam(required = false, defaultValue = "0")int page){
         Pageable pageable = PageRequest.of(page,10);
-        Page<AdminReservationSearchResponse> result = adminReservationService.getReservations(startDate, endDate, searchType, keyword, status, pageable);
+        Page<AdminReservationSearchResponse> result = adminReservationService.getReservations(startDate, endDate, searchType, keyword, status, roomAssigned, pageable);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

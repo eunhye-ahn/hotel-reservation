@@ -1,8 +1,6 @@
 package com.hotel.reservation.repository;
 
-import com.hotel.admin.dto.AdminReservationSearchRequest;
-import com.hotel.hotel.domain.ReservationSearchType;
-import com.hotel.reservation.domain.QReservation;
+import com.hotel.reservation.domain.ReservationSearchType;
 import com.hotel.reservation.domain.Reservation;
 import com.hotel.reservation.domain.ReservationStatus;
 import com.querydsl.core.BooleanBuilder;
@@ -17,7 +15,6 @@ import org.springframework.util.StringUtils;
 import static com.hotel.reservation.domain.QReservation.reservation;
 import static com.hotel.reservation.domain.QUser.user;
 import static com.hotel.hotel.domain.QHotel.hotel;
-import static com.hotel.hotel.domain.QRoomType.roomType;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -27,7 +24,7 @@ public class ReservationRepositoryImpl implements ReservationRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<Reservation> searchByReservation(LocalDate startDate, LocalDate endDate, ReservationSearchType searchType, String keyword, ReservationStatus status, Pageable pageable) {
+    public Page<Reservation> searchByReservation(LocalDate startDate, LocalDate endDate, ReservationSearchType searchType, String keyword, ReservationStatus status, Boolean roomAssigned, Pageable pageable) {
         BooleanBuilder builder = new BooleanBuilder();
 
         //날짜 필터
@@ -43,13 +40,22 @@ public class ReservationRepositoryImpl implements ReservationRepositoryCustom {
             switch (searchType){
                 case USER_NAME -> builder.and(reservation.user.name.containsIgnoreCase(keyword));
                 case HOTEL_NAME -> builder.and(reservation.hotel.name.containsIgnoreCase(keyword));
-                case RESERVATION_KEY -> builder.and(reservation.reservationKey.eq(keyword));
+                case PHONE -> builder.and(reservation.user.phone.containsIgnoreCase(keyword));
             }
         }
 
         //상태 필터
         if(status != null){
             builder.and(reservation.reservationStatus.eq(status));
+        }
+
+        //룸배정여부 필터
+        if(roomAssigned != null){
+            if(roomAssigned){
+                builder.and(reservation.room.isNotNull());
+            }else{
+                builder.and(reservation.room.isNull());
+            }
         }
 
         List<Reservation> content = queryFactory

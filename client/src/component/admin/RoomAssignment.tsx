@@ -1,55 +1,116 @@
-import { getReservations } from "@/api/api"
-import { useQuery } from "@tanstack/react-query"
-import { useState } from "react";
+import { useReservations } from "@/hooks/admin/useReservations"
+import { useReservationsFilter } from "@/hooks/admin/useReservationsFilter"
+import { Spinner } from "../common/Spinner"
+import { ErrorMessage } from "../common/ErrorMessage"
+
 
 export const RoomAssignment = () => {
-    const [searchType, setSearchType] = useState<string | undefined>(undefined);
-    const [keyword, setKeyword] = useState("");
-    const [startDate, setStartDate] = useState<string | undefined>(undefined);
-    const [endDate, setEndDate] = useState<string | undefined>(undefined);
-    const [status, setStatus] = useState<string | undefined>(undefined);
-    const [page, setPage] = useState(0);
-
-    const { data } = useQuery({
-        queryKey: ["reservations"],
-        queryFn: () => getReservations(searchType, keyword, startDate, endDate, status, page).then((res) => res.data)
-    })
-
-    console.log(data);
+    const { filter, setSearchType, setKeyword, setStartDate, setEndDate, setPage, setRoomAssigned, setStatus } = useReservationsFilter()
+    const { data, isLoading, isError } = useReservations(filter)
 
     return (
         <div>
             <h1>배정 및 예약확정</h1>
-            <table className="min-w-100 drive-y drive-gray-200">
-                <thead className="bg-gray-100">
-                    <tr>
-                        <th>예약번호</th>
-                        <th>예약자</th>
-                        <th>호텔명</th>
-                        <th>객실타입</th>
-                        <th>체크인</th>
-                        <th>체크아웃</th>
-                        <th>상태</th>
-                        <th>배정여부</th>
-                        <th>액션</th>
-                    </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200 bg-white">
-                    {data?.content.map(r => (
-                        <tr key={r.id} className="hover:bg-gray-50">
-                            <td>{r.reservationKey}</td>
-                            <td>{r.username}</td>
-                            <td>{r.hotelName}</td>
-                            <td></td>
-                            <td>{r.startDate}</td>
-                            <td>{r.endDate}</td>
-                            <td>{r.reservationStatus}</td>
-                            <td>{r.roomAssigned == true ? '완료' : '미정'}</td>
-                            <td></td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+            <div>
+                <input type="date" value={filter.startDate ?? ""} onChange={(e) => setStartDate(e.target.value || undefined)} />
+                <input type="date" value={filter.endDate ?? ""} onChange={(e) => setEndDate(e.target.value || undefined)} />
+                <select value={filter.searchType ?? "USER_NAME"} onChange={(e) => {
+                    setSearchType(e.target.value)
+                    setKeyword("")
+                }}>
+                    <option value="USER_NAME">예약자명</option>
+                    <option value="HOTEL_NAME">호텔명</option>
+                    <option value="PHONE">전화번호</option>
+                </select>
+                <input type="text" value={filter.keyword ?? ""} onChange={(e) => setKeyword(e.target.value)} />
+                <select value={filter.status ?? ""} onChange={(e) => {
+                    setStatus(e.target.value || undefined)
+                    setRoomAssigned(undefined)
+                }}>
+                    <option value="">전체</option>
+                    <option value="PENDING_PAYMENT">결제미완료</option>
+                    <option value="BEFORE_USE">이용전</option>
+                    <option value="AFTER_USE">이용후</option>
+                    <option value="CANCELED">취소</option>
+                    <option value="EXPIRED">만료</option>
+                </select>
+                {filter.status === "BEFORE_USE" && <>
+                    <label>
+                        <input type="radio" name="roomAssigned"
+                            checked={filter.roomAssigned === undefined}
+                            onChange={() => setRoomAssigned(undefined)} />
+                        전체
+                    </label>
+                    <label>
+                        <input type="radio" name="roomAssigned"
+                            checked={filter.roomAssigned === true}
+                            onChange={() => setRoomAssigned(true)} />
+                        배정
+                    </label>
+                    <label>
+                        <input type="radio" name="roomAssigned"
+                            checked={filter.roomAssigned === false}
+                            onChange={() => setRoomAssigned(false)} />
+                        미배정
+                    </label>
+                </>
+                }
+            </div>
+
+
+
+            {isLoading ? (
+                <Spinner />
+            ) : isError ? (
+                <ErrorMessage />
+            ) : (
+                <>
+                    <table className="min-w-100 divide-y divide-gray-200">
+                        <thead className="bg-gray-100">
+                            <tr>
+                                <th>예약번호</th>
+                                <th>예약자</th>
+                                <th>호텔명</th>
+                                <th>객실타입</th>
+                                <th>체크인</th>
+                                <th>체크아웃</th>
+                                <th>상태</th>
+                                <th>배정여부</th>
+                                <th>액션</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200 bg-white">
+                            {data?.content.map(r => (
+                                <tr key={r.id} className="hover:bg-gray-50">
+                                    <td>{r.reservationKey}</td>
+                                    <td>{r.username}</td>
+                                    <td>{r.hotelName}</td>
+                                    <td></td>
+                                    <td>{r.startDate}</td>
+                                    <td>{r.endDate}</td>
+                                    <td>{r.reservationStatus}</td>
+                                    <td>{r.roomAssigned ? '배정완료' : '미배정'}</td>
+                                    <td></td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                    <div className="flex items-center justify-center gap-2">
+                        <button
+                            onClick={() => setPage(filter.page - 1)}
+                            disabled={data?.first}
+                        >이전</button>
+                        <span>
+                            {filter.page + 1}/{data?.totalPages}
+                        </span>
+                        <button
+                            onClick={() => setPage(filter.page + 1)}
+                            disabled={data?.last}
+                        >다음
+                        </button>
+                    </div>
+                </>
+            )}
         </div>
     )
 }

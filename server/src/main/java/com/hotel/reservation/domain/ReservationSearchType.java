@@ -1,7 +1,7 @@
-package com.hotel.hotel.domain;
+package com.hotel.reservation.domain;
 
 public enum ReservationSearchType {
     USER_NAME,
     HOTEL_NAME,
-    RESERVATION_KEY
+    PHONE
 }
