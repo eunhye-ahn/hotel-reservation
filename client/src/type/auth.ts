@@ -1,3 +1,6 @@
+import { extend } from "dayjs"
+import type { JwtPayload } from "jwt-decode"
+
 export interface LoginRequest {
     email: string,
     password: string | null
@@ -17,4 +20,8 @@ export interface SignUpRequest {
     email: string,
     password: string | null,
     phone: string
+}
+
+export interface CustomJwtPayLoad extends JwtPayload {
+    role: string
 }

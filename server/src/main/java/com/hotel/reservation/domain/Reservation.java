@@ -107,7 +107,7 @@ public class Reservation extends BaseTime{
     /**
      * 역정규화
      * room_type으로 예약 후,
-     * room은 체크인 시 배정
+     * room은 관리자가 배정
      */
     @Builder.Default
     @ManyToOne
@@ -127,21 +127,43 @@ public class Reservation extends BaseTime{
     @JoinColumn(name="user_id", nullable = false)
     private User user;
 
+    @Column(name="cancel_type")
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private CancelType cancelType=null;
+
+    //고객취소
     public void cancel(){
-        if(this.reservationStatus != ReservationStatus.BEFORE_USE){
+        if(this.reservationStatus != ReservationStatus.PENDING_PAYMENT){
             throw new CustomException(ErrorCode.CANNOT_CANCEL_RESERVATION);
         }
 
         this.reservationStatus = ReservationStatus.CANCELED;
+        this.cancelType = CancelType.USER;
         this.paymentStatus = PaymentStatus.CANCELED;
     }
 
+    //결제시간 만료시, 예약만료 및 재고복구
     public void updateReservationExpire(){
-        this.reservationStatus = ReservationStatus.CANCELED;
+        this.reservationStatus = ReservationStatus.EXPIRED;
         this.paymentStatus = PaymentStatus.EXPIRED;
     }
 
+    //결제
     public void paid(){
+        this.reservationStatus=ReservationStatus.BEFORE_USE;
         this.paymentStatus = PaymentStatus.PAID;
     }
+
+    //룸배정
+    public void assignRoom(Room room){
+        if(this.reservationStatus != ReservationStatus.BEFORE_USE){
+            throw new CustomException(ErrorCode.CANNOT_ASSIGN_ROOM);
+        }
+        if(this.room != null){
+            throw new CustomException(ErrorCode.ROOM_ALREADY_ASSIGNED);
+        }
+        this.room = room;
+    }
+
 }

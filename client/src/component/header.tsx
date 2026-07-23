@@ -6,7 +6,7 @@ import { SearchBar } from "./SearchBar"
 
 export const Header = () => {
     const navigate = useNavigate()
-    const { accessToken, clearAccessToken } = useAuthStore();
+    const { accessToken, clearAccessToken, role } = useAuthStore();
 
     const handleLogout = () => {
         logout()
@@ -29,7 +29,10 @@ export const Header = () => {
                     : <span onClick={() => navigate("/login")}>Login</span>
                 }
                 <span onClick={() => navigate("/mypage")}>Mypage</span>
-                <span onClick={()=> navigate("/recent-hotel/list")}>최근본상품</span>
+                <span onClick={() => navigate("/recent-hotel/list")}>최근본상품</span>
+                {accessToken && role == "ROLE_ADMIN" &&
+                    <span onClick={() => navigate("/admin")}>관리자</span>
+                }
             </nav>
         </header>
     )

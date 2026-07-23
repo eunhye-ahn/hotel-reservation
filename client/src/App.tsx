@@ -21,6 +21,7 @@ import { HotelListPage } from './pages/HotelListPage'
 import { RecentHotelPage } from './pages/RecentHotelPage'
 import { WishListPage } from './pages/WishListPage'
 import { CollectionSelectModal } from './component/CollectionSelectModal'
+import { AdminPage } from './pages/AdminPage'
 
 /**
  * [tanstack query 흐름] : 서버 상태관리 라이브러리 : 비동기데이터
@@ -33,31 +34,14 @@ import { CollectionSelectModal } from './component/CollectionSelectModal'
 
 const queryClient = new QueryClient({
   defaultOptions: {
-    queries:{
-      staleTime: 1000*60*5,
+    queries: {
+      staleTime: 1000 * 60 * 5,
       retry: 1,
     }
   }
 })
 
 function App() {
-  const { setAccessToken } = useAuthStore();
-  const [reissueComplete, setReissueComplete] = useState(false);
-
-  useEffect(() => {
-    reissue()
-      .then((res) => {
-        setAccessToken(res.data.accessToken)
-      })
-      .catch((err) => { 
-        console.log(err)
-      })
-      .finally(()=>{
-        setReissueComplete(true)
-    })
-  }, []);
-
-  if(!reissueComplete) return <p>Loading...</p>
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -67,23 +51,24 @@ function App() {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignUpPage />} />
-          <Route path="/payments/success" element={<PaymentSuccess />}/>
-          <Route path="/payments/fail" element={<PaymentFail />}/>
+          <Route path="/payments/success" element={<PaymentSuccess />} />
+          <Route path="/payments/fail" element={<PaymentFail />} />
           <Route element={<Layout />}>
             <Route path="/" element={<MainPage />} />
             <Route path="/hotels/:hotelId" element={<HotelDetailPage />} />
-            <Route path="/reservations/:reservationKey" element={<ReservationConfirmPage/>}/>
+            <Route path="/reservations/:reservationKey" element={<ReservationConfirmPage />} />
             {/* <Route path="/hotels/:hotelId/rooms/:roomTypeId" element={<ReservationPage />} /> */}
             <Route path="/reservations/:reservationKey/reservation-info" element={<ReservationPage />} />
             <Route path="/mypage" element={<MyPage />} />
             <Route path='/wishlists/:collectionId' element={<WishListPage />} />
             <Route path="/recent-hotel/list" element={<RecentHotelPage />} />
             <Route path="/hotels/list" element={<HotelListPage />} />
+            <Route path="/admin" element={<AdminPage />} />
           </Route>
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </BrowserRouter>
-      <ReactQueryDevtools initialIsOpen={false}/>
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   )
 }

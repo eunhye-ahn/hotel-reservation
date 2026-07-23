@@ -136,7 +136,7 @@ public class ReservationProcessor {
                 .numberOfGuests(request.getNumberOfGuests())
                 .totalPrice(totalPrice)
                 .paymentStatus(PaymentStatus.PENDING)
-                .reservationStatus(ReservationStatus.BEFORE_USE)
+                .reservationStatus(ReservationStatus.PENDING_PAYMENT)
                 .build();
 
         reservationRepository.save(reservation);

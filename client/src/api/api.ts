@@ -1,10 +1,11 @@
 import type { AccessTokenResponse, LoginRequest, SignUpRequest } from "@/type/auth";
 import axios from "axios";
-import type { AddWishListRequest, AddWishListResponse, CursorResponse, HotelDetailResponse, hotelResponse,  MoveWishRequest,  MoveWishResponse,  Page, WishCollectionsRequest, WishListCollectionResponse} from "@/type/hotel";
+import type { AddWishListRequest, AddWishListResponse, CursorResponse, HotelDetailResponse, hotelResponse, MoveWishRequest, MoveWishResponse, Page, WishCollectionsRequest, WishListCollectionResponse } from "@/type/hotel";
 import type { ReservationCreateResponse, ReservationDetailResponse, ReservationInfoResponse, ReservationRequest, ReservationResponse, RoomTypeReservationResponse } from "@/type/reservation";
 import type { UserInfoResponse } from "@/type/user";
 import { api } from "./axios";
 import type { PaymentConfirmRequest, PaymentConfirmResponse, PaymentPrepareResponse } from "@/type/payment";
+import type { AdminReservationSearchResponse } from "@/type/admin";
 
 export const login = (request: LoginRequest) => {
     return api.post<AccessTokenResponse>("/auth/login", request);
@@ -61,7 +62,7 @@ export const getHotelsByFilter = (q?: string, lDongRegnCd?: string, lDongSignguC
 
 export const getHotelDetail = (hotelId: number, startDate?: string, endDate?: string, numberOfRooms?: number, numberOfGuests?: number) => {
     return api.get<HotelDetailResponse>(`/hotels/${hotelId}`, {
-        params: {startDate, endDate, numberOfRooms, numberOfGuests}
+        params: { startDate, endDate, numberOfRooms, numberOfGuests }
     });
 }
 
@@ -103,13 +104,13 @@ export const getReservationStatus = (reservationKey: string) => {
 
 export const getSearchAutocomplete = (q?: string) => {
     return api.get<string[]>("/hotels/autocomplete", {
-        params : {q}
+        params: { q }
     })
 }
 
 export const getSimilarHotel = (hotelId: number, page: number) => {
-    return api.get<Page<hotelResponse>>("/hotels/similarHotel",{
-        params: {hotelId, page}        
+    return api.get<Page<hotelResponse>>("/hotels/similarHotel", {
+        params: { hotelId, page }
     })
 }
 
@@ -123,34 +124,34 @@ export const getCollections = () => {
 
 export const getCollection = (collectionId: number) => {
     return api.get<WishListCollectionResponse>("/wish/collection", {
-        params: {collectionId}
+        params: { collectionId }
     })
 }
 
 export const addWishList = (hotelId: number) => {
     return api.post<AddWishListResponse>("/wish/list", null, {
-        params: {hotelId}
+        params: { hotelId }
     })
 }
 
 export const moveCollection = (request: MoveWishRequest) => {
-    return api.post<MoveWishResponse>("/wish/move",request)
+    return api.post<MoveWishResponse>("/wish/move", request)
 }
 
 export const cancelWishList = (hotelId: number) => {
     return api.delete<void>("/wish/cancel", {
-        params: {hotelId}
+        params: { hotelId }
     })
 }
 
-export const getWishedChecked = (hotelId: number)=>{
-    return api.get<boolean>("/wish/check",{
-        params: {hotelId}
+export const getWishedChecked = (hotelId: number) => {
+    return api.get<boolean>("/wish/check", {
+        params: { hotelId }
     })
 }
 
 export const preparePayment = (reservationKey: string, orderId: string, idempotencyKey: string) => {
-    return api.post<PaymentPrepareResponse>(`/payments/prepare/${reservationKey}`, {orderId}, {
+    return api.post<PaymentPrepareResponse>(`/payments/prepare/${reservationKey}`, { orderId }, {
         headers: {
             "Idempotency-Key": idempotencyKey
         }
@@ -160,4 +161,21 @@ export const preparePayment = (reservationKey: string, orderId: string, idempote
 //결제승인처리api
 export const confirmPayment = (request: PaymentConfirmRequest) => {
     return api.post<PaymentConfirmResponse>("/payments/confirm", request)
+}
+
+
+
+
+//============관리자
+export const getReservations = (startDate?: string, endDate?: string, searchType?: string, keyword?: string, status?: string, page?: number) => {
+    return api.get<Page<AdminReservationSearchResponse>>("/admin/reservation", {
+        params: {
+            startDate,
+            endDate,
+            searchType,
+            keyword,
+            status,
+            page
+        }
+    })
 }

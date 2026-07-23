@@ -2,6 +2,8 @@ import axios from "axios";
 import { useAuthStore } from "../store/useAuthStore";
 import { toast } from 'react-toastify';
 import { reissue } from "./api";
+import { jwtDecode } from "jwt-decode";
+import type { CustomJwtPayLoad } from "@/type/auth";
 
 export const api = axios.create({
     baseURL: "http://localhost:8080/api/v1",
@@ -47,14 +49,17 @@ api.interceptors.response.use(
             try {
                 const res = await reissue();
                 useAuthStore.getState().setAccessToken(res.data.accessToken)
+                const decoded = jwtDecode<CustomJwtPayLoad>(res.data.accessToken)
+                useAuthStore.getState().setRole(decoded.role);
                 return api(error.config)
             } catch (e) {
                 useAuthStore.getState().setAccessToken(null);
+                useAuthStore.getState().setRole(null)
                 window.location.href = "/login";
                 return Promise.reject(e);
             }
         }
-        if(status === 403){
+        if (status === 403) {
             toast.error('접근 권한이 없습니다');
         }
         if (status === 500) {

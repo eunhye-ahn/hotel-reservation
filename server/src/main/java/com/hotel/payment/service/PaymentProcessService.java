@@ -58,7 +58,7 @@ public class PaymentProcessService {
         Reservation reservation = reservationRepository.findByReservationKey(paymentEvent.getReservationKey())
                 .orElseThrow(()-> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
 
-        //예약 완료
+        //예약 확정 및 결제완료
         reservation.paid();
     }
 }

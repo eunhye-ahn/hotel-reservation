@@ -1,26 +1,31 @@
 import { useNavigate } from "react-router-dom"
 import { useAuthStore } from "../store/useAuthStore"
-import type { LoginRequest } from "@/type/auth"
+import type { CustomJwtPayLoad, LoginRequest } from "@/type/auth"
 import '@/css/LoginPage.css'
 import { toast } from "react-toastify"
 import { useMutation } from "@tanstack/react-query"
 import { useForm } from "react-hook-form"
 import { login } from "@/api/api"
+import { jwtDecode } from "jwt-decode";
+
 
 export const LoginPage = () => {
-    const {register, handleSubmit, formState:{errors}} = useForm<LoginRequest>();
+    const { register, handleSubmit, formState: { errors } } = useForm<LoginRequest>();
     const navigate = useNavigate();
-    const { setAccessToken } = useAuthStore();
+    const { accessToken, setAccessToken, setRole, role } = useAuthStore();
 
-    const {mutate, isPending} = useMutation({
+    const { mutate, isPending } = useMutation({
         mutationFn: login,
-        onSuccess: (res)=>{
-                setAccessToken(res.data.accessToken)
-                navigate("/")
+        onSuccess: (res) => {
+            setAccessToken(res.data.accessToken)
+            const deocded = jwtDecode<CustomJwtPayLoad>(accessToken!);
+            setRole(deocded.role)
+            navigate("/")
+            console.log(role)
         },
-        onError: (err: any)=>{
+        onError: (err: any) => {
             const { code, message } = err.response.data
-            if(code === "INVALID_PASSWORD"){
+            if (code === "INVALID_PASSWORD") {
                 toast.error(message)
                 return
             }
@@ -30,22 +35,22 @@ export const LoginPage = () => {
 
     return (
         <div className="login-container">
-            <form onSubmit={handleSubmit((data)=>mutate(data))}>
+            <form onSubmit={handleSubmit((data) => mutate(data))}>
                 <div>
                     <label>email</label>
                     <input type="email"
-                        {...register("email",{required: "이메일을 입력하세요"})} />
+                        {...register("email", { required: "이메일을 입력하세요" })} />
                     {errors.email && <p>{errors.email.message}</p>}
                 </div>
                 <div>
                     <label>password</label>
                     <input type="password"
-                        {...register("password", {required: "비밀번호를 입력하세요"})} />
+                        {...register("password", { required: "비밀번호를 입력하세요" })} />
                     {errors.password && <p>{errors.password.message}</p>}
                 </div>
                 <button type="submit" disabled={isPending}>
-                    {isPending? "Loading..." : "Login"}
-                    </button>
+                    {isPending ? "Loading..." : "Login"}
+                </button>
                 <button type="button" onClick={() => navigate("/signup")}>SignUp</button>
             </form>
         </div>

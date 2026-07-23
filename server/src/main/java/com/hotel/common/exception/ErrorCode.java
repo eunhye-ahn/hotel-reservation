@@ -39,6 +39,8 @@ public enum ErrorCode {
     EXCEED_MAX_OCCUPANCY(HttpStatus.BAD_REQUEST, "최대 수용 인원을 초과했습니다"),
     RESERVATION_CONFLICT(HttpStatus.CONFLICT, "일시적으로 예약이 집중되고 있습니다\n" +
             "잠시 후 다시 시도해주세요"),
+    CANNOT_ASSIGN_ROOM(HttpStatus.CONFLICT, "방을 배정할 수 없는 예약입니다"),
+    ROOM_ALREADY_ASSIGNED(HttpStatus.CONFLICT, "이미 배정된 예약입니다"),
 
     //결제
     PRICE_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "세션이 만료되었습니다. 다시 시도해주세요"),
