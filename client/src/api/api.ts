@@ -1,11 +1,11 @@
 import type { AccessTokenResponse, LoginRequest, SignUpRequest } from "@/type/auth";
 import axios from "axios";
-import type { AddWishListRequest, AddWishListResponse, CursorResponse, HotelDetailResponse, hotelResponse, MoveWishRequest, MoveWishResponse, Page, WishCollectionsRequest, WishListCollectionResponse } from "@/type/hotel";
+import type { AddWishListResponse, CursorResponse, HotelDetailResponse, hotelResponse, MoveWishRequest, MoveWishResponse, Page, WishCollectionsRequest, WishListCollectionResponse } from "@/type/hotel";
 import type { ReservationCreateResponse, ReservationDetailResponse, ReservationInfoResponse, ReservationRequest, ReservationResponse, RoomTypeReservationResponse } from "@/type/reservation";
 import type { UserInfoResponse } from "@/type/user";
 import { api } from "./axios";
 import type { PaymentConfirmRequest, PaymentConfirmResponse, PaymentPrepareResponse } from "@/type/payment";
-import type { AdminReseervationSearchRequest, AdminReservationDetailResponse, AdminReservationSearchResponse, AdminRoomListResponse, AssignmentRoomRequest } from "@/type/admin";
+import type { AdminReseervationSearchRequest, AdminReservationDetailResponse, AdminReservationSearchResponse, AdminRoomResponse, AssignmentRoomRequest, CancelReservationByAdminRequest } from "@/type/admin";
 
 export const login = (request: LoginRequest) => {
     return api.post<AccessTokenResponse>("/auth/login", request);
@@ -181,10 +181,20 @@ export const getReservationDetail = (reservationId: number) => {
 }
 
 export const getRoomsByReservation = (reservationId: number) => {
-    return api.get<AdminRoomListResponse[]>(`admin/reservation/${reservationId}/rooms`)
+    return api.get<AdminRoomResponse[]>(`admin/reservation/${reservationId}/rooms`)
 }
 
 //객실 배정
 export const assignRoom = (reservationId: number, roomId: number) => {
-    return api.post<void>(`admin/reservation/${reservationId}/assign-rooms`, { roomId } as AssignmentRoomRequest)
+    return api.patch<void>(`admin/reservation/${reservationId}/assign-rooms`, { roomId } as AssignmentRoomRequest)
+}
+
+//객실 배정취소
+export const unassignRoom = (reservationId: number) => {
+    return api.patch<void>(`admin/reservation/${reservationId}/unassign-rooms`)
+}
+
+//예약취소 - 관리자
+export const cancelReservationByAdmin = (reservationId: number, cancelReason: string) => {
+    return api.post<void>(`admin/reservation/${reservationId}/cancel`, {cancelReason} as CancelReservationByAdminRequest)
 }

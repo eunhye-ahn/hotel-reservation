@@ -1,5 +1,5 @@
-import { useReservations } from "@/features/admin/hooks/useReservations"
-import { useReservationsFilter } from "@/features/admin/hooks/useReservationsFilter"
+import { useReservations } from "@/features/admin/hooks/reservation/useReservations"
+import { useReservationsFilter } from "@/features/admin/hooks/reservation/useReservationsFilter"
 import { Spinner } from "../../../component/common/Spinner"
 import { ErrorMessage } from "../../../component/common/ErrorMessage"
 import { useNavigate } from "react-router"

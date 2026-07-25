@@ -46,6 +46,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/admin/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/admin/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/v1/admin/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/api/v1/admin/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/admin/**").hasAuthority("ROLE_ADMIN")
 
                         //결제
@@ -87,7 +88,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowedOrigins(List.of("http://localhost:5173"));
-        config.setAllowedMethods(List.of("GET", "POST","DELETE","PUT"));
+        config.setAllowedMethods(List.of("GET", "POST","DELETE","PUT", "PATCH"));
         config.setAllowedHeaders(List.of("*"));
 
         config.setAllowCredentials(true);

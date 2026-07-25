@@ -49,6 +49,8 @@ public enum ErrorCode {
     PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "결제 주문을 찾을 수 없습니다"),
     PAYMENT_AMOUNT_MISMATCH(HttpStatus.BAD_REQUEST, "결제 금액이 변조되었습니다"),
     MISSING_IDEMPOTENCY_KEY(HttpStatus.BAD_REQUEST, "Idempotency-Key 헤더가 필요합니다."),
+    REFUND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "환불처리에 실패했습니다"),
+    WALLET_NOT_FOUND(HttpStatus.NOT_FOUND, "지갑 정보를 찾을 수 없습니다"),
 
     //reservationKey -멱등키
     HASH_GENERATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "일시적인 오류가 발생했습니다. 다시 시도해주세요"),
@@ -73,7 +75,8 @@ public enum ErrorCode {
     //관리자
     ROOM_TYPE_MISMATCH(HttpStatus.CONFLICT, "예약된 객실타입과 일치하지 않습니다"),
     ROOM_NOT_USABLE(HttpStatus.CONFLICT, "이용할 수 없는 객실입니다"),
-    ROOM_ALREADY_OCCUPIED(HttpStatus.CONFLICT, "해당 기간에 이미 예약된 객실입니다");
+    ROOM_ALREADY_OCCUPIED(HttpStatus.CONFLICT, "해당 기간에 이미 예약된 객실입니다"),
+    CANNOT_UNASSIGN_ROOM(HttpStatus.CONFLICT, "배정을 취소할 수 없는 예약 상태입니다");
 
     private final HttpStatus status;
     private final String message;

@@ -1,13 +1,14 @@
 package com.hotel.admin.service;
 
-import com.hotel.admin.dto.AdminReservationDetailResponse;
-import com.hotel.admin.dto.AdminReservationSearchResponse;
-import com.hotel.admin.dto.AdminRoomListResponse;
-import com.hotel.admin.dto.AssignmentRoomRequest;
+import com.hotel.admin.dto.*;
 import com.hotel.common.exception.CustomException;
 import com.hotel.common.exception.ErrorCode;
 import com.hotel.hotel.domain.Room;
+import com.hotel.hotel.domain.RoomTypeInventory;
 import com.hotel.hotel.repository.RoomRepository;
+import com.hotel.hotel.repository.RoomTypeInventoryRepository;
+import com.hotel.payment.domain.*;
+import com.hotel.payment.service.PaymentService;
 import com.hotel.reservation.domain.ReservationSearchType;
 import com.hotel.reservation.domain.Reservation;
 import com.hotel.reservation.domain.ReservationStatus;
@@ -26,7 +27,8 @@ import java.util.List;
 public class AdminReservationService {
     private final ReservationRepository reservationRepository;
     private final RoomRepository roomRepository;
-
+    private final PaymentService paymentService;
+    private final RoomTypeInventoryRepository roomTypeInventoryRepository;
     public Page<AdminReservationSearchResponse> getReservations(LocalDate startDate, LocalDate endDate, ReservationSearchType searchType, String keyword, ReservationStatus status,Boolean roomAssigned, Pageable pageable) {
 
         Page<Reservation> result = reservationRepository.searchByReservation(startDate, endDate, searchType, keyword, status, roomAssigned,  pageable);
@@ -41,14 +43,15 @@ public class AdminReservationService {
         return AdminReservationDetailResponse.from(reservation);
     }
 
-    //방조회
-    public List<AdminRoomListResponse> getRoomsByReservation(Long reservationId){
+    //객실조회
+    public List<AdminRoomResponse> getRoomsByReservation(Long reservationId){
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(()-> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
         List<Room> rooms = roomRepository.findAllByRoomType(reservation.getRoomType());
+        Long currentlyRoomId = reservation.getRoom() != null ? reservation.getRoom().getId() : null;
 
         return rooms.stream()
-                .map(room -> AdminRoomListResponse.builder()
+                .map(room -> AdminRoomResponse.builder()
                         .id(room.getId())
                         .roomTypeName(room.getRoomType().getName())
                         .roomName(room.getName())
@@ -56,6 +59,7 @@ public class AdminReservationService {
                         .floor(room.getFloor())
                         .roomStatus(room.isUsable())
                         .available(isRoomAvailable(reservation, room))
+                        .currentlyAssigned(room.getId().equals(currentlyRoomId))
                         .build())
                 .toList();
     }
@@ -74,6 +78,34 @@ public class AdminReservationService {
         reservation.assignRoom(room);
     }
 
+    //배정취소
+    @Transactional
+    public void unassignRoom(Long reservationId){
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
+
+        reservation.unassignRoom();
+    }
+
+    //예약취소 - 관리자
+    @Transactional
+    public void cancelReservationByAdmin(Long reservationId, String reason){
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
+        //예약상태변경 검증 룸초기화
+        reservation.cancelByAdmin(reason);
+
+        //재고복구(중복코드)
+        List<RoomTypeInventory> inventories = roomTypeInventoryRepository
+                .findByRoomTypeIdAndDateBetween(reservation.getRoomType().getId(), reservation.getStartDate(), reservation.getEndDate().minusDays(1));
+
+        inventories.forEach(i -> i.restore(reservation.getNumberOfRooms()));
+
+        paymentService.cancel(reservationId, reason);
+        reservation.refund();
+        //정산
+        paymentService.reverseSettlement(reservation);
+    }
 
     private void validateSameRoomType(Reservation reservation, Room room){
         if(!reservation.getRoomType().getId().equals(room.getRoomType().getId())){
@@ -105,4 +137,5 @@ public class AdminReservationService {
     private boolean isRoomAvailable(Reservation reservation, Room room){
         return isUsable(room) && !isOverlapping(reservation, room);
     }
+
 }

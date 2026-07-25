@@ -3,18 +3,20 @@ package com.hotel.payment.service;
 import com.hotel.common.exception.CustomException;
 import com.hotel.common.exception.ErrorCode;
 import com.hotel.payment.client.TossPaymentClient;
-import com.hotel.payment.domain.PaymentEvent;
-import com.hotel.payment.domain.PaymentOrder;
-import com.hotel.payment.domain.PaymentOrderStatus;
+import com.hotel.payment.domain.*;
 import com.hotel.payment.dto.*;
+import com.hotel.payment.repository.LedgerRepository;
 import com.hotel.payment.repository.PaymentEventRepository;
 import com.hotel.payment.repository.PaymentOrderRepository;
+import com.hotel.payment.repository.WalletRepository;
 import com.hotel.reservation.domain.PaymentStatus;
 import com.hotel.reservation.domain.Reservation;
 import com.hotel.reservation.repository.ReservationRepository;
+import feign.FeignException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -45,14 +47,25 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class PaymentService {
     private final PaymentEventRepository paymentEventRepository;
     private final PaymentOrderRepository paymentOrderRepository;
     private final TossPaymentClient tossPaymentClient;
     private final ReservationRepository reservationRepository;
+    private final WalletRepository walletRepository;
+    private final LedgerRepository ledgerRepository;
+
+
 
     @Value("${psp.toss.secret-key}")
     private String secretKey;
+
+    private String getAuthorizationHeader(){
+        String encodedKey = Base64.getEncoder()
+                .encodeToString((secretKey + ":").getBytes());
+        return "Basic " + encodedKey;
+    }
 
     @Transactional
     public PaymentPrepareResponse preparePayment(String reservationKey, String orderId, HttpServletRequest request){
@@ -142,10 +155,8 @@ public class PaymentService {
         }
 
         //토스 승인 API 호출
-        String encodedKey = Base64.getEncoder()
-                .encodeToString((secretKey + ":").getBytes());
         tossPaymentClient.confirm(
-                "Basic " + encodedKey,
+                getAuthorizationHeader(),
                 new TossConfirmRequest(request.getPaymentKey(), request.getOrderId(), request.getAmount())
         );
 
@@ -155,4 +166,49 @@ public class PaymentService {
 
         return new PaymentConfirmResponse(paymentEvent.getReservationKey());
     }
+
+    public void cancel(Long reservationId, String cancelReason){
+        PaymentEvent event = paymentEventRepository.findByReservationId(reservationId)
+                .orElseThrow(()-> new CustomException(ErrorCode.PAYMENT_NOT_FOUND));
+        String paymentKey = event.getPspToken();
+        try {
+            tossPaymentClient.cancel(
+                    getAuthorizationHeader(),
+                    paymentKey,
+                    new TossCancelRequest(cancelReason)
+            );
+        }catch(Exception e){
+            e.printStackTrace();
+            throw new CustomException(ErrorCode.REFUND_FAILED);
+        }
+    }
+
+    public void reverseSettlement(Reservation reservation){
+        PaymentEvent paymentEvent = paymentEventRepository.findByReservationId(reservation.getId())
+                .orElseThrow(()->new CustomException(ErrorCode.PAYMENT_NOT_FOUND));
+        PaymentOrder paymentOrder = paymentOrderRepository.findByCheckoutId(paymentEvent.getCheckoutId())
+                .orElseThrow(()->new CustomException(ErrorCode.PAYMENT_NOT_FOUND));
+        String paymentOrderId = paymentOrder.getPaymentOrderId();
+        int amount = reservation.getTotalPrice();
+
+        ledgerRepository.save(Ledger.builder()
+                .paymentOrderId(paymentOrderId)
+                .account(reservation.getUser().getId().toString())
+                .accountType(AccountType.BUYER)
+                .debit(0)
+                .credit(amount)
+                .build());
+        ledgerRepository.save(Ledger.builder()
+                .paymentOrderId(paymentOrderId)
+                .account(reservation.getHotel().getSellerAccount())
+                .accountType(AccountType.SELLER)
+                .debit(amount)
+                .credit(0)
+                .build());
+
+        Wallet wallet = walletRepository.findBySellerAccount(reservation.getHotel().getSellerAccount())
+                .orElseThrow(()->new CustomException(ErrorCode.WALLET_NOT_FOUND));
+        wallet.updateBalance(-amount);
+    }
+
 }

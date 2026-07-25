@@ -1,8 +1,9 @@
 import { ErrorMessage } from "@/component/common/ErrorMessage"
 import { Spinner } from "@/component/common/Spinner"
 import { useState } from "react"
-import { useRoomsByReservation } from "@/features/admin/hooks/useRoomsByReservation"
-import { useAssignRoom } from "../hooks/useAssignRoom"
+import { useRoomsByReservation } from "@/features/admin/hooks/reservation/useRoomsByReservation"
+import { useAssignRoom } from "../hooks/reservation/useAssignRoom"
+import { useUnassignRoom } from "../hooks/reservation/useUnAssignRoom"
 
 interface RoomAssignmentFormProps {
     reservationId: number
@@ -11,8 +12,9 @@ interface RoomAssignmentFormProps {
 export const RoomAssignmentForm = ({ reservationId }: RoomAssignmentFormProps) => {
     const [showOnlyAvailable, setShowOnlyAvailable] = useState<boolean>(false)
 
-    const { data, isLoading, isError } = useRoomsByReservation(reservationId);
-    const { assignRoomMutate, isPending } = useAssignRoom(reservationId)
+    const { data, isLoading, isError } = useRoomsByReservation(reservationId)
+    const { assignRoomMutate, isAssigning } = useAssignRoom(reservationId)
+    const { unassignRoomMutate, isUnAssigning } = useUnassignRoom(reservationId)
 
     if (isLoading) return <Spinner />
     if (isError) return <ErrorMessage />
@@ -49,14 +51,23 @@ export const RoomAssignmentForm = ({ reservationId }: RoomAssignmentFormProps) =
                             <td>{room.floor}층</td>
                             <td>{room.roomNumber}호</td>
                             <td>{room.roomTypeName}</td>
-                            <td>{!room.roomStatus ? '점검중' : room.available ? '배정가능' : '배정불가'}</td>
                             <td>
-                                <button
-                                    disabled={!room.roomStatus || !room.available || isPending}
-                                    onClick={() => assignRoomMutate(room.id)}
-                                >
-                                    배정하기
-                                </button>
+                                {room.currentlyAssigned ? '(현재배정)' : ''}
+                                {!room.roomStatus ? '점검중' : room.available ? '배정가능' : '배정불가'}
+                            </td>
+                            <td>
+                                {room.currentlyAssigned ? (
+                                    <button onClick={() => unassignRoomMutate()} disabled={isUnAssigning}>
+                                        배정취소
+                                    </button>
+                                ) : (
+                                    <button
+                                        disabled={!room.roomStatus || !room.available || isAssigning}
+                                        onClick={() => assignRoomMutate(room.id)}
+                                    >
+                                        배정하기
+                                    </button>
+                                )}
                             </td>
                         </tr>
                     )}

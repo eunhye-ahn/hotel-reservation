@@ -1,9 +1,11 @@
 import { ErrorMessage } from "@/component/common/ErrorMessage";
 import { Spinner } from "@/component/common/Spinner";
-import { useReservationDetail } from "@/features/admin/hooks/useReservationDetail";
+import { useReservationDetail } from "@/features/admin/hooks/reservation/useReservationDetail";
 import { useState } from "react";
 import { useParams } from "react-router"
 import { RoomAssignmentForm } from "./RoomAssignmentForm";
+import { AssignRoomInfoTable } from "./AssignRoomInfoTable";
+import { CancelByAdminForm } from "./CancelByAdminForm";
 
 export const ReservationDetail = () => {
     const { id } = useParams<{ id: string }>()
@@ -16,6 +18,7 @@ export const ReservationDetail = () => {
 
     if (isLoading) return <Spinner />
     if (isError) return <ErrorMessage />
+    console.log(reservationId)
 
     return (
         <div>
@@ -31,7 +34,7 @@ export const ReservationDetail = () => {
                     <span>{data?.numberOfGuests}</span>
                     <span>호텔명</span>
                     <span>{data?.hotelName}</span>
-                    <span>객실명</span>
+                    <span>객실타입</span>
                     <span>{data?.roomTypeName}</span>
                     <span>기간</span>
                     <span>{data?.startDate}~{data?.endDate}</span>
@@ -58,21 +61,22 @@ export const ReservationDetail = () => {
                     <p>이용 전 상태에서만 배정이 가능합니다</p>
                 ) : data?.roomAssigned ? (
                     <>
-                        <p>배정 정보</p>
-                        {!showAssignForm ?
-                            (<button>배정변경</button>) : (
-                                <>
-                                    {/* 재배정폼 */}
-                                </>
-                            )
+                        <AssignRoomInfoTable
+                            roomNumber={data?.roomNumber}
+                            roomName={data?.roomName}
+                            floor={data?.floor}
+                            usable={data?.usable}
+                        />
+                        <button onClick={() => setShowAssignFrom(!showAssignForm)}>{showAssignForm ? '취소' : '배정변경'}</button>
+                        {showAssignForm &&
+                            <RoomAssignmentForm reservationId={reservationId} />
                         }
                     </>
                 ) : (
-                    !showAssignForm ? (
-                        <button onClick={() => setShowAssignFrom(true)}>배정하기</button>
-                    ) : (
+                    <div>
+                        <button onClick={() => setShowAssignFrom(!showAssignForm)}>{showAssignForm ? '취소' : '배정하기'}</button>
                         <RoomAssignmentForm reservationId={reservationId} />
-                    )
+                    </div>
                 )
 
                 }
@@ -82,11 +86,14 @@ export const ReservationDetail = () => {
                 {data?.reservationStatus != "BEFORE_USE" ? (
                     <p>이용 전 상태에서만 취소할 수 있습니다</p>
                 ) : (
-                    !showCancelForm ? (
-                        <button>강제취소</button>
-                    ) : (
-                        <>{/* 강제취소폼 */}</>
-                    )
+                    <div>
+                        <button onClick={() => setShowCancelForm(!showCancelForm)}>{showCancelForm ? '취소' : '예약취소'}</button>
+                        {showCancelForm &&
+                            <CancelByAdminForm
+                                reservationId={reservationId}
+                                refundPrice={data?.totalPrice} />
+                        }
+                    </div>
                 )}
 
             </section>

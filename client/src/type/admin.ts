@@ -42,16 +42,21 @@ export interface AdminReservationDetailResponse {
     usable: boolean
 }
 
-export interface AdminRoomListResponse {
+export interface AdminRoomResponse {
     id: number,
     roomTypeName: string,
     roomName: string,
     roomNumber: number,
     floor: number,
     roomStatus: boolean,
-    available: boolean
+    available: boolean,
+    currentlyAssigned: boolean
 }
 
 export interface AssignmentRoomRequest {
     roomId: number
+}
+
+export interface CancelReservationByAdminRequest {
+    cancelReason: string
 }

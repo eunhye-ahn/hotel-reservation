@@ -131,6 +131,9 @@ public class Reservation extends BaseTime{
     @Builder.Default
     private CancelType cancelType=null;
 
+    @Builder.Default
+    private String cancelReason=null;
+
     //고객취소
     public void cancel(){
         if(this.reservationStatus != ReservationStatus.PENDING_PAYMENT){
@@ -154,14 +157,35 @@ public class Reservation extends BaseTime{
         this.paymentStatus = PaymentStatus.PAID;
     }
 
-    //룸배정
+    //객실배정
     public void assignRoom(Room room) {
         if (this.reservationStatus != ReservationStatus.BEFORE_USE) {
             throw new CustomException(ErrorCode.CANNOT_ASSIGN_ROOM);
         }
-        if (this.room != null) {
-            throw new CustomException(ErrorCode.ROOM_ALREADY_ASSIGNED);
-        }
         this.room = room;
+    }
+
+    //객실배정취소
+    public void unassignRoom(){
+        if(this.reservationStatus != ReservationStatus.BEFORE_USE) {
+            throw new CustomException(ErrorCode.CANNOT_UNASSIGN_ROOM);
+        }
+        this.room = null;
+    }
+
+    //예약취소 - 관리자
+    public void cancelByAdmin(String reason){
+        if(this.reservationStatus != ReservationStatus.BEFORE_USE) {
+            throw new CustomException(ErrorCode.CANNOT_UNASSIGN_ROOM);
+        }
+
+        this.reservationStatus = ReservationStatus.CANCELED;
+        this.cancelType = CancelType.ADMIN;
+        this.cancelReason = reason;
+        this.room = null;
+    }
+
+    public void refund(){
+        this.paymentStatus=PaymentStatus.REFUNDED;
     }
 }

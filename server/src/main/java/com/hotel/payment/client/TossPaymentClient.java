@@ -1,8 +1,10 @@
 package com.hotel.payment.client;
 
+import com.hotel.payment.dto.TossCancelRequest;
 import com.hotel.payment.dto.TossConfirmRequest;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -28,4 +30,8 @@ public interface TossPaymentClient {
      */
     @PostMapping(value="/v1/payments/confirm", consumes = MediaType.APPLICATION_JSON_VALUE)
     void confirm(@RequestHeader("Authorization") String authorization, @RequestBody TossConfirmRequest request);
+
+    @PostMapping(value="/v1/payments/{paymentKey}/cancel", consumes = MediaType.APPLICATION_JSON_VALUE)
+    void cancel(@RequestHeader("Authorization") String authorization, @PathVariable("paymentKey") String paymentKey,
+                @RequestBody TossCancelRequest request);
 }
