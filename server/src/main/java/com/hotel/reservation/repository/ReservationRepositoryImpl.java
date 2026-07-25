@@ -78,4 +78,21 @@ public class ReservationRepositoryImpl implements ReservationRepositoryCustom {
         return new PageImpl<>(content,pageable,total != null ? total:0L);
     }
 
+    @Override
+    public boolean existsOverlappingReservation(Long roomId, LocalDate start, LocalDate end, Long excludeReservationId) {
+        Integer result = queryFactory
+                .selectOne()
+                .from(reservation)
+                .where(
+                        reservation.room.id.eq(roomId),
+                        reservation.id.ne(excludeReservationId),
+                        reservation.reservationStatus.in(ReservationStatus.BEFORE_USE, ReservationStatus.AFTER_USE),
+                        reservation.startDate.lt(end),
+                        reservation.endDate.gt(start)
+                )
+                .fetchFirst();
+
+        return result!=null;
+    }
+
 }

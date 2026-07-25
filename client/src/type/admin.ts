@@ -41,3 +41,17 @@ export interface AdminReservationDetailResponse {
     floor: number,
     usable: boolean
 }
+
+export interface AdminRoomListResponse {
+    id: number,
+    roomTypeName: string,
+    roomName: string,
+    roomNumber: number,
+    floor: number,
+    roomStatus: boolean,
+    available: boolean
+}
+
+export interface AssignmentRoomRequest {
+    roomId: number
+}

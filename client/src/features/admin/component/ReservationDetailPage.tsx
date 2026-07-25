@@ -1,8 +1,9 @@
 import { ErrorMessage } from "@/component/common/ErrorMessage";
 import { Spinner } from "@/component/common/Spinner";
-import { useReservationDetail } from "@/hooks/admin/useReservationDetail";
+import { useReservationDetail } from "@/features/admin/hooks/useReservationDetail";
 import { useState } from "react";
 import { useParams } from "react-router"
+import { RoomAssignmentForm } from "./RoomAssignmentForm";
 
 export const ReservationDetail = () => {
     const { id } = useParams<{ id: string }>()
@@ -68,9 +69,9 @@ export const ReservationDetail = () => {
                     </>
                 ) : (
                     !showAssignForm ? (
-                        <button>배정하기</button>
+                        <button onClick={() => setShowAssignFrom(true)}>배정하기</button>
                     ) : (
-                        <>{/* 배정폼 */}</>
+                        <RoomAssignmentForm reservationId={reservationId} />
                     )
                 )
 

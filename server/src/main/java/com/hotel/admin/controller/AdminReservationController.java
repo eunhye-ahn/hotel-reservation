@@ -2,6 +2,8 @@ package com.hotel.admin.controller;
 
 import com.hotel.admin.dto.AdminReservationDetailResponse;
 import com.hotel.admin.dto.AdminReservationSearchResponse;
+import com.hotel.admin.dto.AdminRoomListResponse;
+import com.hotel.admin.dto.AssignmentRoomRequest;
 import com.hotel.admin.service.AdminReservationService;
 import com.hotel.reservation.domain.ReservationSearchType;
 import com.hotel.reservation.domain.ReservationStatus;
@@ -14,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * GET /admin/reservations (필터+페이징)
@@ -61,5 +64,27 @@ public class AdminReservationController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(result);
+    }
+
+    //방 조회
+    @GetMapping("/{reservationId}/rooms")
+    public ResponseEntity<List<AdminRoomListResponse>> getRoomsByReservation(@PathVariable Long reservationId){
+        List<AdminRoomListResponse> list = adminReservationService.getRoomsByReservation(reservationId);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(list);
+    }
+
+    //배정확정
+    @PostMapping("/{reservationId}/assign-rooms")
+    public ResponseEntity<Void> assignRoom(
+            @PathVariable Long reservationId,
+            @RequestBody AssignmentRoomRequest request){
+        adminReservationService.assignRoom(reservationId, request.getRoomId());
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .build();
     }
 }

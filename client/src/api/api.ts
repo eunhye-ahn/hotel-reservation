@@ -5,7 +5,7 @@ import type { ReservationCreateResponse, ReservationDetailResponse, ReservationI
 import type { UserInfoResponse } from "@/type/user";
 import { api } from "./axios";
 import type { PaymentConfirmRequest, PaymentConfirmResponse, PaymentPrepareResponse } from "@/type/payment";
-import type { AdminReseervationSearchRequest, AdminReservationDetailResponse, AdminReservationSearchResponse } from "@/type/admin";
+import type { AdminReseervationSearchRequest, AdminReservationDetailResponse, AdminReservationSearchResponse, AdminRoomListResponse, AssignmentRoomRequest } from "@/type/admin";
 
 export const login = (request: LoginRequest) => {
     return api.post<AccessTokenResponse>("/auth/login", request);
@@ -180,3 +180,11 @@ export const getReservationDetail = (reservationId: number) => {
     return api.get<AdminReservationDetailResponse>(`/admin/reservation/${reservationId}`)
 }
 
+export const getRoomsByReservation = (reservationId: number) => {
+    return api.get<AdminRoomListResponse[]>(`admin/reservation/${reservationId}/rooms`)
+}
+
+//객실 배정
+export const assignRoom = (reservationId: number, roomId: number) => {
+    return api.post<void>(`admin/reservation/${reservationId}/assign-rooms`, { roomId } as AssignmentRoomRequest)
+}

@@ -10,4 +10,6 @@ import java.time.LocalDate;
 
 public interface ReservationRepositoryCustom {
     Page<Reservation> searchByReservation(LocalDate startDate, LocalDate endDate, ReservationSearchType searchType, String keyword, ReservationStatus status, Boolean roomAssigned, Pageable pageable);
+
+    boolean existsOverlappingReservation(Long roomId, LocalDate start, LocalDate end, Long excludeReservationId);
 }

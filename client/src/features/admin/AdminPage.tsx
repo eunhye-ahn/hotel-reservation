@@ -1,5 +1,5 @@
 
-import { RoomAssignment } from "@/component/admin/RoomAssignment"
+import { ReservationList } from "@/features/admin/component/ReservationList"
 
 export function AdminPage() {
     //메뉴바
@@ -15,7 +15,7 @@ export function AdminPage() {
 
     return (
         <>
-            <RoomAssignment />
+            <ReservationList />
         </>
     )
 }

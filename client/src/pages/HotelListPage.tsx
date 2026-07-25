@@ -1,6 +1,6 @@
 import { getHotels, getHotelsByFilter } from "@/api/api";
-import { HotelCard } from "@/component/HotelCard";
-import { SearchFilterBar } from "@/component/SearchFilterBar";
+import { HotelCard } from "@/features/hotel/component/HotelCard";
+import { SearchFilterBar } from "@/features/hotel/component/SearchFilterBar";
 import type { CursorResponse } from "@/type/hotel";
 import { useRegionStore } from "@/store/useRegionStore";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
@@ -39,7 +39,7 @@ export function HotelListPage() {
 
     const { data, isLoading, isError, fetchNextPage, hasNextPage } = useInfiniteQuery<CursorResponse>({
         queryKey: ["hotels", q, regionCode, subRegionCode, checkIn, checkOut, numberOfGuests, numberOfRooms, lclsSystm2],     //지역바뀌면 자동재조회
-        queryFn: ({pageParam}) => getHotelsByFilter(
+        queryFn: ({ pageParam }) => getHotelsByFilter(
             q || undefined,
             regionCode ?? "",
             subRegionCode ?? "",

@@ -1,15 +1,15 @@
 import type { HotelDetailResponse } from "@/type/hotel";
-import {  useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useNavigate, useParams } from "react-router";
 import '@/css/HotelDetailPage.css';
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-import NotFoundPage from "./NotFoundPage";
+import NotFoundPage from "../../pages/NotFoundPage";
 import { addWishList, cancelWishList, createReservation, getHotelDetail, getWishedChecked } from "@/api/api";
 import { Map } from "@/component/Map";
 import { Heart, ShoppingCart } from "lucide-react";
 import { useWishList } from "@/hooks/useWishList";
-import { useReservation } from "@/hooks/useReservation";
+import { useCreateReservation } from "@/hooks/useCreateReservation";
 
 // 파일 분리 : 메인(조립만), 
 // 훅 : 기능(호텔 상세쿼리/날짜인원상태, 위시조회+추가/취소mutation, 예약mutation+에러코드 분기)=>훅으로 분리하기
@@ -26,18 +26,18 @@ export const HotelDetailPage = () => {
     const [endDate, setEndDate] = useState(tomorrow);
     const [numberOfRooms, setNumberOfRooms] = useState(1);
     const [numberOfGuests, setNumberOfGuests] = useState(1);
-   
-    const {data, isLoading, isError, error} = useQuery<HotelDetailResponse>({
+
+    const { data, isLoading, isError, error } = useQuery<HotelDetailResponse>({
         queryKey: ["hotelDetails", hotelId, startDate, endDate, numberOfRooms, numberOfGuests],    //호텔id별로 캐시관리
-        queryFn: () => getHotelDetail(Number(hotelId), startDate, endDate, numberOfRooms, numberOfGuests).then((res)=>res.data)
+        queryFn: () => getHotelDetail(Number(hotelId), startDate, endDate, numberOfRooms, numberOfGuests).then((res) => res.data)
     });
 
     //hotelId가 nan 이들어가는 오류 => useWishList에서 쿼리에 방어로직 추가 enabled
     //위시리스트
-    const {isWished, handleWish} = useWishList(Number(data?.hotelId));
+    const { isWished, handleWish } = useWishList(Number(data?.hotelId));
 
     //예약
-    const {handleReservation, isPending} = useReservation({
+    const { handleReservation, isPending } = useCreateReservation({
         hotelId,
         data,
         startDate,
@@ -47,14 +47,14 @@ export const HotelDetailPage = () => {
     });
 
 
-    if(isLoading) return <p>Loading...</p>
-    if(isError){
+    if (isLoading) return <p>Loading...</p>
+    if (isError) {
         const { code, message } = (error as any).response.data;
-    
-        if(code === "HOTEL_NOT_FOUND"){
+
+        if (code === "HOTEL_NOT_FOUND") {
             return <NotFoundPage />
         }
-        if(code === "RATE_NOT_FOUND" || code === "ROOM_INVENTORY_NOT_FOUND"){
+        if (code === "RATE_NOT_FOUND" || code === "ROOM_INVENTORY_NOT_FOUND") {
             toast.error(message)
             navigate("/")
             return null
@@ -102,8 +102,8 @@ export const HotelDetailPage = () => {
                     <p>{data?.hotelName}</p>
                     <p>{data?.address}</p>
                 </div>
-                <button onClick={()=>handleWish(data?.hotelId)}>
-                    <Heart size={24} fill={isWished ? "red":"none"} color={isWished ? "red" : "white"} />
+                <button onClick={() => handleWish(data?.hotelId)}>
+                    <Heart size={24} fill={isWished ? "red" : "none"} color={isWished ? "red" : "white"} />
                 </button>
             </div>
             <div className="room-select-title">객실선택</div>
@@ -122,15 +122,15 @@ export const HotelDetailPage = () => {
                         </div>
                         <p className="hotel-demand">{roomType.demandRate.toLocaleString()}원</p>
                         <button><ShoppingCart size={24} /></button>
-                        <button onClick={()=>handleReservation(roomType.roomTypeId)} disabled={isPending}>
-                        {isPending ? "Loading..." : "예약하기"}
+                        <button onClick={() => handleReservation(roomType.roomTypeId)} disabled={isPending}>
+                            {isPending ? "Loading..." : "예약하기"}
                         </button>
                     </div>
                 </div>
             ))}
 
             <div>
-                 <div className="room-select-title">위치</div>
+                <div className="room-select-title">위치</div>
                 <Map hotelName={data?.hotelName ?? ""} hotelAddress={data?.address ?? ""} />
             </div>
         </div>

@@ -68,9 +68,12 @@ public enum ErrorCode {
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지않는 유저입니다"),
 
     //낙관적 락
-    OPTIMISTIC_LOCK_CONFLICT(HttpStatus.CONFLICT, "요청이 충돌했습니다. 다시 시도해주세요");
+    OPTIMISTIC_LOCK_CONFLICT(HttpStatus.CONFLICT, "요청이 충돌했습니다. 다시 시도해주세요"),
 
-
+    //관리자
+    ROOM_TYPE_MISMATCH(HttpStatus.CONFLICT, "예약된 객실타입과 일치하지 않습니다"),
+    ROOM_NOT_USABLE(HttpStatus.CONFLICT, "이용할 수 없는 객실입니다"),
+    ROOM_ALREADY_OCCUPIED(HttpStatus.CONFLICT, "해당 기간에 이미 예약된 객실입니다");
 
     private final HttpStatus status;
     private final String message;

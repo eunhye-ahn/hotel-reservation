@@ -1,14 +1,14 @@
-import { HotelCard } from "@/component/HotelCard";
+import { HotelCard } from "@/features/hotel/component/HotelCard";
 import { useRecentHotelStore } from "@/store/useRecentHotelStore"
 
-export function RecentHotelPage(){
-    const {recentHotels, removeRecentHotel} = useRecentHotelStore();
+export function RecentHotelPage() {
+    const { recentHotels, removeRecentHotel } = useRecentHotelStore();
 
-    return(
+    return (
         <div>
-            <HotelCard 
-            data={recentHotels}
-            onRemove={removeRecentHotel}
+            <HotelCard
+                data={recentHotels}
+                onRemove={removeRecentHotel}
             />
         </div>
     )

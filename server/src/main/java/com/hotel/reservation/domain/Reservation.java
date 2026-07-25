@@ -155,14 +155,13 @@ public class Reservation extends BaseTime{
     }
 
     //룸배정
-    public void assignRoom(Room room){
-        if(this.reservationStatus != ReservationStatus.BEFORE_USE){
+    public void assignRoom(Room room) {
+        if (this.reservationStatus != ReservationStatus.BEFORE_USE) {
             throw new CustomException(ErrorCode.CANNOT_ASSIGN_ROOM);
         }
-        if(this.room != null){
+        if (this.room != null) {
             throw new CustomException(ErrorCode.ROOM_ALREADY_ASSIGNED);
         }
         this.room = room;
     }
-
 }

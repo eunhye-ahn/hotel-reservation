@@ -1,18 +1,18 @@
-import { useReservations } from "@/hooks/admin/useReservations"
-import { useReservationsFilter } from "@/hooks/admin/useReservationsFilter"
-import { Spinner } from "../common/Spinner"
-import { ErrorMessage } from "../common/ErrorMessage"
+import { useReservations } from "@/features/admin/hooks/useReservations"
+import { useReservationsFilter } from "@/features/admin/hooks/useReservationsFilter"
+import { Spinner } from "../../../component/common/Spinner"
+import { ErrorMessage } from "../../../component/common/ErrorMessage"
 import { useNavigate } from "react-router"
 
 
-export const RoomAssignment = () => {
+export const ReservationList = () => {
     const navigate = useNavigate()
     const { filter, setSearchType, setKeyword, setStartDate, setEndDate, setPage, setRoomAssigned, setStatus } = useReservationsFilter()
     const { data, isLoading, isError } = useReservations(filter)
 
     return (
         <div>
-            <h1>배정 및 예약확정</h1>
+            <h1>예약 목록</h1>
             <div>
                 <input type="date" value={filter.startDate ?? ""} onChange={(e) => setStartDate(e.target.value || undefined)} />
                 <input type="date" value={filter.endDate ?? ""} onChange={(e) => setEndDate(e.target.value || undefined)} />
