@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom"
 import '@/css/header.css'
 import { useAuthStore } from "@/store/useAuthStore"
 import { logout } from "@/api/api"
-import { SearchBar } from "../features/hotel/component/SearchBar"
+import { SearchBar } from "@/features/hotel/component/SearchBar"
 
 export const Header = () => {
     const navigate = useNavigate()

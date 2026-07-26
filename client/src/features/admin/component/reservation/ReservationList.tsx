@@ -1,8 +1,9 @@
 import { useReservations } from "@/features/admin/hooks/reservation/useReservations"
 import { useReservationsFilter } from "@/features/admin/hooks/reservation/useReservationsFilter"
-import { Spinner } from "@/component/common/Spinner"
-import { ErrorMessage } from "@/component/common/ErrorMessage"
+import { Spinner } from "@/common/component/Spinner"
+import { ErrorMessage } from "@/common/component/ErrorMessage"
 import { useNavigate } from "react-router"
+import { Pagination } from "@/common/component/Pagination"
 
 
 export const ReservationList = () => {
@@ -111,20 +112,13 @@ export const ReservationList = () => {
                             ))}
                         </tbody>
                     </table>
-                    <div className="flex items-center justify-center gap-2">
-                        <button
-                            onClick={() => setPage(filter.page - 1)}
-                            disabled={data?.first}
-                        >이전</button>
-                        <span>
-                            {filter.page + 1}/{data?.totalPages}
-                        </span>
-                        <button
-                            onClick={() => setPage(filter.page + 1)}
-                            disabled={data?.last}
-                        >다음
-                        </button>
-                    </div>
+                    <Pagination
+                        page={filter.page}
+                        totalPages={data?.totalPages}
+                        isFirst={data?.first}
+                        isLast={data?.last}
+                        onPageChange={setPage}
+                    />
                 </>
             )}
         </div>

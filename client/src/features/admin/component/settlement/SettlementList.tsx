@@ -1,11 +1,12 @@
 import type { AdminSettlementSearchResponse } from "@/type/admin"
 import { useState } from "react"
 import { SettlementModal } from "./SettlementModal"
-import { Modal } from "@/component/Modal"
+import { Modal } from "@/common/component/Modal"
 import { useSettlementFilter } from "../../hooks/settlement/useSettlementFilter"
-import { Spinner } from "@/component/common/Spinner"
-import { ErrorMessage } from "@/component/common/ErrorMessage"
+import { Spinner } from "@/common/component/Spinner"
+import { ErrorMessage } from "@/common/component/ErrorMessage"
 import { useSettlementList } from "../../hooks/settlement/useSettlementList"
+import { Pagination } from "@/common/component/Pagination"
 
 export const SettlementList = () => {
     const [settleTarget, setSettleTarget] = useState<AdminSettlementSearchResponse | null>(null)
@@ -35,36 +36,48 @@ export const SettlementList = () => {
             </select>
             {isLoading ? <Spinner />
                 : isError ? <ErrorMessage /> : (
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>연번</th>
-                                <th>호텔명</th>
-                                <th>정산계좌</th>
-                                <th>미정산 잔액</th>
-                                <th>누적 정산액</th>
-                                <th>최근 정산일</th>
-                                <th>액션</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {data?.content.map((s, i) =>
-                                <tr key={s.hotelId}>
-                                    <td>{i + 1}</td>
-                                    <td>{s.hotelName}</td>
-                                    <td>{s.sellerAccount}</td>
-                                    <td>{s.pendingBalance}</td>
-                                    <td>{s.totalSettlementAmount}</td>
-                                    <td>{s.lastSettledAt ?? "없음"}</td>
-                                    <td>
-                                        <button onClick={() => setSettleTarget(s)}>정산하기</button>
-                                        <button>정산이력</button>
-                                    </td>
+                    <>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>연번</th>
+                                    <th>호텔명</th>
+                                    <th>정산계좌</th>
+                                    <th>미정산 잔액</th>
+                                    <th>누적 정산액</th>
+                                    <th>최근 정산일</th>
+                                    <th>액션</th>
                                 </tr>
-                            )}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {data?.content.map((s, i) =>
+                                    <tr key={s.hotelId}>
+                                        <td>{i + 1}</td>
+                                        <td>{s.hotelName}</td>
+                                        <td>{s.sellerAccount}</td>
+                                        <td>{s.pendingBalance}</td>
+                                        <td>{s.totalSettlementAmount}</td>
+                                        <td>{s.lastSettledAt ?? "없음"}</td>
+                                        <td>
+                                            <button onClick={() => setSettleTarget(s)}>정산하기</button>
+                                            <button>정산이력</button>
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                        <Pagination
+                            page={filter.page}
+                            totalPages={data?.totalPages}
+                            isFirst={data?.first}
+                            isLast={data?.last}
+                            onPageChange={setPage}
+                        />
+                    </>
                 )}
+
+
+
             <Modal
                 isOpen={settleTarget != null}
                 onClose={() => setSettleTarget(null)}

@@ -1,5 +1,5 @@
-import { ErrorMessage } from "@/component/common/ErrorMessage"
-import { Spinner } from "@/component/common/Spinner"
+import { ErrorMessage } from "@/common/component/ErrorMessage"
+import { Spinner } from "@/common/component/Spinner"
 import { useState } from "react"
 import { useRoomsByReservation } from "@/features/admin/hooks/reservation/useRoomsByReservation"
 import { useAssignRoom } from "../../hooks/reservation/useAssignRoom"

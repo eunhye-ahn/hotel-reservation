@@ -1,8 +1,9 @@
-import { executeSettlementByAdmin, previewSettlementAmount } from "@/api/api"
-import { getToday } from "@/component/common/util/date"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { addDays, format, subDays } from "date-fns"
 import { useState } from "react"
+import { useExecuteSettlement } from "../../hooks/settlement/useExecuteSettlement"
+import { useSettlementPreview } from "../../hooks/settlement/useSettlementPreview"
+import { Spinner } from "@/common/component/Spinner"
+import { ErrorMessage } from "@/common/component/ErrorMessage"
 
 interface SettlementModalProps {
     hotelId: number,
@@ -17,28 +18,11 @@ export const SettlementModal = ({ hotelId, hotelName, pendingBalance, lastSettle
         : format(subDays(new Date(), 7), 'yyyy-MM-dd');
 
     const [periodStart, setPeriodStart] = useState<string | undefined>(defaultPeriodStart)
-    const [periodEnd, setPeriodEnd] = useState<string | undefined>(getToday())
-    const queryClient = useQueryClient()
+    const [periodEnd, setPeriodEnd] = useState<string | undefined>(format(new Date(), 'yyyy-MM-dd'))
 
-    const { data, isLoading, isError } = useQuery({
-        queryKey: ["settlement-hotel", hotelId, periodStart, periodEnd],
-        queryFn: () => previewSettlementAmount(hotelId, periodStart, periodEnd)
-            .then(res => res.data),
-        enabled: !!periodStart && !!periodEnd
-    })
+    const { data, isLoading, isError } = useSettlementPreview({ hotelId, periodStart, periodEnd })
+    const { executeSettleMutate, isExecuting } = useExecuteSettlement({ hotelId, periodStart: periodStart!, periodEnd: periodEnd! })
 
-
-    const { mutate: executeSettleMutate, isPending: isExecuting } = useMutation({
-        mutationFn: () => executeSettlementByAdmin(hotelId, periodStart!, periodEnd!),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["settlement-hotel"] })
-            queryClient.invalidateQueries({ queryKey: ["settlement"] })
-
-
-        }
-    })
-
-    console.log(data)
 
     return (
         <div>
@@ -54,8 +38,11 @@ export const SettlementModal = ({ hotelId, hotelName, pendingBalance, lastSettle
                 <input type="date" value={periodEnd ?? ""}
                     onChange={(e) => setPeriodEnd(e.target.value || undefined)} />
             </div>
-            <p>예상정산액 : {data?.toLocaleString()}원</p>
-
+            {isLoading ? <Spinner />
+                : isError ? <ErrorMessage />
+                    : (
+                        <p>예상정산액 : {data?.toLocaleString()}원</p>
+                    )}
             <button onClick={() => executeSettleMutate()}
                 disabled={isExecuting || !periodStart || !periodEnd}>
                 정산하기

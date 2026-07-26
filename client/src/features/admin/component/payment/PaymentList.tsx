@@ -1,7 +1,8 @@
 import { usePaymentFilter } from "@/features/admin/hooks/payment/usePaymentFilter"
 import { usePaymentList } from "@/features/admin/hooks/payment/usePaymentList"
-import { Spinner } from "@/component/common/Spinner"
-import { ErrorMessage } from "@/component/common/ErrorMessage"
+import { Spinner } from "@/common/component/Spinner"
+import { ErrorMessage } from "@/common/component/ErrorMessage"
+import { Pagination } from "@/common/component/Pagination"
 
 export const PaymentList = () => {
     const { filter, setSearchType, setKeyword, setStartDate, setEndDate, setPage, setStatus } = usePaymentFilter()
@@ -30,30 +31,39 @@ export const PaymentList = () => {
             ) : isError ? (
                 <ErrorMessage />
             ) : (
-                <table>
-                    <thead>
-                        <tr>
-                            <th>결제ID</th>
-                            <th>호텔명</th>
-                            <th>결제자명</th>
-                            <th>금액</th>
-                            <th>결제상태</th>
-                            <th>결제일시</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {data?.content?.map(payment =>
+                <>
+                    <table>
+                        <thead>
                             <tr>
-                                <td>{payment.displayOrderNO}</td>
-                                <td>{payment.hotelName}</td>
-                                <td>{payment.userName}</td>
-                                <td>{payment.amount}</td>
-                                <td>{payment.status}</td>
-                                <td>{payment.createdAt}</td>
+                                <th>결제ID</th>
+                                <th>호텔명</th>
+                                <th>결제자명</th>
+                                <th>금액</th>
+                                <th>결제상태</th>
+                                <th>결제일시</th>
                             </tr>
-                        )}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {data?.content?.map(payment =>
+                                <tr>
+                                    <td>{payment.displayOrderNO}</td>
+                                    <td>{payment.hotelName}</td>
+                                    <td>{payment.userName}</td>
+                                    <td>{payment.amount}</td>
+                                    <td>{payment.status}</td>
+                                    <td>{payment.createdAt}</td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                    <Pagination
+                        page={filter.page}
+                        totalPages={data?.totalPages}
+                        isFirst={data?.first}
+                        isLast={data?.last}
+                        onPageChange={setPage}
+                    />
+                </>
             )
             }
         </div>

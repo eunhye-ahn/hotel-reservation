@@ -1,6 +1,6 @@
 import type { AccessTokenResponse, LoginRequest, SignUpRequest } from "@/type/auth";
 import axios from "axios";
-import type { AddWishListResponse, CursorResponse, HotelDetailResponse, hotelResponse, MoveWishRequest, MoveWishResponse, Page, WishCollectionsRequest, WishListCollectionResponse } from "@/type/hotel";
+import type { AddWishListResponse, CursorResponse, HotelDetailResponse, HotelListFilter, hotelResponse, MoveWishRequest, MoveWishResponse, Page, WishCollectionsRequest, WishListCollectionResponse } from "@/type/hotel";
 import type { ReservationCreateResponse, ReservationDetailResponse, ReservationInfoResponse, ReservationRequest, ReservationResponse, RoomTypeReservationResponse } from "@/type/reservation";
 import type { UserInfoResponse } from "@/type/user";
 import { api } from "./axios";
@@ -33,28 +33,18 @@ export const getHotels = (cursorId?: number) => {
     })
 }
 
-/**
- * 
- * 
-// 순서 기반 - q 자리 undefined로 채워야 함
-getHotelsByFilter(undefined, regionCode, ...)
-
-// 객체 기반 - q 그냥 생략
-getHotelsByFilter({ lDongRegnCd: regionCode, ... })
-
-=> 객체기반으로 변경작업필요
- */
 //호텔필터조회
-export const getHotelsByFilter = (q?: string, lDongRegnCd?: string, lDongSignguCd?: string, lclsSystm2?: string,
-    startDate?: string, endDate?: string, numberOfGuests?: number, numberOfRooms?: number, cursorId: number = 0) => {
+export const getHotelsByFilter = (filter: HotelListFilter, cursorId: number = 0) => {
     return api.get<CursorResponse>("/hotels", {
         params: {
-            q,
-            lDongRegnCd, lDongSignguCd, lclsSystm2,
-            startDate,
-            endDate,
-            numberOfGuests,
-            numberOfRooms,
+            q: filter.q || undefined,
+            lDongRegnCd: filter.regionCode,
+            lDongSignguCd: filter.subRegionCode,
+            lclsSystm2: filter.lclsSystm2,
+            startDate: filter.checkIn,
+            endDate: filter.checkOut,
+            numberOfGuests: filter.numberOfGuests,
+            numberOfRooms: filter.numberOfRooms,
             cursorId
         }
     });

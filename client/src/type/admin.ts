@@ -68,7 +68,7 @@ export interface AdminPaymentSearchRequest {
     startDate?: string,
     endDate?: string,
     status?: string,
-    page?: number
+    page: number
 }
 
 export interface AdminPaymentResponse {
@@ -85,7 +85,7 @@ export interface AdminSettlementSearchRequest {
     keyword?: string,
     hasPendingBalance?: boolean,
     sortType?: string
-    page?: number
+    page: number
 }
 
 export interface AdminSettlementSearchResponse {

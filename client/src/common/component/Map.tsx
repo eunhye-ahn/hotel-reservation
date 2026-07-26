@@ -7,13 +7,13 @@ interface MapProps {
     hotelAddress: string
 }
 
-export const Map = ({hotelName, hotelAddress}: MapProps) => {
+export const Map = ({ hotelName, hotelAddress }: MapProps) => {
     // 지도를 표시할 div 
     const mapRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         if (!mapRef.current) return;    //DOM이 없으면 종료
-        
+
         const mapOption = {
             center: new kakao.maps.LatLng(33.450701, 126.570667),   // 지도의 중심좌표(기본)
             level: 3,

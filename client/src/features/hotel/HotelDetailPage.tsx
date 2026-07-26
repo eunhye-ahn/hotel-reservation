@@ -1,23 +1,22 @@
-import type { HotelDetailResponse } from "@/type/hotel";
-import { useEffect, useRef, useState } from "react"
+import { useState } from "react"
 import { useNavigate, useParams } from "react-router";
 import '@/css/HotelDetailPage.css';
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import NotFoundPage from "../../pages/NotFoundPage";
-import { addWishList, cancelWishList, createReservation, getHotelDetail, getWishedChecked } from "@/api/api";
-import { Map } from "@/component/Map";
-import { Heart, ShoppingCart } from "lucide-react";
-import { useWishList } from "@/hooks/useWishList";
-import { useCreateReservation } from "@/hooks/useCreateReservation";
+import { Map } from "@/common/component/Map";
+import { useWishList } from "@/features/hotel/hooks/useWishList";
+import { useCreateReservation } from "@/features/hotel/hooks/useCreateReservation";
+import { addDays, format } from "date-fns";
+import { useHotelDetail } from "./hooks/useHotelDetail";
+import { Spinner } from "@/common/component/Spinner";
+import { RoomSearchBar } from "./component/RoomSearchBar";
+import { HotelDetailInfo } from "./component/HotelDetailInfo";
+import { RoomCard } from "./component/RoomCard";
 
-// 파일 분리 : 메인(조립만), 
-// 훅 : 기능(호텔 상세쿼리/날짜인원상태, 위시조회+추가/취소mutation, 예약mutation+에러코드 분기)=>훅으로 분리하기
-// 컴포넌트 : 검색바,호텔인포,룸카드
+
 export const HotelDetailPage = () => {
-    //한국 기준 오늘날짜 설정 -date기본값 => 이건 전역변수 설정 필요
-    const today = new Date().toLocaleDateString('en-CA')
-    const tomorrow = new Date(Date.now() + 86400000).toLocaleDateString('en-CA');
+    const today = format(new Date(), 'yyyy-MM-dd')
+    const tomorrow = format(addDays(new Date(), 1), 'yyyy-MM-dd')
 
     const navigate = useNavigate();
 
@@ -27,16 +26,10 @@ export const HotelDetailPage = () => {
     const [numberOfRooms, setNumberOfRooms] = useState(1);
     const [numberOfGuests, setNumberOfGuests] = useState(1);
 
-    const { data, isLoading, isError, error } = useQuery<HotelDetailResponse>({
-        queryKey: ["hotelDetails", hotelId, startDate, endDate, numberOfRooms, numberOfGuests],    //호텔id별로 캐시관리
-        queryFn: () => getHotelDetail(Number(hotelId), startDate, endDate, numberOfRooms, numberOfGuests).then((res) => res.data)
-    });
+    const { data, isLoading, isError, error } = useHotelDetail({ hotelId, startDate, endDate, numberOfRooms, numberOfGuests })
 
-    //hotelId가 nan 이들어가는 오류 => useWishList에서 쿼리에 방어로직 추가 enabled
-    //위시리스트
     const { isWished, handleWish } = useWishList(Number(data?.hotelId));
 
-    //예약
     const { handleReservation, isPending } = useCreateReservation({
         hotelId,
         data,
@@ -47,17 +40,12 @@ export const HotelDetailPage = () => {
     });
 
 
-    if (isLoading) return <p>Loading...</p>
+    if (isLoading) return <Spinner />
     if (isError) {
-        const { code, message } = (error as any).response.data;
+        const { code } = (error as any).response.data;
 
         if (code === "HOTEL_NOT_FOUND") {
             return <NotFoundPage />
-        }
-        if (code === "RATE_NOT_FOUND" || code === "ROOM_INVENTORY_NOT_FOUND") {
-            toast.error(message)
-            navigate("/")
-            return null
         }
 
         toast.error("일시적인 오류가 발생했습니다")
@@ -67,66 +55,38 @@ export const HotelDetailPage = () => {
 
     return (
         <div className="detail-container">
-            <div className="search-bar">
-                <input
-                    type="date"
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                />
-                <span>~</span>
-                <input
-                    type="date"
-                    value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
-                />
-                <div className="guest-select">
-                    <span>인원</span>
-                    <input
-                        type="number"
-                        value={numberOfGuests}
-                        min={1}
-                        onChange={(e) => setNumberOfGuests(Number(e.target.value))}
-                    />
-                    <span>객실</span>
-                    <input
-                        type="number"
-                        value={numberOfRooms}
-                        min={1}
-                        onChange={(e) => setNumberOfRooms(Number(e.target.value))}
-                    />
-                </div>
-            </div>
-            <div className="hotel-info">
-                <img src={data?.imageUrl} />
-                <div className="hotel-info-text">
-                    <p>{data?.hotelName}</p>
-                    <p>{data?.address}</p>
-                </div>
-                <button onClick={() => handleWish(data?.hotelId)}>
-                    <Heart size={24} fill={isWished ? "red" : "none"} color={isWished ? "red" : "white"} />
-                </button>
-            </div>
+            <RoomSearchBar
+                startDate={startDate}
+                endDate={endDate}
+                numberOfRooms={numberOfRooms}
+                numberOfGuests={numberOfGuests}
+                onStartDateChange={setStartDate}
+                onEndDateChange={setEndDate}
+                onRoomsChange={setNumberOfRooms}
+                onGuestsChange={setNumberOfGuests}
+            />
+            <HotelDetailInfo
+                imageUrl={data?.imageUrl}
+                hotelName={data?.hotelName}
+                address={data?.address}
+                isWished={isWished}
+                onWishClick={() => handleWish(data?.hotelId)}
+            />
             <div className="room-select-title">객실선택</div>
             {data?.roomTypes.map((roomType) => (
-                <div className="room-card" key={roomType.roomTypeId}>
-                    <img src={roomType.imageUrl} />
-                    <div className="room-card-info">
-                        <p>{roomType.name}</p>
-                        <p>숙박 {data.checkInTime.substring(0, 5)}~{data.checkOutTime.substring(0, 5)}</p>
-                        <p>남은객실 {roomType.availableCount}개</p>
-                    </div>
-                    <div className="room-card-price">
-                        <div className="hotel-price-row">
-                            <span className="hotel-original">{roomType.maxRate.toLocaleString()}</span>
-                            <span className="hotel-discount">{roomType.discountRate}%</span>
-                        </div>
-                        <p className="hotel-demand">{roomType.demandRate.toLocaleString()}원</p>
-                        <button><ShoppingCart size={24} /></button>
-                        <button onClick={() => handleReservation(roomType.roomTypeId)} disabled={isPending}>
-                            {isPending ? "Loading..." : "예약하기"}
-                        </button>
-                    </div>
-                </div>
+                <RoomCard
+                    roomTypeId={roomType.roomTypeId}
+                    imageUrl={roomType.imageUrl}
+                    name={roomType.name}
+                    checkInTime={data.checkInTime}
+                    checkOutTime={data.checkOutTime}
+                    availableCount={roomType.availableCount}
+                    maxRate={roomType.maxRate}
+                    discountRate={roomType.discountRate}
+                    demandRate={roomType.demandRate}
+                    isPending={isPending}
+                    onReserve={handleReservation}
+                />
             ))}
 
             <div>

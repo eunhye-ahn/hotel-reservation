@@ -1,5 +1,5 @@
-import { ErrorMessage } from "@/component/common/ErrorMessage";
-import { Spinner } from "@/component/common/Spinner";
+import { ErrorMessage } from "@/common/component/ErrorMessage";
+import { Spinner } from "@/common/component/Spinner";
 import { useReservationDetail } from "@/features/admin/hooks/reservation/useReservationDetail";
 import { useState } from "react";
 import { useParams } from "react-router"

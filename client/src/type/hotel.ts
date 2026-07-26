@@ -82,3 +82,14 @@ export interface MoveWishResponse {
     collectionName: string,
     hotelImageUrl: string
 }
+
+export interface HotelListFilter {
+    q: string,
+    regionCode: string,
+    subRegionCode: string,
+    checkIn: string,
+    checkOut: string,
+    numberOfGuests: number,
+    numberOfRooms: number,
+    lclsSystm2: string | null
+}

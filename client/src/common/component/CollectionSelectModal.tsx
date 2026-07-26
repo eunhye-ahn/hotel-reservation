@@ -2,15 +2,15 @@ import { useWishCollections } from "@/hooks/useWishCollections"
 import { useWishModalStore } from "@/store/useWishModalStore"
 import { Modal } from "./Modal"
 import Cookies from 'js-cookie'
-import { useWishList } from "@/hooks/useWishList"
+import { useWishList } from "@/features/hotel/hooks/useWishList"
 import { useNavigate } from "react-router"
 
 export const CollectionSelectModal = () => {
     const { isOpen, hotelId, close } = useWishModalStore()
     const { data, isLoading } = useWishCollections(isOpen)
-    const {handleWish} = useWishList()
+    const { handleWish } = useWishList()
     //const {navigate} = useNavigate()
-    
+
 
     const handleSelect = (collectionId: number) => {
         Cookies.set('wish-collection', String(collectionId), { expires: 7 })

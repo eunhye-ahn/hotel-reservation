@@ -1,16 +1,16 @@
 import '@/css/HotelCard.css';
 import { useNavigate } from "react-router";
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import { getHotels, getSimilarHotel } from "@/api/api";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { getHotels } from "@/api/api";
 import type { CursorResponse } from '@/type/hotel';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { getDisplayName, type Region, type SubRegion } from '@/constants/Region';
-import { RegionSelector } from '@/component/RegionSelector';
-import { Modal } from '@/component/Modal';
+import { RegionSelector } from '@/common/component/RegionSelector';
+import { Modal } from '@/common/component/Modal';
 import { useRegionStore } from '@/store/useRegionStore';
 import { HotelCard } from '@/features/hotel/component/HotelCard';
 import '@/css/MainPage.css'
-import { SimilarHotels } from '@/component/SimilarHotels';
+import { SimilarHotels } from '@/common/component/SimilarHotels';
 
 //호텔정보페이지
 export const MainPage = () => {
@@ -18,27 +18,15 @@ export const MainPage = () => {
     const { setRegion, regionCode, subRegionCode, displayName, resetRegion, recentRegions, saveRecentRegion, removeRecentRegion } = useRegionStore();
     const [isOpen, setIsOpen] = useState(false);
 
-    /**
-     * useQuery vs useMutation
-     * get          post,put,delete,patch
-     * 데이터조회       데이터변경
-     * 컴포넌트 마운트 시 자동          직접 mutate()호출
-     * 캐싱 있음            없음
-     */
-
-    //useQuery: api 자동호출, isLoading/isError 상태 자동관리 /캐싱키
-    //전체 호텔 조회
     const { data, isLoading, isError, fetchNextPage, hasNextPage } = useInfiniteQuery<CursorResponse>({
-        queryKey: ["hotels"],     //지역바뀌면 자동재조회
+        queryKey: ["hotels"],
         queryFn: ({ pageParam }) => getHotels(pageParam as number | undefined)
             .then((res) => res.data),
         initialPageParam: undefined,
         getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined
     })
-    //useInfiniteQuery와 flaptMAp
     const hotels = data?.pages.flatMap(page => page.content) ?? [];
 
-    //지역선택
     const handleSelect = (region: Region, subRegion?: SubRegion) => {
         const newRegionCode = region.code;
         const newSubRegionCode = subRegion?.code;
