@@ -18,6 +18,9 @@ public class PaymentOrder extends BaseTime {
     @Id
     private String paymentOrderId;
 
+    @Column(name="display_order_no")
+    private String displayOrderNo;
+
     @Column(nullable = false)
     private String checkoutId;
 

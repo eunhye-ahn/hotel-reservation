@@ -1,6 +1,6 @@
 export interface AdminReservationSearchResponse {
     id: number,
-    reservationKey: string,
+    displayReservationNO: string,
     username: string,
     hotelName: string,
     startDate: string,
@@ -72,7 +72,7 @@ export interface AdminPaymentSearchRequest {
 }
 
 export interface AdminPaymentResponse {
-    paymentOrderId: string,
+    displayOrderNO: string,
     hotelName: string,
     userName: string,
     amount: number,

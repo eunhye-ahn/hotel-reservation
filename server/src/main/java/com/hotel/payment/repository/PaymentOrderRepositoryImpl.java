@@ -33,6 +33,8 @@ public class PaymentOrderRepositoryImpl implements PaymentOrderRepositoryCustom{
             switch (searchType) {
                 case HOTEL_NAME -> builder.and(reservation.hotel.name.containsIgnoreCase(keyword));
                 case USER_NAME -> builder.and(reservation.user.name.containsIgnoreCase(keyword));
+                case PAYMENT_ID -> builder.and(paymentOrder.displayOrderNo.containsIgnoreCase(keyword));
+                case PHONE -> builder.and(reservation.user.phone.containsIgnoreCase(keyword));
             }
         }
 
@@ -50,7 +52,7 @@ public class PaymentOrderRepositoryImpl implements PaymentOrderRepositoryCustom{
 
         List<AdminPaymentResponse> payments = queryFactory
                 .select(Projections.constructor(AdminPaymentResponse.class,
-                        paymentOrder.paymentOrderId,
+                        paymentOrder.displayOrderNo,
                         reservation.hotel.name,
                         reservation.user.name,
                         paymentOrder.amount,

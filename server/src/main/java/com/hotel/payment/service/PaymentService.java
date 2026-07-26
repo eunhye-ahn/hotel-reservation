@@ -20,6 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.Optional;
 import java.util.UUID;
@@ -115,6 +117,7 @@ public class PaymentService {
         PaymentOrder paymentOrder = PaymentOrder
                 .builder()
                 .paymentOrderId(paymentOrderId)
+                .displayOrderNo(generateDisplayOrderNo())
                 .checkoutId(checkoutId)
                 .sellerAccount(reservation.getHotel().getSellerAccount())
                 .amount(reservation.getTotalPrice())
@@ -213,6 +216,12 @@ public class PaymentService {
         Wallet wallet = walletRepository.findBySellerAccount(reservation.getHotel().getSellerAccount())
                 .orElseThrow(()->new CustomException(ErrorCode.WALLET_NOT_FOUND));
         wallet.updateBalance(-amount);
+    }
+
+    private String generateDisplayOrderNo(){
+        String datePart = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        String shortId = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        return "PAY-"+datePart+"-"+shortId;
     }
 
 }

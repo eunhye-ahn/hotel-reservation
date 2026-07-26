@@ -41,6 +41,7 @@ public class ReservationRepositoryImpl implements ReservationRepositoryCustom {
                 case USER_NAME -> builder.and(reservation.user.name.containsIgnoreCase(keyword));
                 case HOTEL_NAME -> builder.and(reservation.hotel.name.containsIgnoreCase(keyword));
                 case PHONE -> builder.and(reservation.user.phone.containsIgnoreCase(keyword));
+                case RESERVE_ID -> builder.and(reservation.displayReservationNO.containsIgnoreCase(keyword));
             }
         }
 

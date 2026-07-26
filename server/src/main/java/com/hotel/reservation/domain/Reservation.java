@@ -26,6 +26,9 @@ public class Reservation extends BaseTime{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name="display_reservation_no")
+    private String displayReservationNO;
+
     /**
      * [WHAT]
      * 멱등키 - 같은요청이 여러번 와도 딱 한번만 처리하도록 하는 키

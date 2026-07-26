@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 public class AdminPaymentResponse {
-    private String paymentOrderId;
+    private String displayOrderNO;
     private String hotelName;
     private String userName;
     private int amount;

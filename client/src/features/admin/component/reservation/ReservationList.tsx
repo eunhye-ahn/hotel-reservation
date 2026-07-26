@@ -23,6 +23,7 @@ export const ReservationList = () => {
                     <option value="USER_NAME">예약자명</option>
                     <option value="HOTEL_NAME">호텔명</option>
                     <option value="PHONE">전화번호</option>
+                    <option value="RESERVE_ID">예약ID</option>
                 </select>
                 <input type="text" value={filter.keyword ?? ""} onChange={(e) => setKeyword(e.target.value)} />
                 <select value={filter.status ?? ""} onChange={(e) => {
@@ -70,7 +71,7 @@ export const ReservationList = () => {
                     <table className="min-w-100 divide-y divide-gray-200">
                         <thead className="bg-gray-100">
                             <tr>
-                                <th>예약번호</th>
+                                <th>예약ID</th>
                                 <th>예약자</th>
                                 <th>호텔명</th>
                                 <th>객실타입</th>
@@ -86,7 +87,7 @@ export const ReservationList = () => {
                                 <tr key={r.id}
                                     onClick={() => navigate(`/admin/reservations/${r.id}`)}
                                     className="hover:bg-gray-50">
-                                    <td>{r.reservationKey}</td>
+                                    <td>{r.displayReservationNO}</td>
                                     <td>{r.username}</td>
                                     <td>{r.hotelName}</td>
                                     <td>{r.roomTypeName}</td>

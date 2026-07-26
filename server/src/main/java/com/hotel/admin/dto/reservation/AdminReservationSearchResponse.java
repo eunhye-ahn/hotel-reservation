@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Builder
 public class AdminReservationSearchResponse {
     private Long id;
-    private String reservationKey;
+    private String displayReservationNO;
     private String username;
     private String hotelName;
     private String roomTypeName;
@@ -24,7 +24,7 @@ public class AdminReservationSearchResponse {
     public static AdminReservationSearchResponse from(Reservation r){
         return AdminReservationSearchResponse.builder()
                 .id(r.getId())
-                .reservationKey(r.getReservationKey())
+                .displayReservationNO(r.getDisplayReservationNO())
                 .username(r.getUser().getName())
                 .hotelName(r.getHotel().getName())
                 .roomTypeName(r.getRoomType().getName())

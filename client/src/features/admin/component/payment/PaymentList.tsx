@@ -15,6 +15,7 @@ export const PaymentList = () => {
             <select value={filter.searchType ?? "USER_NAME"} onChange={(e) => setSearchType(e.target.value || undefined)}>
                 <option value="USER_NAME">결제자명</option>
                 <option value="HOTEL_NAME">호텔명</option>
+                <option value="PAYMENT_ID">결제ID</option>
             </select>
             <input type="text" value={filter.keyword ?? ""} onChange={(e) => setKeyword(e.target.value)} />
             <select value={filter.status ?? ""} onChange={(e) => setStatus(e.target.value || undefined)}>
@@ -32,7 +33,7 @@ export const PaymentList = () => {
                 <table>
                     <thead>
                         <tr>
-                            <th>결제번호</th>
+                            <th>결제ID</th>
                             <th>호텔명</th>
                             <th>결제자명</th>
                             <th>금액</th>
@@ -43,7 +44,7 @@ export const PaymentList = () => {
                     <tbody>
                         {data?.content?.map(payment =>
                             <tr>
-                                <td>{payment.paymentOrderId}</td>
+                                <td>{payment.displayOrderNO}</td>
                                 <td>{payment.hotelName}</td>
                                 <td>{payment.userName}</td>
                                 <td>{payment.amount}</td>

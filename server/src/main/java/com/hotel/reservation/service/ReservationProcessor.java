@@ -27,6 +27,8 @@ import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
@@ -125,6 +127,7 @@ public class ReservationProcessor {
 
         //예약생성
         Reservation reservation = Reservation.builder()
+                .displayReservationNO(generateDisplayReservationNo())
                 .reservationKey(request.getReservationKey())
                 .orderId(orderId)
                 .hotel(hotel)
@@ -163,5 +166,11 @@ public class ReservationProcessor {
             throw ce;  // RESERVATION_UNAVAILABLE 그대로 던짐
         }
         throw new CustomException(ErrorCode.RESERVATION_CONFLICT);
+    }
+
+    private String generateDisplayReservationNo(){
+        String datePart = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        String shortId = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        return "RESERVE-"+datePart+"-"+shortId;
     }
 }
