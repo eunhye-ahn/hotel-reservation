@@ -60,4 +60,5 @@ public class PaymentOrder extends BaseTime {
     public void fail(){
         this.paymentOrderStatus = PaymentOrderStatus.FAILED;
     }
+    public void cancel(){this.paymentOrderStatus = PaymentOrderStatus.CANCELED;}
 }

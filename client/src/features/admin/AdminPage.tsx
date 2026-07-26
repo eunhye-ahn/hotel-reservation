@@ -1,5 +1,6 @@
 
-import { ReservationList } from "@/features/admin/component/ReservationList"
+import { ReservationList } from "@/features/admin/component/reservation/ReservationList"
+import { PaymentList } from "./component/payment/PaymentList"
 
 export function AdminPage() {
     //메뉴바
@@ -16,6 +17,8 @@ export function AdminPage() {
     return (
         <>
             <ReservationList />
+            <br/>
+            <PaymentList />
         </>
     )
 }

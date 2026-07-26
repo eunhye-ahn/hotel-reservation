@@ -20,7 +20,7 @@ import { RecentHotelPage } from './pages/RecentHotelPage'
 import { WishListPage } from './pages/WishListPage'
 import { CollectionSelectModal } from './component/CollectionSelectModal'
 import { AdminPage } from './features/admin/AdminPage'
-import { ReservationDetail } from '@/features/admin/component/ReservationDetailPage'
+import { ReservationDetail } from '@/features/admin/component/reservation/ReservationDetailPage'
 
 /**
  * [tanstack query 흐름] : 서버 상태관리 라이브러리 : 비동기데이터

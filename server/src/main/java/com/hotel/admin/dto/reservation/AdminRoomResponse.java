@@ -1,6 +1,5 @@
-package com.hotel.admin.dto;
+package com.hotel.admin.dto.reservation;
 
-import com.hotel.hotel.domain.Room;
 import lombok.Builder;
 import lombok.Getter;
 

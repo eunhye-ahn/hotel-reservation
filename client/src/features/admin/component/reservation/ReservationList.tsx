@@ -1,7 +1,7 @@
 import { useReservations } from "@/features/admin/hooks/reservation/useReservations"
 import { useReservationsFilter } from "@/features/admin/hooks/reservation/useReservationsFilter"
-import { Spinner } from "../../../component/common/Spinner"
-import { ErrorMessage } from "../../../component/common/ErrorMessage"
+import { Spinner } from "@/component/common/Spinner"
+import { ErrorMessage } from "@/component/common/ErrorMessage"
 import { useNavigate } from "react-router"
 
 
@@ -89,7 +89,7 @@ export const ReservationList = () => {
                                     <td>{r.reservationKey}</td>
                                     <td>{r.username}</td>
                                     <td>{r.hotelName}</td>
-                                    <td></td>
+                                    <td>{r.roomTypeName}</td>
                                     <td>{r.startDate}</td>
                                     <td>{r.endDate}</td>
                                     <td>{r.reservationStatus}</td>

@@ -181,6 +181,10 @@ public class PaymentService {
             e.printStackTrace();
             throw new CustomException(ErrorCode.REFUND_FAILED);
         }
+
+        PaymentOrder paymentOrder = paymentOrderRepository.findByCheckoutId(event.getCheckoutId())
+                .orElseThrow(()-> new CustomException(ErrorCode.PAYMENT_NOT_FOUND));
+        paymentOrder.cancel();
     }
 
     public void reverseSettlement(Reservation reservation){

@@ -2,8 +2,8 @@ import { ErrorMessage } from "@/component/common/ErrorMessage"
 import { Spinner } from "@/component/common/Spinner"
 import { useState } from "react"
 import { useRoomsByReservation } from "@/features/admin/hooks/reservation/useRoomsByReservation"
-import { useAssignRoom } from "../hooks/reservation/useAssignRoom"
-import { useUnassignRoom } from "../hooks/reservation/useUnAssignRoom"
+import { useAssignRoom } from "../../hooks/reservation/useAssignRoom"
+import { useUnassignRoom } from "../../hooks/reservation/useUnAssignRoom"
 
 interface RoomAssignmentFormProps {
     reservationId: number

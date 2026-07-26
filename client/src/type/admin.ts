@@ -5,6 +5,7 @@ export interface AdminReservationSearchResponse {
     hotelName: string,
     startDate: string,
     endDate: string,
+    roomTypeName: string,
     reservationStatus: string,
     roomAssigned: boolean,
     createdDate: string
@@ -59,4 +60,22 @@ export interface AssignmentRoomRequest {
 
 export interface CancelReservationByAdminRequest {
     cancelReason: string
+}
+
+export interface AdminPaymentSearchRequest {
+    searchType?: string,
+    keyword?: string,
+    startDate?: string,
+    endDate?: string,
+    status?: string,
+    page?: number
+}
+
+export interface AdminPaymentResponse {
+    paymentOrderId: string,
+    hotelName: string,
+    userName: string,
+    amount: number,
+    status: string,
+    createdAt: string
 }

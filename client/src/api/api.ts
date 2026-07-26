@@ -5,7 +5,7 @@ import type { ReservationCreateResponse, ReservationDetailResponse, ReservationI
 import type { UserInfoResponse } from "@/type/user";
 import { api } from "./axios";
 import type { PaymentConfirmRequest, PaymentConfirmResponse, PaymentPrepareResponse } from "@/type/payment";
-import type { AdminReseervationSearchRequest, AdminReservationDetailResponse, AdminReservationSearchResponse, AdminRoomResponse, AssignmentRoomRequest, CancelReservationByAdminRequest } from "@/type/admin";
+import type { AdminPaymentResponse, AdminPaymentSearchRequest, AdminReseervationSearchRequest, AdminReservationDetailResponse, AdminReservationSearchResponse, AdminRoomResponse, AssignmentRoomRequest, CancelReservationByAdminRequest } from "@/type/admin";
 
 export const login = (request: LoginRequest) => {
     return api.post<AccessTokenResponse>("/auth/login", request);
@@ -196,5 +196,12 @@ export const unassignRoom = (reservationId: number) => {
 
 //예약취소 - 관리자
 export const cancelReservationByAdmin = (reservationId: number, cancelReason: string) => {
-    return api.post<void>(`admin/reservation/${reservationId}/cancel`, {cancelReason} as CancelReservationByAdminRequest)
+    return api.post<void>(`admin/reservation/${reservationId}/cancel`, { cancelReason } as CancelReservationByAdminRequest)
+}
+
+//결제내역 조회
+export const getPayments = (params: AdminPaymentSearchRequest) => {
+    return api.get<Page<AdminPaymentResponse>>("admin/payment", {
+        params
+    })
 }

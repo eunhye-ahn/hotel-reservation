@@ -1,4 +1,4 @@
-package com.hotel.admin.dto;
+package com.hotel.admin.dto.reservation;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.hotel.reservation.domain.PaymentStatus;

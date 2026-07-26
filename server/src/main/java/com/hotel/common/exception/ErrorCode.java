@@ -52,6 +52,9 @@ public enum ErrorCode {
     REFUND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "환불처리에 실패했습니다"),
     WALLET_NOT_FOUND(HttpStatus.NOT_FOUND, "지갑 정보를 찾을 수 없습니다"),
 
+    //정산
+    INVALID_SETTLEMENT_STATUS(HttpStatus.CONFLICT, "정산할 수 있는 상태가 아닙니다"),
+
     //reservationKey -멱등키
     HASH_GENERATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "일시적인 오류가 발생했습니다. 다시 시도해주세요"),
     IDEMPOTENCY_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "일시적인 오류가 발생했습니다. 다시 시도해주세요"),

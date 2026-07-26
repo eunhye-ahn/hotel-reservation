@@ -1,13 +1,14 @@
 package com.hotel.admin.service;
 
-import com.hotel.admin.dto.*;
+import com.hotel.admin.dto.reservation.AdminReservationDetailResponse;
+import com.hotel.admin.dto.reservation.AdminReservationSearchResponse;
+import com.hotel.admin.dto.reservation.AdminRoomResponse;
 import com.hotel.common.exception.CustomException;
 import com.hotel.common.exception.ErrorCode;
 import com.hotel.hotel.domain.Room;
 import com.hotel.hotel.domain.RoomTypeInventory;
 import com.hotel.hotel.repository.RoomRepository;
 import com.hotel.hotel.repository.RoomTypeInventoryRepository;
-import com.hotel.payment.domain.*;
 import com.hotel.payment.service.PaymentService;
 import com.hotel.reservation.domain.ReservationSearchType;
 import com.hotel.reservation.domain.Reservation;
@@ -29,7 +30,7 @@ public class AdminReservationService {
     private final RoomRepository roomRepository;
     private final PaymentService paymentService;
     private final RoomTypeInventoryRepository roomTypeInventoryRepository;
-    public Page<AdminReservationSearchResponse> getReservations(LocalDate startDate, LocalDate endDate, ReservationSearchType searchType, String keyword, ReservationStatus status,Boolean roomAssigned, Pageable pageable) {
+    public Page<AdminReservationSearchResponse> getReservations(LocalDate startDate, LocalDate endDate, ReservationSearchType searchType, String keyword, ReservationStatus status, Boolean roomAssigned, Pageable pageable) {
 
         Page<Reservation> result = reservationRepository.searchByReservation(startDate, endDate, searchType, keyword, status, roomAssigned,  pageable);
 
@@ -95,7 +96,7 @@ public class AdminReservationService {
         //예약상태변경 검증 룸초기화
         reservation.cancelByAdmin(reason);
 
-        //재고복구(중복코드)
+        //재고복구(중복코드) - 룸타입서비스로 리팩토링 예정
         List<RoomTypeInventory> inventories = roomTypeInventoryRepository
                 .findByRoomTypeIdAndDateBetween(reservation.getRoomType().getId(), reservation.getStartDate(), reservation.getEndDate().minusDays(1));
 

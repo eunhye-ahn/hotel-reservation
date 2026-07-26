@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { useCancelByAdmin } from "../hooks/reservation/useCancelByAdmin"
+import { useCancelByAdmin } from "../../hooks/reservation/useCancelByAdmin"
 
 interface CancelByAdminFormProps {
     reservationId: number,

@@ -1,8 +1,7 @@
 package com.hotel.admin.controller;
 
-import com.hotel.admin.dto.*;
+import com.hotel.admin.dto.reservation.*;
 import com.hotel.admin.service.AdminReservationService;
-import com.hotel.hotel.dto.RoomInfoResponse;
 import com.hotel.reservation.domain.ReservationSearchType;
 import com.hotel.reservation.domain.ReservationStatus;
 import lombok.RequiredArgsConstructor;
