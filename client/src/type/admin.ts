@@ -79,3 +79,25 @@ export interface AdminPaymentResponse {
     status: string,
     createdAt: string
 }
+
+export interface AdminSettlementSearchRequest {
+    searchType?: string,
+    keyword?: string,
+    hasPendingBalance?: boolean,
+    sortType?: string
+    page?: number
+}
+
+export interface AdminSettlementSearchResponse {
+    hotelId: number,
+    sellerAccount: string,
+    hotelName: string,
+    pendingBalance: number,
+    lastSettledAt: string,
+    totalSettlementAmount: number
+}
+
+export interface ExecuteSettlementRequest {
+    periodStart: string,
+    periodEnd: string
+}

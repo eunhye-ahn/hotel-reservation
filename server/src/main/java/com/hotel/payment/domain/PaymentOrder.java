@@ -18,7 +18,7 @@ public class PaymentOrder extends BaseTime {
     @Id
     private String paymentOrderId;
 
-    @Column(name="display_order_no")
+    @Column(name="display_order_no",unique = true)
     private String displayOrderNo;
 
     @Column(nullable = false)

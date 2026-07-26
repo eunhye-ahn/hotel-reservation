@@ -41,10 +41,13 @@ mybatis:
   #xml 위치(sql이 저장된)
   mapper-locations: classpath:mapper/*.xml
   #칼럼명의 aliases 위치 설정
-  type-aliases-package: com.hotel.hotel.domain, com.hotel.hotel.dto
+  type-aliases-package: com.hotel.hotel.domain, com.hotel.hotel.dto, com.hotel.admin.dto
   #snake-case(DB) -> camel-case(Java) 자동매핑 설정
   configuration:
     map-underscore-to-camel-case: true
+logging:
+  level:
+    org.hibernate.orm.jdbc.bind: trace
 psp:
   toss:
     secret-key: ${TOSS_SECRET_KEY}

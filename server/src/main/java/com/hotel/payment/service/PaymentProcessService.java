@@ -28,8 +28,8 @@ public class PaymentProcessService {
                 .paymentOrderId(orderId)
                 .account(paymentOrder.getSellerAccount())
                 .accountType(AccountType.SELLER)
-                .debit(paymentOrder.getAmount())
-                .credit(null)
+                .debit(null)
+                .credit(paymentOrder.getAmount())
                 .build()
         );
         //구매자
@@ -37,8 +37,8 @@ public class PaymentProcessService {
                 .paymentOrderId(orderId)
                 .account(paymentEvent.getUserId().toString())
                 .accountType(AccountType.BUYER)
-                .debit(null)
-                .credit(paymentOrder.getAmount())
+                .debit(paymentOrder.getAmount())
+                .credit(null)
                 .build()
         );
 

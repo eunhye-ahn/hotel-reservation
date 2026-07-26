@@ -5,7 +5,7 @@ import type { ReservationCreateResponse, ReservationDetailResponse, ReservationI
 import type { UserInfoResponse } from "@/type/user";
 import { api } from "./axios";
 import type { PaymentConfirmRequest, PaymentConfirmResponse, PaymentPrepareResponse } from "@/type/payment";
-import type { AdminPaymentResponse, AdminPaymentSearchRequest, AdminReseervationSearchRequest, AdminReservationDetailResponse, AdminReservationSearchResponse, AdminRoomResponse, AssignmentRoomRequest, CancelReservationByAdminRequest } from "@/type/admin";
+import type { AdminPaymentResponse, AdminPaymentSearchRequest, AdminReseervationSearchRequest, AdminReservationDetailResponse, AdminReservationSearchResponse, AdminRoomResponse, AdminSettlementSearchRequest, AdminSettlementSearchResponse, AssignmentRoomRequest, CancelReservationByAdminRequest, ExecuteSettlementRequest } from "@/type/admin";
 
 export const login = (request: LoginRequest) => {
     return api.post<AccessTokenResponse>("/auth/login", request);
@@ -204,4 +204,21 @@ export const getPayments = (params: AdminPaymentSearchRequest) => {
     return api.get<Page<AdminPaymentResponse>>("admin/payment", {
         params
     })
+}
+
+//정산내역 조회
+export const getSettlements = (params: AdminSettlementSearchRequest) => {
+    return api.get<Page<AdminSettlementSearchResponse>>("admin/settlement", {
+        params
+    })
+}
+
+export const previewSettlementAmount = (hotelId: number, periodStart?: string, periodEnd?: string) => {
+    return api.get<number>(`admin/settlement/${hotelId}/preview`, {
+        params: { periodStart, periodEnd }
+    })
+}
+
+export const executeSettlementByAdmin = (hotelId: number, periodStart?: string, periodEnd?: string) => {
+    return api.post<void>(`admin/settlement/${hotelId}/execute`, { periodStart, periodEnd })
 }

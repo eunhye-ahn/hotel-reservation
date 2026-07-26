@@ -1,0 +1,77 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hotel.payment.mapper.SettlementMapper">
+    <!--정산조회-->
+    <select id="searchBySettlement" resultType="AdminSettlementSearchResponse">
+        SELECT
+            h.id AS hotelId,
+            h.seller_account AS sellerAccount,
+            h.name AS hotelName,
+            COALESCE(w.balance, 0) AS pendingBalance,
+            COALESCE((
+                SELECT SUM(s.amount)
+                FROM settlement s
+                WHERE s.seller_account = h.seller_account
+                AND s.status = 'COMPLETED'
+            ),0) AS totalSettlementAmount,
+            (
+            SELECT MAX(s.settled_at)
+            FROM settlement s
+            WHERE s.seller_account = h.seller_account AND s.status = 'COMPLETED'
+            ) AS lastSettledAt
+        FROM hotel h
+        LEFT JOIN wallet w ON w.seller_account = h.seller_account
+        <where>
+            <if test="keyword != null and keyword != '' and searchType.name() == 'HOTEL_NAME'">
+                AND h.name ILIKE CONCAT('%', #{keyword}, '%')
+            </if>
+            <if test="keyword != null and keyword != '' and searchType.name() == 'SELLER_ACCOUNT'">
+                AND h.seller_account ILIKE CONCAT('%', #{keyword}, '%')
+            </if>
+            <if test="hasPendingBalance != null and hasPendingBalance == true">
+                AND COALESCE(w.balance,0) > 0
+            </if>
+            <if test="hasPendingBalance != null and hasPendingBalance == false">
+                AND COALESCE(w.balance,0) = 0
+            </if>
+        </where>
+        <choose>
+            <when test="sortType != null and sortType.name() == 'LAST_SETTLED_DESC'">
+                ORDER BY (
+                    SELECT MAX(s.settled_at) FROM settlement s
+                    WHERE s.seller_account = h.seller_account AND s.status = 'COMPLETED'
+                ) DESC NULLS LAST
+            </when>
+            <when test="sortType != null and sortType.name() == 'TOTAL_AMOUNT'">
+                ORDER BY (
+                    SELECT COALESCE(SUM(s.amount), 0) FROM settlement s
+                    WHERE s.seller_account = h.seller_account AND s.status = 'COMPLETED'
+                ) DESC
+            </when>
+            <otherwise>
+                ORDER BY COALESCE(w.balance, 0) DESC
+            </otherwise>
+        </choose>
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+    <!--정산조회 총 개수-->
+    <select id="countBySettlement" resultType="long">
+        SELECT COUNT(*)
+        FROM hotel h
+        LEFT JOIN wallet w ON w.seller_account = h.seller_account
+        <where>
+            <if test="keyword != null and keyword != '' and searchType.name() == 'HOTEL_NAME'">
+                AND h.name ILIKE CONCAT('%', #{keyword}, '%')
+            </if>
+            <if test="keyword != null and keyword != '' and searchType.name() == 'SELLER_ACCOUNT'">
+                AND h.seller_account ILIKE CONCAT('%', #{keyword}, '%')
+            </if>
+            <if test="hasPendingBalance != null and hasPendingBalance == true">
+                AND COALESCE(w.balance,0) > 0
+            </if>
+            <if test="hasPendingBalance != null and hasPendingBalance == false">
+                AND COALESCE(w.balance,0) = 0
+            </if>
+        </where>
+    </select>
+</mapper>

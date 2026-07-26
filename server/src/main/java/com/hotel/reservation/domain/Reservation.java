@@ -26,7 +26,7 @@ public class Reservation extends BaseTime{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="display_reservation_no")
+    @Column(name="display_reservation_no",unique = true)
     private String displayReservationNO;
 
     /**
