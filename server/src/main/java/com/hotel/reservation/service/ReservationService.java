@@ -9,9 +9,9 @@ import com.hotel.hotel.repository.RoomTypeInventoryRepository;
 import com.hotel.reservation.domain.*;
 import com.hotel.reservation.dto.*;
 import com.hotel.reservation.repository.*;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -27,23 +27,6 @@ public class ReservationService {
     private final ReservationProcessor reservationProcessor;
     private final RoomTypeInventoryRepository roomTypeInventoryRepository;
 
-    /**
-     *
-     * 1. 멱등키 확인 (Redis)
-     * -중복요청이면 이전 결과 반환
-     * -새요청이면 예약처리진행
-     * 2. 예약가능여부확인-DB
-     * 3. 예약 생성-DB
-     * 4. Redis 결과 업데이트
-     * <p>
-     * IdempotencyValue {
-     * status      : processing | completed | failed
-     * result      : true/false (null 가능)
-     * userId      : 다른 유저 방지
-     * requestHash : 요청 본문 해시 (변조 감지)
-     * createdAt   : 생성 시간
-     * }
-     */
     //예약생성
     public ReservationCreateResponse createReservation(ReservationRequest request, Long userId) {
         //멱등키 확인 -Redis
@@ -80,26 +63,16 @@ public class ReservationService {
             idempotencyRedisService.fail(request.getReservationKey());
             throw e;
         }
-
-        /**
-         * [커밋 시점] - 메서드 종료 시
-         * @Transactional이 커밋 실행
-         * → JPA 더티체킹
-         *   → inventory 스냅샷 vs 현재값 비교
-         *   → 변경됐으면 UPDATE 자동 실행
-         *   → UPDATE ... WHERE id=? AND version=0
-         *   → 0 rows updated → OptimisticLockException → 롤백()
-         */
     }
 
     //내 예약조회
     public List<ReservationResponse> getMyReservations(Long userId, ReservationStatus status) {
         //엔티티 조회
-        User User = userRepository.findById(userId)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         //내예약조회
-        List<ReservationResponse> reservations = reservationRepository.findByUserAndReservationStatusOrderByCreatedAtDesc(User, status)
+        List<ReservationResponse> reservations = reservationRepository.findByUserAndReservationStatusOrderByCreatedAtDesc(user, status)
                 .stream().map(ReservationResponse::from)
                 .toList();
 
@@ -122,7 +95,7 @@ public class ReservationService {
     public ReservationInfoResponse getReservationInfo(Long userId,
                                                       String reservationKey){
         //유효성
-        User User = userRepository.findById(userId)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         Reservation reservation = reservationRepository.findByReservationKey(reservationKey)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
@@ -149,7 +122,7 @@ public class ReservationService {
         Reservation reservation = reservationRepository.findByUserIdAndReservationKey(userId, reservationKey)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
 
-        reservation.cancel();
+        reservation.cancelByUser();
 
         //n+1 발생
         List<RoomTypeInventory> inventories = roomTypeInventoryRepository
@@ -158,18 +131,6 @@ public class ReservationService {
         inventories.forEach(i -> i.restore(reservation.getNumberOfRooms()));
     }
 
-    /**
-     * [WHAT] 요청본문을 해시로 변환 : 변조검지용 방어로직
-     * <p>
-     * [WHY] 같은 reservationKey로 다른 본문이 오면 감지하기 위해
-     * <p>
-     * [흐름]
-     * request 객체 → JSON 문자열 → SHA-256 해시
-     * <p>
-     * [비교]
-     * JWT - HS256 -> 비밀키 + SHA-256으로 서명 (검증가능)
-     * SHA-256 -> 단방향 해시 (복원불가)
-     */
     private String generateHash(ReservationRequest request) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -186,21 +147,6 @@ public class ReservationService {
         }
     }
 
-    /**
-     * [WHAT] 중복요청 처리
-     * <p>
-     * [WHY]
-     * tryProcessing()이 false일 때 (이미 redis에 있음)
-     * 기존 값을 꺼내서 상황에 맞게 처리
-     * <p>
-     * [흐름]
-     * get()으로 기존 값 조회
-     * ├── userId 다름   → 403
-     * ├── requestHash 다름 → 422
-     * ├── processing   → 409
-     * ├── completed    → 200 (이전 result 반환)
-     * └── failed       → 500
-     */
     private void handleDuplicate(String reservationKey, Long userId, String requestHash) {
         //tryProcessing() -> get() 사이에서 멱등키 만료되는 상황 방지
         //      : 현실적으로는 TTL을 24시간으로 설정해두어서 발생할 확률이 없지만 이론상 방어

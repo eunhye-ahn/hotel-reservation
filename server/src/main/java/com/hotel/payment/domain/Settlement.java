@@ -48,4 +48,8 @@ public class Settlement extends BaseTime{
         this.status = SettlementStatus.COMPLETED;
         this.settledAt = LocalDateTime.now();
     }
+
+    public void fail(){
+        this.status = SettlementStatus.FAILED;
+    }
 }

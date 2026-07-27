@@ -41,6 +41,7 @@ public enum ErrorCode {
             "잠시 후 다시 시도해주세요"),
     CANNOT_ASSIGN_ROOM(HttpStatus.CONFLICT, "방을 배정할 수 없는 예약입니다"),
     ROOM_ALREADY_ASSIGNED(HttpStatus.CONFLICT, "이미 배정된 예약입니다"),
+    CANNOT_REFUND_RESERVATION(HttpStatus.CONFLICT, "결제 취소할 수 없는 예약상태 입니다"),
 
     //결제
     PRICE_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "세션이 만료되었습니다. 다시 시도해주세요"),
@@ -51,10 +52,11 @@ public enum ErrorCode {
     MISSING_IDEMPOTENCY_KEY(HttpStatus.BAD_REQUEST, "Idempotency-Key 헤더가 필요합니다."),
     REFUND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "환불처리에 실패했습니다"),
     WALLET_NOT_FOUND(HttpStatus.NOT_FOUND, "지갑 정보를 찾을 수 없습니다"),
-
+    PAYMENT_CANCEL_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "결제 취소에 실패했습니다"),
+    PAYMENT_PROCESSING_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "결제 실행에 실패했습니다"),
     //정산
     INVALID_SETTLEMENT_STATUS(HttpStatus.CONFLICT, "정산할 수 있는 상태가 아닙니다"),
-
+    SETTLEMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "정산 정보를 찾을 수 없습니다"),
     //reservationKey -멱등키
     HASH_GENERATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "일시적인 오류가 발생했습니다. 다시 시도해주세요"),
     IDEMPOTENCY_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "일시적인 오류가 발생했습니다. 다시 시도해주세요"),

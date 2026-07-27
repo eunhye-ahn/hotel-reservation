@@ -137,21 +137,21 @@ public class Reservation extends BaseTime{
     @Builder.Default
     private String cancelReason=null;
 
-    //고객취소
-    public void cancel(){
+    //결제 전 고객취소
+    public void cancelByUser(){
         if(this.reservationStatus != ReservationStatus.PENDING_PAYMENT){
             throw new CustomException(ErrorCode.CANNOT_CANCEL_RESERVATION);
         }
-
+        if(this.room != null){
+            throw new CustomException(ErrorCode.CANNOT_CANCEL_RESERVATION);
+        }
         this.reservationStatus = ReservationStatus.CANCELED;
         this.cancelType = CancelType.USER;
-        this.paymentStatus = PaymentStatus.CANCELED;
     }
 
     //결제시간 만료시, 예약만료 및 재고복구
     public void updateReservationExpire(){
         this.reservationStatus = ReservationStatus.EXPIRED;
-        this.paymentStatus = PaymentStatus.EXPIRED;
     }
 
     //결제
@@ -179,16 +179,21 @@ public class Reservation extends BaseTime{
     //예약취소 - 관리자
     public void cancelByAdmin(String reason){
         if(this.reservationStatus != ReservationStatus.BEFORE_USE) {
-            throw new CustomException(ErrorCode.CANNOT_UNASSIGN_ROOM);
+            throw new CustomException(ErrorCode.CANNOT_CANCEL_RESERVATION);
         }
 
-        this.reservationStatus = ReservationStatus.CANCELED;
+        this.reservationStatus = ReservationStatus.CANCEL_PENDING;
         this.cancelType = CancelType.ADMIN;
         this.cancelReason = reason;
         this.room = null;
     }
 
-    public void refund(){
-        this.paymentStatus=PaymentStatus.REFUNDED;
+    //결제 취소 성공
+    public void completeCancelByRefund(){
+        if(this.reservationStatus != ReservationStatus.CANCEL_PENDING) {
+            throw new CustomException(ErrorCode.CANNOT_REFUND_RESERVATION);
+        }
+        this.reservationStatus = ReservationStatus.CANCELED;
+        this.paymentStatus = PaymentStatus.REFUNDED;
     }
 }

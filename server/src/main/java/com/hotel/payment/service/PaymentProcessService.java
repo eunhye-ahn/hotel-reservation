@@ -23,6 +23,11 @@ public class PaymentProcessService {
     @Transactional
     public void processDone(String orderId, String paymentKey,
                             PaymentOrder paymentOrder, PaymentEvent paymentEvent) {
+        //중복 웹훅 방어
+        if(paymentOrder.getPaymentOrderStatus() == PaymentOrderStatus.SUCCESS){
+            return;
+        }
+
         //판매자
         ledgerRepository.save(Ledger.builder()
                 .paymentOrderId(orderId)
@@ -53,7 +58,7 @@ public class PaymentProcessService {
 
         paymentOrder.completedLedgerAndWalletUpdate();
         paymentOrder.success();
-        paymentEvent.complete(paymentKey);
+        paymentEvent.registerPspToken(paymentKey);
 
         Reservation reservation = reservationRepository.findByReservationKey(paymentEvent.getReservationKey())
                 .orElseThrow(()-> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));

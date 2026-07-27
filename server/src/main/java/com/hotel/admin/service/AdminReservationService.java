@@ -6,19 +6,17 @@ import com.hotel.admin.dto.reservation.AdminRoomResponse;
 import com.hotel.common.exception.CustomException;
 import com.hotel.common.exception.ErrorCode;
 import com.hotel.hotel.domain.Room;
-import com.hotel.hotel.domain.RoomTypeInventory;
 import com.hotel.hotel.repository.RoomRepository;
-import com.hotel.hotel.repository.RoomTypeInventoryRepository;
 import com.hotel.payment.service.PaymentService;
 import com.hotel.reservation.domain.ReservationSearchType;
 import com.hotel.reservation.domain.Reservation;
 import com.hotel.reservation.domain.ReservationStatus;
 import com.hotel.reservation.repository.ReservationRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -29,7 +27,8 @@ public class AdminReservationService {
     private final ReservationRepository reservationRepository;
     private final RoomRepository roomRepository;
     private final PaymentService paymentService;
-    private final RoomTypeInventoryRepository roomTypeInventoryRepository;
+    private final AdminReservationCancelService cancelService;
+
     public Page<AdminReservationSearchResponse> getReservations(LocalDate startDate, LocalDate endDate, ReservationSearchType searchType, String keyword, ReservationStatus status, Boolean roomAssigned, Pageable pageable) {
 
         Page<Reservation> result = reservationRepository.searchByReservation(startDate, endDate, searchType, keyword, status, roomAssigned,  pageable);
@@ -89,23 +88,17 @@ public class AdminReservationService {
     }
 
     //예약취소 - 관리자
-    @Transactional
-    public void cancelReservationByAdmin(Long reservationId, String reason){
-        Reservation reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
-        //예약상태변경 검증 룸초기화
-        reservation.cancelByAdmin(reason);
-
-        //재고복구(중복코드) - 룸타입서비스로 리팩토링 예정
-        List<RoomTypeInventory> inventories = roomTypeInventoryRepository
-                .findByRoomTypeIdAndDateBetween(reservation.getRoomType().getId(), reservation.getStartDate(), reservation.getEndDate().minusDays(1));
-
-        inventories.forEach(i -> i.restore(reservation.getNumberOfRooms()));
-
-        paymentService.cancel(reservationId, reason);
-        reservation.refund();
-        //정산
-        paymentService.reverseSettlement(reservation);
+    public void refundByReservation(Long reservationId, String reason){
+        //재고복구 및 reservation 취소대기
+        cancelService.cancelAndRestoreInventory(reservationId, reason);
+        try{
+            //토스 결제취소 API 호출
+            paymentService.cancel(reservationId, reason);
+        }catch(Exception e){
+            throw new CustomException(ErrorCode.PAYMENT_CANCEL_FAILED);
+        }
+        //정산 및 reservation 취소확정
+        cancelService.completeCancelByRefund(reservationId, reason);
     }
 
     private void validateSameRoomType(Reservation reservation, Room room){

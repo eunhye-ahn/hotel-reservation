@@ -86,7 +86,7 @@ public class AdminReservationController {
     public ResponseEntity<Void> cancelReservationByAdmin(@PathVariable Long reservationId,
                                                   @RequestBody CancelReservationByAdminRequest request){
 
-        adminReservationService.cancelReservationByAdmin(reservationId, request.getCancelReason());
+        adminReservationService.refundByReservation(reservationId, request.getCancelReason());
 
         return ResponseEntity
                 .status(HttpStatus.OK)

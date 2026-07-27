@@ -51,12 +51,7 @@ public class PaymentEvent extends BaseTime{
     //null허용 (PSP 등록 후 받음)
     private String pspToken;
 
-    //결제완료여부
-    @Builder.Default
-    private boolean isPaymentDone = false;
-
-    public void complete(String pspToken){
+    public void registerPspToken(String pspToken){
         this.pspToken = pspToken;
-        this.isPaymentDone = true;
     }
 }

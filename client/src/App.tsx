@@ -5,7 +5,7 @@ import { SignUpPage } from './pages/SignUpPage'
 import { HotelDetailPage } from './features/hotel/HotelDetailPage'
 import { ReservationPage } from './pages/ReservationPage'
 import { ReservationConfirmPage } from './pages/ReservationConfirmPage'
-import { MyPage } from './pages/MyPage'
+import { MyPage } from '@/features/mypage/MyPage'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import NotFoundPage from './pages/NotFoundPage'

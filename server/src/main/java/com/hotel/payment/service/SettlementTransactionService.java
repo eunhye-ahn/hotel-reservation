@@ -1,0 +1,51 @@
+package com.hotel.payment.service;
+
+import com.hotel.common.exception.CustomException;
+import com.hotel.common.exception.ErrorCode;
+import com.hotel.payment.domain.Settlement;
+import com.hotel.payment.domain.Wallet;
+import com.hotel.payment.repository.SettlementRepository;
+import com.hotel.payment.repository.WalletRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+
+@Service
+@RequiredArgsConstructor
+public class SettlementTransactionService {
+    private final SettlementRepository settlementRepository;
+    private final WalletRepository walletRepository;
+
+    @Transactional
+    public Long createPendingSettlement (String sellerAccount, int amount, LocalDate periodStart, LocalDate periodEnd) {
+        //정산시작 => Pending 저장
+        Settlement settlement = Settlement.builder()
+                .sellerAccount(sellerAccount)
+                .amount(amount)
+                .periodStartDate(periodStart)
+                .periodEndDate(periodEnd)
+                .build();
+
+        return settlementRepository.save(settlement).getId();
+    }
+
+    @Transactional
+    public void completedSettlement (Long settlementId, String sellerAccount, int amount){
+        Settlement settlement = settlementRepository.findById(settlementId)
+                .orElseThrow(() -> new CustomException(ErrorCode.SETTLEMENT_NOT_FOUND));
+
+        settlement.complete();
+        Wallet wallet = walletRepository.findBySellerAccount(sellerAccount)
+                        .orElseThrow(() -> new CustomException(ErrorCode.WALLET_NOT_FOUND));
+        wallet.updateBalance(-amount);
+    }
+
+    @Transactional
+    public void failedSettlement (Long settlementId){
+        Settlement settlement = settlementRepository.findById(settlementId)
+                .orElseThrow(() -> new CustomException(ErrorCode.SETTLEMENT_NOT_FOUND));
+        settlement.fail();
+    }
+}
