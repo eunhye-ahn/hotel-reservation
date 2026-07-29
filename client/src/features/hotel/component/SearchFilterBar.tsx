@@ -1,5 +1,4 @@
 import { CalendarIcon, FilterIcon, SortAscIcon } from "lucide-react";
-import '@/css/SearchFilterBar.css'
 
 interface SearchFilterBarProps {
     checkIn: string,
@@ -17,16 +16,19 @@ export const SearchFilterBar = ({
     onDateClick, onFilterClick, onSortClick
 }: SearchFilterBarProps) => {
     return (
-        <div className="filter-bar">
-            <button className="filter-btn" onClick={onDateClick}>
+        <div className="flex gap-10 py-4 justify-center">
+            <button className="flex text-sm items-center gap-1.5 border rounded-full border-gray-500 px-4 py-2 hover:bg-gray-200 cursoer-pointer"
+                onClick={onDateClick}>
                 <CalendarIcon />
                 {checkIn}~{checkOut} · {guestToReserve}명
             </button>
-            <button className="filter-btn" onClick={onFilterClick}>
+            <button className="flex text-sm items-center gap-1.5 border rounded-full border-gray-500 px-4 py-2 hover:bg-gray-200 cursoer-pointer"
+                onClick={onFilterClick}>
                 <FilterIcon />
                 필터
             </button>
-            <button className="filter-btn" onClick={onSortClick}>
+            <button className="flex text-sm items-center gap-1.5 border rounded-full border-gray-500 px-4 py-2 hover:bg-gray-200 cursoer-pointer"
+                onClick={onSortClick}>
                 <SortAscIcon />
                 정렬
             </button>

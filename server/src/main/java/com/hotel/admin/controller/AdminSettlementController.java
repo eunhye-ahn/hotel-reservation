@@ -2,6 +2,7 @@ package com.hotel.admin.controller;
 
 import com.hotel.admin.dto.payment.AdminSettlementSearchResponse;
 import com.hotel.admin.dto.settlement.ExecuteSettlementRequest;
+import com.hotel.admin.dto.settlement.SettlementHistoryResponse;
 import com.hotel.admin.service.AdminSettlementService;
 import com.hotel.payment.domain.SettlementSearchType;
 import com.hotel.payment.domain.SettlementSortType;
@@ -21,7 +22,7 @@ import java.time.LocalDate;
 public class AdminSettlementController {
     private final AdminSettlementService adminSettlementService;
 
-    //관리자 수동 정산
+    //관리자 수동 정산 => 오류: 네트워크오류로 정산하기버튼 여러번 클릭 시, 여러번 insert되는 오류
     @PostMapping("/{hotelId}/execute")
     public ResponseEntity<Void> executeSettlementByAdmin(@PathVariable Long hotelId,
                                                          @RequestBody ExecuteSettlementRequest request){
@@ -56,5 +57,16 @@ public ResponseEntity<Page<AdminSettlementSearchResponse>> getSettlements(@Reque
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(amount);
+    }
+
+    //특정 호텔 정산이력 조회
+    @GetMapping("{hotel}/list")
+    public ResponseEntity<Page<SettlementHistoryResponse>> getSettlementByHotel(@PathVariable Long hotelId,
+                                                                                @RequestParam(required = false,defaultValue = "0")int page){
+        Pageable pageable =  PageRequest.of(page,10);
+        Page<SettlementHistoryResponse> result = adminSettlementService.getSettlementByHotel(hotelId, pageable);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(result);
     }
 }

@@ -139,7 +139,10 @@ public class Reservation extends BaseTime{
 
     //결제 전 고객취소
     public void cancelByUser(){
-        if(this.reservationStatus != ReservationStatus.PENDING_PAYMENT){
+        if(this.reservationStatus != ReservationStatus.BEFORE_USE){
+            throw new CustomException(ErrorCode.CANNOT_CANCEL_RESERVATION);
+        }
+        if(this.paymentStatus != PaymentStatus.PENDING){
             throw new CustomException(ErrorCode.CANNOT_CANCEL_RESERVATION);
         }
         if(this.room != null){

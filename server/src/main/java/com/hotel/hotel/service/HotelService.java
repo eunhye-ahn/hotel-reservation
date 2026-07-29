@@ -47,17 +47,6 @@ public class HotelService {
     public HotelDetailResponse getHotelDetail(Long hotelId, LocalDate startDate,LocalDate endDate, Integer numberOfRooms, Integer numberOfGuests) {
         Hotel hotel = hotelRepository.findById(hotelId)
                 .orElseThrow(()->new CustomException(ErrorCode.HOTEL_NOT_FOUND));
-
-        //n+1문제
-//        List<RoomTypeResponse> roomTypes = roomTypeRepository.findByHotelId(hotelId)
-//                .stream().map(rt -> {
-//                    Rate rate = rateRepository.findByRoomTypeAndDate(rt, today)
-//                            .orElseThrow(()->new CustomException(ErrorCode.RATE_NOT_FOUND));
-//                    RoomTypeInventory inventory = roomTypeInventoryRepository.findByRoomTypeAndDate(rt, today)
-//                            .orElseThrow(()->new CustomException(ErrorCode.ROOM_INVENTORY_NOT_FOUND));
-//                    return RoomTypeResponse.from(rt, rate, inventory);
-//                }).toList();
-
         //totalDays 계산
         int totalDays = (startDate != null && endDate != null)
                 ?((int) ChronoUnit.DAYS.between(startDate, endDate)) : 0;
@@ -138,6 +127,18 @@ public class HotelService {
         );
 
         return HotelUpdateResponse.from(hotel);
+    }
+
+    //페이지네이션 조회 - 메인용 [예정]
+    public void searchByFilterAndPagination(String q,
+                                               String lDongRegnCd,String lDongSignguCd,
+                                               String lclsSystm2,
+                                               LocalDate startDate, LocalDate endDate,
+                                               Integer numberOfGuests, //게스트 수 처리..........
+                                               Integer numberOfRooms,
+                                               Pageable pageable){
+
+
     }
 
     //조회(전체조회 / 필터조회)

@@ -203,12 +203,19 @@ export const getSettlements = (params: AdminSettlementSearchRequest) => {
     })
 }
 
+//기간내 정산액 조회
 export const previewSettlementAmount = (hotelId: number, periodStart?: string, periodEnd?: string) => {
     return api.get<number>(`admin/settlement/${hotelId}/preview`, {
         params: { periodStart, periodEnd }
     })
 }
 
+//수동정산
 export const executeSettlementByAdmin = (hotelId: number, periodStart?: string, periodEnd?: string) => {
     return api.post<void>(`admin/settlement/${hotelId}/execute`, { periodStart, periodEnd })
 }
+
+//특정 호텔 정산내역 조회
+// export const getSettlementByHotel = (hotelId: number, page?: number) => {
+//     return api.get<>
+// }

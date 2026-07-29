@@ -1,8 +1,0 @@
-/* Layout.css */
-.main-content {
-    max-width: 80%;
-    margin: 0 auto;
-
-    min-height: calc(100vh - 60px);
-    /* 헤더 높이 */
-}

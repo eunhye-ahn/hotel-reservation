@@ -1,15 +1,18 @@
 package com.hotel.admin.service;
 
 import com.hotel.admin.dto.payment.AdminSettlementSearchResponse;
+import com.hotel.admin.dto.settlement.SettlementHistoryResponse;
 import com.hotel.common.exception.CustomException;
 import com.hotel.common.exception.ErrorCode;
 import com.hotel.hotel.domain.Hotel;
 import com.hotel.hotel.repository.HotelRepository;
 import com.hotel.payment.domain.AccountType;
+import com.hotel.payment.domain.Settlement;
 import com.hotel.payment.domain.SettlementSearchType;
 import com.hotel.payment.domain.SettlementSortType;
 import com.hotel.payment.mapper.SettlementMapper;
 import com.hotel.payment.repository.LedgerRepository;
+import com.hotel.payment.repository.SettlementRepository;
 import com.hotel.payment.service.SettlementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -27,6 +30,7 @@ public class AdminSettlementService {
     private final HotelRepository hotelRepository;
     private final LedgerRepository ledgerRepository;
     private final SettlementMapper mapper;
+    private final SettlementRepository settlementRepository;
 
     public void executeSettlementByAdmin(Long hotelId, LocalDate periodStart, LocalDate periodEnd){
         settlementService.executeSettlementByAdmin(hotelId, periodStart, periodEnd);
@@ -55,5 +59,13 @@ public class AdminSettlementService {
                 periodStart.atTime(0,0,0),
                 periodEnd.atTime(23,59,59)
         );
+    }
+
+    //호텔 정산이력 조회
+    public Page<SettlementHistoryResponse> getSettlementByHotel(Long hotelId, Pageable pageable){
+        Hotel hotel = hotelRepository.findById(hotelId)
+                .orElseThrow(() -> new CustomException(ErrorCode.HOTEL_NOT_FOUND));
+        Page<Settlement> list =  settlementRepository.findBySellerAccountOrderByCreatedAtDesc(hotel.getSellerAccount(), pageable);
+        return list.map(SettlementHistoryResponse::from);
     }
 }

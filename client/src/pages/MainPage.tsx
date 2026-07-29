@@ -1,16 +1,16 @@
-import '@/css/HotelCard.css';
+
 import { useNavigate } from "react-router";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { getHotels } from "@/api/api";
 import type { CursorResponse } from '@/type/hotel';
 import { useState } from 'react';
-import { getDisplayName, type Region, type SubRegion } from '@/constants/Region';
+import { getDisplayName, type Region, type SubRegion } from '@/type/Region';
 import { RegionSelector } from '@/common/component/RegionSelector';
 import { Modal } from '@/common/component/Modal';
 import { useRegionStore } from '@/store/useRegionStore';
-import { HotelCard } from '@/features/hotel/component/HotelCard';
-import '@/css/MainPage.css'
-import { SimilarHotels } from '@/common/component/SimilarHotels';
+import { HotelCardList } from '@/features/hotel/component/HotelCardList';
+import { SimilarHotels } from '@/features/hotel/component/SimilarHotels';
+import { HeroSection } from "@/common/component/HeroSection";
 
 //호텔정보페이지
 export const MainPage = () => {
@@ -44,45 +44,35 @@ export const MainPage = () => {
 
     return (
         <div>
-            <div className="search-wrap">
-                <h2 className='search-title'>어디로 갈까요?</h2>
-                <div className='search-row'>
-                    <button onClick={() => setIsOpen(true)}
-                        className='region-btn'>
-                        {regionCode && !isOpen ? displayName : "지역선택"}
-                    </button>
-                    <button className="nearby-btn">내주변</button>
+            <HeroSection onRegionClick={() => setIsOpen(true)} />
+            <div className="page-container">
+                <div className="search-wrap" style={{
+                    maxWidth: '600px',
+                    marginInline: 'auto',
+                    position: 'relative',
+                    backgroundColor: 'black',
+                    color: 'white',
+                    zIndex: 10
+                }}>
+
                 </div>
-                <div className='recent-wrap'>
-                    <h3 className='recent-label'>최근 선택 지역</h3>
-                    <div className='recent-list'>
-                        {recentRegions.map((r) => (
-                            <span key={r.code} className='recent-tag'>
-                                {r.subRegion?.name ?? r.name}
-                                <button className='recent-remove'
-                                    onClick={() => removeRecentRegion(r.code)}>X</button>
-                            </span>
-                        ))}
+
+
+                {isOpen && (
+                    <div>
+                        <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} title="지역 선택">
+                            <RegionSelector onSelect={handleSelect} />
+                        </Modal>
                     </div>
-                </div>
+                )}
+
+                <SimilarHotels />
+                <HotelCardList
+                    data={hotels}
+                    fetchNextPage={fetchNextPage}
+                    hasNextPage={hasNextPage}
+                />
             </div>
-
-
-            {isOpen && (
-                <div>
-                    <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} title="지역 선택">
-                        <RegionSelector onSelect={handleSelect} />
-                    </Modal>
-                </div>
-            )}
-
-            <SimilarHotels />
-            <HotelCard
-                data={hotels}
-                fetchNextPage={fetchNextPage}
-                hasNextPage={hasNextPage}
-            />
-
         </div>
     )
 }

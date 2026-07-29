@@ -1,7 +1,6 @@
 package com.hotel.reservation.domain;
 
 public enum ReservationStatus {
-    PENDING_PAYMENT,    //결제대기(10분)
     BEFORE_USE,    // 이용전 (결제완료, 확정)
     AFTER_USE,      //이용후
     CANCELED,      // 고객취소

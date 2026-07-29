@@ -1,4 +1,9 @@
-import '@/css/Modal.css'
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+} from "@/ui/dialog"
 
 interface ModalProps {
     isOpen: boolean;
@@ -11,15 +16,13 @@ export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
     if (!isOpen) return null;
 
     return (
-        <div className="overlay">
-            <div className="overlay-dim" onClick={onClose} />
-            <div className="modal">
-                <div className="modal-header">
-                    <h3 className="modal-title">{title}</h3>
-                    <button className="modal-close" onClick={onClose}>✕</button>
-                </div>
+        <Dialog open={isOpen} onOpenChange={onClose}>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>{title}</DialogTitle>
+                </DialogHeader>
                 {children}
-            </div>
-        </div>
+            </DialogContent>
+        </Dialog>
     );
 };

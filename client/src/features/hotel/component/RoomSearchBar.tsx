@@ -1,3 +1,4 @@
+
 interface RoomSearchBarProps {
     startDate: string,
     endDate: string,
@@ -20,29 +21,33 @@ export const RoomSearchBar = ({
     onGuestsChange
 }: RoomSearchBarProps) => {
     return (
-        <div className="search-bar">
+        <div className="flex items-center gap-3 p-4 border border-gray-200 rounded-xl my-6">
             <input
                 type="date"
+                className="border-none outline-none text-sm"
                 value={startDate}
                 onChange={(e) => onStartDateChange(e.target.value)}
             />
-            <span>~</span>
+            <span className="text-gray-400"> ~ </span>
             <input
                 type="date"
+                className="border-none outline-none text-sm"
                 value={endDate}
                 onChange={(e) => onEndDateChange(e.target.value)}
             />
-            <div className="guest-select">
-                <span>인원</span>
+            <div className="flex items-center gap-2 ml-auto">
+                <span className="text-sm text-gray-500">인원</span>
                 <input
                     type="number"
+                    className="w-[50px] border border-gray-200 rounded-md px-2 py-1 text-sm"
                     value={numberOfGuests}
                     min={1}
                     onChange={(e) => onGuestsChange(Number(e.target.value))}
                 />
-                <span>객실</span>
+                <span className="text-sm text-gray-500">객실</span>
                 <input
                     type="number"
+                    className="w-[50px] border border-gray-200 rounded-md px-2 py-1 text-sm"
                     value={numberOfRooms}
                     min={1}
                     onChange={(e) => onRoomsChange(Number(e.target.value))}

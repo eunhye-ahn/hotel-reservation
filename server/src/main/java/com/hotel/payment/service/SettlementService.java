@@ -23,7 +23,6 @@ public class SettlementService {
     private final HotelRepository hotelRepository;
     private final SettlementTransactionService settlementTransactionService;
 
-    //[리팩토링 필요] : PENDING 상태로 정산 row 저장하고 커밋
     @Transactional
     public void executeSettlementByAdmin(Long hotelId, LocalDate periodStart, LocalDate periodEnd){
         List<Wallet> wallets;

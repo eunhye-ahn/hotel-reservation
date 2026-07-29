@@ -117,17 +117,17 @@ public class ReservationService {
 
     //예약취소
     @Transactional
-    public void deleteReservation(Long userId, String reservationKey) {
+    public void cancelReservationByUser(Long userId, String reservationKey) {
 
         Reservation reservation = reservationRepository.findByUserIdAndReservationKey(userId, reservationKey)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
 
+        //검증 및 상태변경 BEFORE_USE -> CANCELED
         reservation.cancelByUser();
 
-        //n+1 발생
         List<RoomTypeInventory> inventories = roomTypeInventoryRepository
                 .findByRoomTypeIdAndDateBetween(reservation.getRoomType().getId(), reservation.getStartDate(), reservation.getEndDate().minusDays(1));
-
+        //재고복구
         inventories.forEach(i -> i.restore(reservation.getNumberOfRooms()));
     }
 

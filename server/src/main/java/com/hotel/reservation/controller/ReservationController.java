@@ -74,8 +74,8 @@ public class ReservationController {
 
     //예약 취소
     @DeleteMapping("{reservationKey}")
-    public ResponseEntity<Void> cancelReservation(@AuthenticationPrincipal Long userId, @PathVariable String reservationKey){
-        reservationService.deleteReservation(userId, reservationKey);
+    public ResponseEntity<Void> cancelReservationByUser(@AuthenticationPrincipal Long userId, @PathVariable String reservationKey){
+        reservationService.cancelReservationByUser(userId, reservationKey);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -93,7 +93,7 @@ public class ReservationController {
         );
     }
 
-    //폴링 결제 후 예약상태 확정 확인을 위해
+    //[폴링용] 결제 후 예약상태 확정 확인을 위해
     @GetMapping("/{reservationKey}/status")
     public ResponseEntity<String> getReservationStatus(@PathVariable String reservationKey){
         String result = reservationService.getReservationStatus(reservationKey);

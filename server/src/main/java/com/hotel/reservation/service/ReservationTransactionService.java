@@ -106,7 +106,7 @@ public class ReservationTransactionService {
                 .numberOfGuests(request.getNumberOfGuests())
                 .totalPrice(totalPrice)
                 .paymentStatus(PaymentStatus.PENDING)
-                .reservationStatus(ReservationStatus.PENDING_PAYMENT)
+                .reservationStatus(ReservationStatus.BEFORE_USE)
                 .build();
 
         reservationRepository.save(reservation);

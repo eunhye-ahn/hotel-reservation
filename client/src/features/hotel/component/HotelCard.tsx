@@ -1,85 +1,41 @@
-import { useNavigate } from "react-router";
-import type { hotelResponse } from "@/type/hotel"
-import { useRecentHotelStore } from "@/store/useRecentHotelStore";
-import { useEffect, useRef } from "react";
+import type { hotelResponse } from "@/type/hotel";
 
 interface HotelCardProps {
-    data: hotelResponse[];
-    fetchNextPage?: () => void;
-    hasNextPage?: boolean;
-    onRemove?: (hotelId: number) => void
+    hotel: hotelResponse;
+    onClick: () => void;
+    onRemove?: () => void;
 }
 
-export const HotelCard = ({ data, fetchNextPage, hasNextPage, onRemove }: HotelCardProps) => {
-    const navigate = useNavigate();
-    const { saveRecentHotel } = useRecentHotelStore();
-
-    const observerRef = useRef<HTMLDivElement>(null)
-
-    useEffect(() => {
-        const target = observerRef.current;
-        if (!target) return;
-        const observer = new IntersectionObserver((entries) => {
-            if (entries[0].isIntersecting && hasNextPage) {
-                fetchNextPage?.()
-            }
-        })
-        observer.observe(target)
-        //클린업
-        return () => observer.disconnect()
-    }, [fetchNextPage, hasNextPage])
-
+export const HotelCard = ({ hotel, onClick, onRemove }: HotelCardProps) => {
     return (
-        <div className="hotel-list">
-            {data?.length === 0 && <p>호텔이 없습니다</p>}
-            {data?.map((hotel) => (
-                <div
-                    key={hotel.hotelId}
-                    className="hotel-card"
-                    onClick={() => {
-                        saveRecentHotel({
-                            hotelId: hotel.hotelId,
-                            name: hotel.name,
-                            imageUrl: hotel.imageUrl,
-                            address: hotel.address,
-                            checkInTime: hotel.checkInTime,
-                            maxRate: hotel.maxRate,
-                            demandRate: hotel.demandRate,
-                            discountRate: hotel.discountRate,
-                        })
-                        navigate(`/hotels/${hotel.hotelId}`)
-                    }}
-                >
-                    {onRemove && (
-                        <button className="hotel-remove-btn" onClick={(e) => {
-                            e.stopPropagation();
-                            onRemove(hotel.hotelId)
-                        }}>
-                            x
-                        </button>
+        <div className="cursor-pointer" onClick={onClick}>
+            {onRemove && (
+                <button className="" onClick={(e) => {
+                    e.stopPropagation();
+                    onRemove()
+                }}>
+                    x
+                </button>
+            )}
+            <img className="w-full aspect-[4/3] object-cover" src={hotel.imageUrl} />
+            <p className="font-semibold text-sm mt-3 mb-1">{hotel.name}</p>
+            <p className="text-xs text-gray-500">{hotel.address}</p>
+            <p className="text-xs text-gray-500 my-1">숙박 {hotel.checkInTime.substring(0, 5)}~</p>
+            <div className="text-right px-3">
+                <div className="flex items-center gap-2 mt-1 justify-end">
+                    {hotel.maxRate && hotel.demandRate ? (
+                        <>
+                            <p className="text-xs text-gray-500 line-through">{hotel.maxRate.toLocaleString()}</p>
+                            <p className="text-red-500 font-bold text-sm">{hotel.discountRate}%</p>
+                        </>
+                    ) : (
+                        <span>요금 준비 중</span>
                     )}
-                    <img className="hotel-img" src={hotel.imageUrl} />
-                    <p className="hotel-name">{hotel.name}</p>
-                    <p className="hotel-address">{hotel.address}</p>
-                    <p className="hotel-checkin">숙박 {hotel.checkInTime.substring(0, 5)}~</p>
-                    <div className="hotel-price-row">
-                        {hotel.maxRate && hotel.demandRate ? (
-                            <>
-                                <span className="hotel-original">{hotel.maxRate.toLocaleString()}</span>
-                                <span className="hotel-discount">{hotel.discountRate}%</span>
-                            </>
-                        ) : (
-                            <span>요금 준비 중</span>
-                        )}
-                    </div>
-                    <p className="hotel-demand">
-                        {hotel.demandRate ? `${hotel.demandRate.toLocaleString()}원` : ""}
-                    </p>
                 </div>
-            ))}
-
-            {/* 스크롤 감지 타겟  */}
-            <div ref={observerRef} style={{ height: "1px" }}></div>
+                <p className="font-bold text-base mt-1">
+                    {hotel.demandRate ? `${hotel.demandRate.toLocaleString()}원` : ""}
+                </p>
+            </div>
         </div>
-    );
+    )
 }

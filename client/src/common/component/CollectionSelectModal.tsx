@@ -1,4 +1,4 @@
-import { useWishCollections } from "@/hooks/useWishCollections"
+import { useWishCollections } from "@/features/mypage/hooks/useWishCollections"
 import { useWishModalStore } from "@/store/useWishModalStore"
 import { Modal } from "./Modal"
 import Cookies from 'js-cookie'

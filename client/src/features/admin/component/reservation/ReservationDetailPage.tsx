@@ -21,82 +21,130 @@ export const ReservationDetail = () => {
     console.log(reservationId)
 
     return (
-        <div>
-            <h1>예약 상세</h1>
+        <div className="mx-auto ">
+            <div className="flex items-baseline gap-2 mb-6">
+                <h1 className="text-xl font-bold">예약 상세</h1>
+                <span className="text-sm text-gray-400">
+                    예약번호 {data?.reservationKey}
+                </span>
+            </div>
 
             {/* 기본정보 */}
-            <section>
-                <h2>예약 기본 정보</h2>
-                <div className="grid grid-cols-2">
-                    <span>예약자</span>
-                    <span>{data?.username}</span>
-                    <span>인원</span>
-                    <span>{data?.numberOfGuests}</span>
-                    <span>호텔명</span>
-                    <span>{data?.hotelName}</span>
-                    <span>객실타입</span>
-                    <span>{data?.roomTypeName}</span>
-                    <span>기간</span>
-                    <span>{data?.startDate}~{data?.endDate}</span>
-                    <span>결제금액</span>
-                    <span>{data?.totalPrice}원</span>
+            <div className="flex gap-6 items-stratch w-full">
+                <div className="flex-1 border border-gray-200 overflow-hidden bg-white">
+                    <div className="bg-gray-50 px-5 py-3 font-semibold text-sm border-b border-gray-200">
+                        예약 기본 정보
+                    </div>
+                    <table className="w-full text-sm border border-gray-200 rounded-xl overflow-hidden">
+                        <tbody className="divide-y divide-gray-100">
+                            <tr>
+                                <th className="w-28 text-left px-4 py-2.5 bg-gray-50 font-medium text-gray-500">예약자</th>
+                                <td className="px-4 py-2.5">{data?.username}</td>
+                            </tr>
+                            <tr>
+                                <th className="text-left px-4 py-2.5 bg-gray-50 font-medium text-gray-500">인원</th>
+                                <td className="px-4 py-2.5">{data?.numberOfGuests}명</td>
+                            </tr>
+                            <tr>
+                                <th className="text-left px-4 py-2.5 bg-gray-50 font-medium text-gray-500">호텔명</th>
+                                <td className="px-4 py-2.5">{data?.hotelName}</td>
+                            </tr>
+                            <tr>
+                                <th className="text-left px-4 py-2.5 bg-gray-50 font-medium text-gray-500">객실타입</th>
+                                <td className="px-4 py-2.5">{data?.roomTypeName}</td>
+                            </tr>
+                            <tr>
+                                <th className="text-left px-4 py-2.5 bg-gray-50 font-medium text-gray-500">기간</th>
+                                <td className="px-4 py-2.5">{data?.startDate} ~ {data?.endDate}</td>
+                            </tr>
+                            <tr>
+                                <th className="text-left px-4 py-2.5 bg-gray-50 font-medium text-gray-500">결제금액</th>
+                                <td className="px-4 py-2.5 font-semibold">{data?.totalPrice}원</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    {/* 강제취소 */}
+                    <section className="min-h-[52px] flex items-center">
+                        {data?.reservationStatus != "BEFORE_USE" ? (
+                            <p className="text-sm text-gray-400">이용 전 상태에서만 취소할 수 있습니다</p>
+                        ) : (
+                            <div className="">
+                                <button
+                                    className="px-4 py-2 text-sm text-red-500 border border-red-500 cursor-pointer hover:bg-gray-100"
+                                    onClick={() => setShowCancelForm(!showCancelForm)}>{showCancelForm ? '취소' : '예약취소'}</button>
+                                {showCancelForm &&
+                                    <CancelByAdminForm
+                                        reservationId={reservationId}
+                                        refundPrice={data?.totalPrice} />
+                                }
+                            </div>
+                        )}
+
+                    </section>
                 </div>
-            </section>
-            {/* 배정상태 */}
-            <section>
-                <h2>배정상태</h2>
-                <div className="grid grid-cols-2">
-                    <span>예약상태</span>
-                    <span>{data?.reservationStatus}</span>
-                    <span>결제상태</span>
-                    <span>{data?.paymentStatus}</span>
-                    <span>배정여부</span>
-                    <span>{ }</span>
+                {/* 배정상태 */}
+                <div className="flex-1 border w-full border-gray-200 overflow-hidden bg-white flex flex-col">
+                    <div className="bg-gray-50 px-5 py-3 font-semibold text-sm border-b border-gray-200">
+                        배정상태
+                    </div>
+                    <table className="w-full text-sm">
+                        <tbody className="divide-y divide-gray-100">
+                            <tr>
+                                <th className="w-28 text-left px-4 py-2.5 bg-gray-50 font-medium text-gray-500">예약상태</th>
+                                <td className="px-4 py-2.5">{data?.reservationStatus}</td>
+                            </tr>
+                            <tr>
+                                <th className="text-left px-4 py-2.5 bg-gray-50 font-medium text-gray-500">결제상태</th>
+                                <td className="px-4 py-2.5">{data?.paymentStatus}</td>
+                            </tr>
+                            <tr>
+                                <th className="text-left px-4 py-2.5 bg-gray-50 font-medium text-gray-500">배정여부</th>
+                                <td className="px-4 py-2.5">
+                                    <span className={`px-2 py-1 border rounded-md text-xs ${data?.roomAssigned
+                                        ? "border-green-500 text-green-600"
+                                        : "border-gray-300 text-gray-500"
+                                        }`}>
+                                        {data?.roomAssigned ? '배정완료' : '미배정'}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colSpan={2}>
+                                    <section className="mb-8">
+                                        {data?.reservationStatus != "BEFORE_USE" ? (
+                                            <p className="text-sm text-gray-400">이용 전 상태에서만 배정이 가능합니다</p>
+                                        ) : data?.roomAssigned ? (
+                                            <>
+                                                <AssignRoomInfoTable
+                                                    roomNumber={data?.roomNumber}
+                                                    roomName={data?.roomName}
+                                                    floor={data?.floor}
+                                                    usable={data?.usable}
+                                                />
+                                                <button
+                                                    className="px-4 py-2 text-sm text-red-500 border border-red-500 cursor-pointer hover:bg-gray-100" onClick={() => setShowAssignFrom(!showAssignForm)}>{showAssignForm ? '취소' : '배정변경'}</button>
+                                                {showAssignForm &&
+                                                    <RoomAssignmentForm reservationId={reservationId} />
+                                                }
+                                            </>
+                                        ) : (
+                                            <div>
+                                                <button onClick={() => setShowAssignFrom(!showAssignForm)}>{showAssignForm ? '취소' : '배정하기'}</button>
+
+                                            </div>
+                                        )
+
+                                        }
+                                    </section>
+
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-            </section>
+            </div>
             {/* 객실 배정 */}
-            <section>
-                <h2>객실 배정</h2>
-                {data?.reservationStatus != "BEFORE_USE" ? (
-                    <p>이용 전 상태에서만 배정이 가능합니다</p>
-                ) : data?.roomAssigned ? (
-                    <>
-                        <AssignRoomInfoTable
-                            roomNumber={data?.roomNumber}
-                            roomName={data?.roomName}
-                            floor={data?.floor}
-                            usable={data?.usable}
-                        />
-                        <button onClick={() => setShowAssignFrom(!showAssignForm)}>{showAssignForm ? '취소' : '배정변경'}</button>
-                        {showAssignForm &&
-                            <RoomAssignmentForm reservationId={reservationId} />
-                        }
-                    </>
-                ) : (
-                    <div>
-                        <button onClick={() => setShowAssignFrom(!showAssignForm)}>{showAssignForm ? '취소' : '배정하기'}</button>
-                        <RoomAssignmentForm reservationId={reservationId} />
-                    </div>
-                )
-
-                }
-            </section>
-            {/* 강제취소 */}
-            <section>
-                {data?.reservationStatus != "BEFORE_USE" ? (
-                    <p>이용 전 상태에서만 취소할 수 있습니다</p>
-                ) : (
-                    <div>
-                        <button onClick={() => setShowCancelForm(!showCancelForm)}>{showCancelForm ? '취소' : '예약취소'}</button>
-                        {showCancelForm &&
-                            <CancelByAdminForm
-                                reservationId={reservationId}
-                                refundPrice={data?.totalPrice} />
-                        }
-                    </div>
-                )}
-
-            </section>
+            <RoomAssignmentForm reservationId={reservationId} />
         </div>
     )
 }
