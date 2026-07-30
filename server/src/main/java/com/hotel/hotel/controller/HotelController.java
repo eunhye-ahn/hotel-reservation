@@ -71,6 +71,9 @@ public class HotelController {
                 .body(result);
     }
 
+    //홈 - 페이지네이션 (인기)
+
+
     /**
      * 지역별 호텔 목록 조회(무한스크롤)
      * GET /api/hotels?lDongRegnCd=11&cursorId=10

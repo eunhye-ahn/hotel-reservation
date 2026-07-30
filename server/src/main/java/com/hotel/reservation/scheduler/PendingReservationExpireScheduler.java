@@ -27,7 +27,7 @@ public class PendingReservationExpireScheduler {
     private final ReservationRepository reservationRepository;
     private final ReservationExpireProcessor expireProcessor;
 
-    @Scheduled(fixedDelay = 10_000)
+    @Scheduled(fixedDelay = 60_000)
     public void expirePendingReservations(){
         LocalDateTime limitTime = LocalDateTime.now().minusMinutes(10);
 

@@ -3,6 +3,7 @@ import { usePaymentList } from "@/features/admin/hooks/payment/usePaymentList"
 import { Spinner } from "@/common/component/Spinner"
 import { ErrorMessage } from "@/common/component/ErrorMessage"
 import { Pagination } from "@/common/component/Pagination"
+import { PaymentStatusBadge } from "../component/payment/PaymentStatusBadge"
 
 export const PaymentList = () => {
     const { filter, setSearchType, setKeyword, setStartDate, setEndDate, setPage, setStatus } = usePaymentFilter()
@@ -77,7 +78,11 @@ export const PaymentList = () => {
                                     <td className="px-3 py-2">{payment.hotelName}</td>
                                     <td className="px-3 py-2 text-center">{payment.userName}</td>
                                     <td className="px-3 py-2 text-center">{payment.amount.toLocaleString()}원</td>
-                                    <td className="px-3 py-2 text-center">{payment.status}</td>
+                                    <td className="px-3 py-2 text-center">
+                                        <PaymentStatusBadge
+                                            status={payment.status}
+                                        />
+                                    </td>
                                     <td className="px-3 py-2 text-center">{payment.createdAt}</td>
                                 </tr>
                             )}

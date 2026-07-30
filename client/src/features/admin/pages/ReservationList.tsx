@@ -4,6 +4,7 @@ import { Spinner } from "@/common/component/Spinner"
 import { ErrorMessage } from "@/common/component/ErrorMessage"
 import { useNavigate } from "react-router"
 import { Pagination } from "@/common/component/Pagination"
+import { ReservationStatusBadge } from "../component/reservation/ReservationStatusBadge"
 
 export const ReservationList = () => {
     const navigate = useNavigate()
@@ -55,7 +56,6 @@ export const ReservationList = () => {
                     }}
                 >
                     <option value="">전체</option>
-                    <option value="PENDING_PAYMENT">결제미완료</option>
                     <option value="BEFORE_USE">이용전</option>
                     <option value="AFTER_USE">이용후</option>
                     <option value="CANCELED">취소</option>
@@ -116,7 +116,11 @@ export const ReservationList = () => {
                                     <td className="px-3 py-2 text-center">{r.roomTypeName}</td>
                                     <td className="px-3 py-2 text-center">{r.startDate}</td>
                                     <td className="px-3 py-2 text-center">{r.endDate}</td>
-                                    <td className="px-3 py-2 text-center">{r.reservationStatus}</td>
+                                    <td className="px-3 py-2 text-center">
+                                        <ReservationStatusBadge
+                                            status={r.reservationStatus}
+                                        />
+                                    </td>
                                     <td className="px-3 py-2 text-center">{r.roomAssigned ? '배정완료' : '미배정'}</td>
                                 </tr>
                             ))}

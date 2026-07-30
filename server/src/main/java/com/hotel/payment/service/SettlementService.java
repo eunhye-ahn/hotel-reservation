@@ -23,7 +23,6 @@ public class SettlementService {
     private final HotelRepository hotelRepository;
     private final SettlementTransactionService settlementTransactionService;
 
-    @Transactional
     public void executeSettlementByAdmin(Long hotelId, LocalDate periodStart, LocalDate periodEnd){
         List<Wallet> wallets;
 

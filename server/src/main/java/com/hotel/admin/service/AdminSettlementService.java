@@ -6,10 +6,7 @@ import com.hotel.common.exception.CustomException;
 import com.hotel.common.exception.ErrorCode;
 import com.hotel.hotel.domain.Hotel;
 import com.hotel.hotel.repository.HotelRepository;
-import com.hotel.payment.domain.AccountType;
-import com.hotel.payment.domain.Settlement;
-import com.hotel.payment.domain.SettlementSearchType;
-import com.hotel.payment.domain.SettlementSortType;
+import com.hotel.payment.domain.*;
 import com.hotel.payment.mapper.SettlementMapper;
 import com.hotel.payment.repository.LedgerRepository;
 import com.hotel.payment.repository.SettlementRepository;
@@ -62,10 +59,14 @@ public class AdminSettlementService {
     }
 
     //호텔 정산이력 조회
-    public Page<SettlementHistoryResponse> getSettlementByHotel(Long hotelId, Pageable pageable){
+    public Page<SettlementHistoryResponse> getSettlementByHotel(Long hotelId,
+                                                                LocalDate startDate,
+                                                                LocalDate endDate,
+                                                                SettlementStatus status,
+
+                                                                Pageable pageable){
         Hotel hotel = hotelRepository.findById(hotelId)
                 .orElseThrow(() -> new CustomException(ErrorCode.HOTEL_NOT_FOUND));
-        Page<Settlement> list =  settlementRepository.findBySellerAccountOrderByCreatedAtDesc(hotel.getSellerAccount(), pageable);
-        return list.map(SettlementHistoryResponse::from);
+        return settlementRepository.searchSettlementByHotel(hotel.getSellerAccount(), startDate, endDate, status, pageable);
     }
 }

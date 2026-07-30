@@ -13,7 +13,7 @@ export const useSettlementPreview = ({ hotelId, periodStart, periodEnd }: useSet
         queryKey: adminSettlementKeys.preview(hotelId, periodStart, periodEnd),
         queryFn: () => previewSettlementAmount(hotelId, periodStart, periodEnd)
             .then(res => res.data),
-        enabled: !!periodStart && !!periodEnd
+
     })
 
     return { data, isLoading, isError }

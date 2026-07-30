@@ -13,7 +13,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 
-public interface HotelRepository extends JpaRepository<Hotel,Long>, HotelRepositoryCustom {
+public interface HotelRepository extends JpaRepository<Hotel,Long> {
     /**
      * JpaRepository 기본 제공 -> findAll(Pageable)
      * 하지만 Rate있는 호텔만 필터링해야함

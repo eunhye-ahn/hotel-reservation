@@ -1,18 +1,18 @@
 import type { AdminSettlementSearchResponse } from "@/type/admin"
 import { useState } from "react"
-import { SettlementModal } from "./SettlementModal"
-import { Modal } from "@/common/component/Modal"
-import { useSettlementFilter } from "../../hooks/settlement/useSettlementFilter"
 import { Spinner } from "@/common/component/Spinner"
 import { ErrorMessage } from "@/common/component/ErrorMessage"
-import { useSettlementList } from "../../hooks/settlement/useSettlementList"
 import { Pagination } from "@/common/component/Pagination"
+import { useNavigate } from "react-router"
+import { useSettlementList } from "../hooks/settlement/useSettlementList"
+import { useSettlementFilter } from "../hooks/settlement/useSettlementFilter"
 
 export const SettlementList = () => {
     const [settleTarget, setSettleTarget] = useState<AdminSettlementSearchResponse | null>(null)
     const { filter, setSearchType, setKeyword, setHasPendingBalance, setSortType, setPage } = useSettlementFilter()
 
     const { data, isLoading, isError } = useSettlementList(filter)
+    const navigate = useNavigate()
 
     return (
         <div>
@@ -69,7 +69,16 @@ export const SettlementList = () => {
                             </thead>
                             <tbody className="divide-y divide-gray-100 bg-white">
                                 {data?.content.map((s, i) =>
-                                    <tr key={s.hotelId} className="hover:bg-gray-50">
+                                    <tr key={s.hotelId} className="hover:bg-gray-50"
+                                        onClick={() => navigate(`/admin/settlements/${s.hotelId}`, {
+                                            state: {
+                                                hotelName: s.hotelName,
+                                                sellerAccount: s.sellerAccount,
+                                                pendingBalance: s.pendingBalance,
+                                                totalSettlementAmount: s.totalSettlementAmount,
+                                                lastSettledAt: s.lastSettledAt
+                                            }
+                                        })}>
                                         <td className="px-3 py-2 text-center">{i + 1}</td>
                                         <td className="px-3 py-2">{s.hotelName}</td>
                                         <td className="px-3 py-2 text-center">{s.sellerAccount}</td>
@@ -81,6 +90,7 @@ export const SettlementList = () => {
                                 )}
                             </tbody>
                         </table>
+
                         <div className="mt-4">
                             <Pagination
                                 page={filter.page}

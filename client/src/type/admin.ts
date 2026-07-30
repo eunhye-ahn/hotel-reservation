@@ -1,3 +1,5 @@
+import type { NumberFieldDecrement } from "@base-ui/react";
+
 export interface AdminReservationSearchResponse {
     id: number,
     displayReservationNO: string,
@@ -100,4 +102,58 @@ export interface AdminSettlementSearchResponse {
 export interface ExecuteSettlementRequest {
     periodStart: string,
     periodEnd: string
+}
+
+export interface SettlementHistorySearchRequest {
+    startDate?: string,
+    endDate?: string,
+    status?: string,
+    page?: number
+}
+
+export interface RoomTypeInventoryCalendarResponse {
+    roomTypeId: number,
+    roomTypeName: string,
+    cells: InventoryCalendarCellResponse[]
+}
+
+export interface InventoryCalendarCellResponse {
+    inventoryId: number,
+    date: string,
+    totalInventory: number,
+    totalReserved: number,
+    availableCount: number
+}
+
+export interface searchRoomInfoRequest {
+    roomTypeId?: number,
+    floor?: number,
+    page: number
+}
+
+export interface AdminRoomInfoResponse {
+    roomId: number,
+    roomName: string,
+    floor: number,
+    roomNumber: number,
+    roomTypeName: string,
+    usable: boolean
+}
+
+export interface RoomFilterOptionResponse {
+    floors: number[],
+    roomTypes: RoomTypeOption[]
+}
+
+export interface RoomTypeOption {
+    id: number,
+    name: string
+}
+
+export interface DashBoardSummaryResponse {
+    todayCheckInCount: number,
+    unassignedCount: number,
+    todayPaymentAmount: number,
+    totalPendingBalance: number,
+    failedPaymentCount: number
 }

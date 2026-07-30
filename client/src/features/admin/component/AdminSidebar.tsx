@@ -5,6 +5,7 @@ const menus = [
     { path: '/admin/reservations', label: '예약 관리' },
     { path: '/admin/payments', label: '결제 관리' },
     { path: '/admin/settlements', label: '정산 관리' },
+    { path: '/admin/inventory', label: '재고 관리' },
 ]
 
 export const AdminSidebar = () => {

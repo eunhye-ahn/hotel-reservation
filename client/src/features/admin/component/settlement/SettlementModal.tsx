@@ -9,11 +9,11 @@ interface SettlementModalProps {
     hotelId: number,
     hotelName: string,
     pendingBalance: number,
-    lastSettledAt?: string
-    onClose: () => void
+    lastSettledAt?: string,
+    onSuccess: () => void
 }
 
-export const SettlementModal = ({ hotelId, hotelName, pendingBalance, lastSettledAt, onClose }: SettlementModalProps) => {
+export const SettlementModal = ({ hotelId, hotelName, pendingBalance, lastSettledAt, onSuccess }: SettlementModalProps) => {
     const defaultPeriodStart = lastSettledAt ? format(addDays(new Date(lastSettledAt), 1), 'yyyy-MM-dd')
         : format(subDays(new Date(), 7), 'yyyy-MM-dd');
 
@@ -23,6 +23,13 @@ export const SettlementModal = ({ hotelId, hotelName, pendingBalance, lastSettle
     const { data, isLoading, isError } = useSettlementPreview({ hotelId, periodStart, periodEnd })
     const { executeSettleMutate, isExecuting } = useExecuteSettlement({ hotelId, periodStart: periodStart!, periodEnd: periodEnd! })
 
+    const handleExecute = () => {
+        executeSettleMutate(undefined, {
+            onSuccess: () => {
+                onSuccess()
+            }
+        })
+    }
 
     return (
         <div>
@@ -43,7 +50,7 @@ export const SettlementModal = ({ hotelId, hotelName, pendingBalance, lastSettle
                     : (
                         <p>예상정산액 : {data?.toLocaleString()}원</p>
                     )}
-            <button onClick={() => executeSettleMutate()}
+            <button onClick={handleExecute}
                 disabled={isExecuting || !periodStart || !periodEnd}>
                 정산하기
             </button>

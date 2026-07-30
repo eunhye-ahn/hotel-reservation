@@ -93,3 +93,31 @@ export interface HotelListFilter {
     numberOfRooms: number,
     lclsSystm2: string | null
 }
+
+export interface SettlementHistoryResponse {
+    settlementId: number,
+    amount: number,
+    periodStartDate: string,
+    periodEndDate: string,
+    status: string,
+    settledAt: string,
+    createdAt: string
+}
+
+export interface searchInventorySummaryRequest {
+    date?: string,
+    hotelName?: string,
+    sortType?: string,
+    page?: number
+}
+
+export interface AdminInventorySummaryResponse {
+    hotelId: number,
+    hotelName: string,
+    ldongSignguCd: string,
+    roomTypeCount: number,
+    totalInventory: number,
+    totalReserved: number,
+    availableCount: number,
+    reserveRate: number
+}

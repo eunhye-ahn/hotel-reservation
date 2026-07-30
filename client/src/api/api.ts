@@ -1,11 +1,11 @@
 import type { AccessTokenResponse, LoginRequest, SignUpRequest } from "@/type/auth";
 import axios from "axios";
-import type { AddWishListResponse, CursorResponse, HotelDetailResponse, HotelListFilter, hotelResponse, MoveWishRequest, MoveWishResponse, Page, WishCollectionsRequest, WishListCollectionResponse } from "@/type/hotel";
+import type { AddWishListResponse, AdminInventorySummaryResponse, CursorResponse, HotelDetailResponse, HotelListFilter, hotelResponse, MoveWishRequest, MoveWishResponse, Page, searchInventorySummaryRequest, SettlementHistoryResponse, WishCollectionsRequest, WishListCollectionResponse } from "@/type/hotel";
 import type { ReservationCreateResponse, ReservationDetailResponse, ReservationInfoResponse, ReservationRequest, ReservationResponse, RoomTypeReservationResponse } from "@/type/reservation";
 import type { UserInfoResponse } from "@/type/user";
 import { api } from "./axios";
 import type { PaymentConfirmRequest, PaymentConfirmResponse, PaymentPrepareResponse } from "@/type/payment";
-import type { AdminPaymentResponse, AdminPaymentSearchRequest, AdminReseervationSearchRequest, AdminReservationDetailResponse, AdminReservationSearchResponse, AdminRoomResponse, AdminSettlementSearchRequest, AdminSettlementSearchResponse, AssignmentRoomRequest, CancelReservationByAdminRequest, ExecuteSettlementRequest } from "@/type/admin";
+import type { AdminPaymentResponse, AdminPaymentSearchRequest, AdminReseervationSearchRequest, AdminReservationDetailResponse, AdminReservationSearchResponse, AdminRoomInfoResponse, AdminRoomResponse, AdminSettlementSearchRequest, AdminSettlementSearchResponse, AssignmentRoomRequest, CancelReservationByAdminRequest, DashBoardSummaryResponse, ExecuteSettlementRequest, RoomFilterOptionResponse, RoomTypeInventoryCalendarResponse, searchRoomInfoRequest, SettlementHistorySearchRequest } from "@/type/admin";
 
 export const login = (request: LoginRequest) => {
     return api.post<AccessTokenResponse>("/auth/login", request);
@@ -216,6 +216,37 @@ export const executeSettlementByAdmin = (hotelId: number, periodStart?: string, 
 }
 
 //특정 호텔 정산내역 조회
-// export const getSettlementByHotel = (hotelId: number, page?: number) => {
-//     return api.get<>
-// }
+export const getSettlementByHotel = (hotelId: number, params: SettlementHistorySearchRequest) => {
+    return api.get<Page<SettlementHistoryResponse>>(`/admin/settlement/${hotelId}/list`, {
+        params
+    })
+}
+
+//호텔 재고조회
+export const searchInventorySummary = (params: searchInventorySummaryRequest) => {
+    return api.get<Page<AdminInventorySummaryResponse>>("/admin/inventory", {
+        params
+    })
+}
+
+//호텔 상세재고조회 - 캘린더
+export const getInventoryCalendar = (hotelId: number, startDate: string, endDate: string) => {
+    return api.get<RoomTypeInventoryCalendarResponse[]>(`/admin/inventory/${hotelId}`, {
+        params: { startDate, endDate }
+    })
+}
+
+//호텔 상세재고조회 - 객실
+export const searchByRoomInfo = (hotelId: number, params: searchRoomInfoRequest) => {
+    return api.get<Page<AdminRoomInfoResponse>>(`/admin/inventory/${hotelId}/room`, {
+        params
+    })
+}
+
+export const getFilterOptions = (hotelId: number) => {
+    return api.get<RoomFilterOptionResponse>(`/admin/inventory/${hotelId}/room/filter-option`)
+}
+
+export const getDashBoardSummaryInfo = () => {
+    return api.get<DashBoardSummaryResponse>("/admin/dashboard/summary")
+}

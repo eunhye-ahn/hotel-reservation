@@ -2,6 +2,7 @@ package com.hotel.payment.domain;
 
 import com.hotel.common.exception.CustomException;
 import com.hotel.common.exception.ErrorCode;
+import com.hotel.hotel.domain.Hotel;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

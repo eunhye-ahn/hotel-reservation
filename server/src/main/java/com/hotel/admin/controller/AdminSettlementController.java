@@ -6,6 +6,7 @@ import com.hotel.admin.dto.settlement.SettlementHistoryResponse;
 import com.hotel.admin.service.AdminSettlementService;
 import com.hotel.payment.domain.SettlementSearchType;
 import com.hotel.payment.domain.SettlementSortType;
+import com.hotel.payment.domain.SettlementStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -60,11 +61,16 @@ public ResponseEntity<Page<AdminSettlementSearchResponse>> getSettlements(@Reque
     }
 
     //특정 호텔 정산이력 조회
-    @GetMapping("{hotel}/list")
+    @GetMapping("{hotelId}/list")
     public ResponseEntity<Page<SettlementHistoryResponse>> getSettlementByHotel(@PathVariable Long hotelId,
+                                                                                @RequestParam(required = false)LocalDate startDate,
+                                                                                @RequestParam(required = false)LocalDate endDate,
+                                                                                @RequestParam(required = false) SettlementStatus status,
+
                                                                                 @RequestParam(required = false,defaultValue = "0")int page){
         Pageable pageable =  PageRequest.of(page,10);
-        Page<SettlementHistoryResponse> result = adminSettlementService.getSettlementByHotel(hotelId, pageable);
+
+        Page<SettlementHistoryResponse> result = adminSettlementService.getSettlementByHotel(hotelId, startDate, endDate, status, pageable);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(result);

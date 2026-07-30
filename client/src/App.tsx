@@ -18,12 +18,15 @@ import { HotelListPage } from './pages/HotelListPage'
 import { RecentHotelPage } from './features/hotel/component/RecentHotelPage'
 import { WishListPage } from './features/mypage/component/WishListPage'
 import { CollectionSelectModal } from '@/common/component/CollectionSelectModal'
-import { AdminPage } from '@/features/admin/pages/AdminPage'
 import { ReservationDetail } from '@/features/admin/component/reservation/ReservationDetailPage'
 import AdminLayout from './features/admin/component/AdminLayout'
-import { ReservationList } from './features/admin/component/reservation/ReservationList'
-import { PaymentList } from './features/admin/component/payment/PaymentList'
-import { SettlementList } from './features/admin/component/settlement/SettlementList'
+import { SettlementHistory } from './features/admin/pages/SettlementHistory'
+import { InventorySummaryList } from './features/admin/pages/InventorySummaryList'
+import { InventoryDetail } from './features/admin/pages/InventoryDetail'
+import { ReservationList } from './features/admin/pages/ReservationList'
+import { PaymentList } from './features/admin/pages/PaymentList'
+import { SettlementList } from './features/admin/pages/SettlementList'
+import { AdminDashBoard } from './features/admin/pages/AdminDashBoard'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -57,11 +60,14 @@ function App() {
             <Route path="/recent-hotel/list" element={<RecentHotelPage />} />
             <Route path="/hotels/list" element={<HotelListPage />} />
             <Route path="/admin" element={<AdminLayout />}>
-              <Route path="/admin" element={<AdminPage />} />
+              <Route index element={<AdminDashBoard />} />
               <Route path="/admin/reservations/:id" element={<ReservationDetail />} />
               <Route path="/admin/reservations" element={<ReservationList />} />
               <Route path="/admin/payments" element={<PaymentList />} />
               <Route path="/admin/settlements" element={<SettlementList />} />
+              <Route path="/admin/settlements/:hotelId" element={<SettlementHistory />} />
+              <Route path="/admin/inventory" element={<InventorySummaryList />} />
+              <Route path="/admin/inventory/:hotelId" element={<InventoryDetail />} />
             </Route>
           </Route>
           <Route path="*" element={<NotFoundPage />} />

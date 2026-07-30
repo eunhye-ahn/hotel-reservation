@@ -1,0 +1,84 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hotel.hotel.mapper.RoomTypeInventoryMapper">
+    <select id="searchInventorySummary" resultType="AdminInventorySummaryResponse">
+        SELECT
+            h.id AS hotelId,
+            h.name AS hotelName,
+            h.l_dong_signgu_cd AS lDongSignguCd,
+            COUNT(DISTINCT rt.id) AS roomTypeCount,
+            SUM(COALESCE(rti.total_inventory,0)) AS totalInventory,
+            SUM(COALESCE(rti.total_reserved,0)) AS totalReserved,
+            SUM(COALESCE(rti.total_inventory,0)-COALESCE(rti.total_reserved,0)) AS availableCount,
+            CASE
+                WHEN SUM(COALESCE(rti.total_inventory,0)) = 0 THEN 0
+                ELSE ROUND(SUM(rti.total_reserved) * 100.0 / SUM(rti.total_inventory),1)
+            END AS reserveRate
+        FROM hotel h
+        LEFT JOIN room_type rt ON rt.hotel_id = h.id
+        LEFT JOIN room_type_inventory rti ON rti.room_type_id = rt.id
+            AND rti.date = #{date}
+        <where>
+            <if test="hotelName != null and hotelName != ''">
+                AND h.name ILIKE CONCAT('%',#{hotelName},'%')
+            </if>
+        </where>
+        GROUP BY h.id
+        <choose>
+            <!--잔여객실적은순-->
+            <when test="sortType != null and sortType.name() == 'AVAILABLE_ASC'">
+                ORDER BY availableCount ASC
+            </when>
+            <!--예약율-->
+            <when test="sortType != null and sortType.name() == 'RESERVE_RATE_DESC'">
+                ORDER BY reserveRate DESC
+            </when>
+            <when test="sortType != null and sortType.name() == 'RESERVE_RATE_ASC'">
+                ORDER BY reserveRate ASC
+            </when>
+            <otherwise>
+                ORDER BY hotelName ASC
+            </otherwise>
+        </choose>
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="countInventorySummary" resultType="long">
+        SELECT COUNT(DISTINCT h.id)
+        FROM hotel h
+        <where>
+            <if test="hotelName != null and hotelName != ''">
+                AND h.name ILIKE CONCAT('%',#{hotelName},'%')
+            </if>
+        </where>
+    </select>
+
+
+
+    <!--호텔 상세 재고-->
+    <resultMap id="calendarResultMap" type="RoomTypeInventoryCalendarResponse">
+        <id property="roomTypeId" column="room_type_id"/>
+        <result property="roomTypeName" column="room_type_name"/>
+        <collection property="cells" ofType="InventoryCalendarCellResponse">
+            <id property="inventoryId" column="inventory_id"/>
+            <result property="date" column="date"/>
+            <result property="totalInventory" column="total_inventory"/>
+            <result property="totalReserved" column="total_reserved"/>
+        </collection>
+    </resultMap>
+    <select id="getInventoryCalendar" resultMap="calendarResultMap">
+        SELECT
+            rt.id AS room_type_id,
+            rt.name AS room_type_name,
+            rti.id AS inventory_id,
+            rti.date AS date,
+            rti.total_inventory AS total_inventory,
+            rti.total_reserved AS total_reserved
+        FROM room_type rt
+        LEFT JOIN room_type_inventory rti
+            ON rti.room_type_id = rt.id
+            AND rti.date BETWEEN #{startDate} AND #{endDate}
+        WHERE rt.hotel_id = #{hotelId}
+        ORDER BY rt.id, rti.date
+    </select>
+</mapper>

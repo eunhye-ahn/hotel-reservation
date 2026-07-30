@@ -15,6 +15,7 @@ export const useExecuteSettlement = ({ hotelId, periodStart, periodEnd }: UseExe
         mutationFn: () => executeSettlementByAdmin(hotelId, periodStart, periodEnd),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: adminSettlementKeys.lists() })
+            
         }
     })
 
