@@ -1,0 +1,22 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hotel.admin.mapper.StatisticMapper">
+    <!--14일치 예약/결제 정보-->
+    <select id="getDailyStatistics" resultType="DailyStatisticsResponse">
+        SELECT
+            d.date,
+            COUNT(DISTINCT r.id) AS reservation_count,
+            COUNT(po.checkout_id) FILTER (WHERE po.payment_order_status = 'SUCCESS') AS payment_count,
+            COALESCE(SUM(po.amount) FILTER (WHERE po.payment_order_status = 'SUCCESS'),0) AS payment_total
+        FROM generate_series(
+            CURRENT_DATE - INTERVAL '13 days',
+            CURRENT_DATE,
+            INTERVAL '1 day'
+        ) AS d(date)
+        LEFT JOIN reservation r ON DATE(r.created_at) = d.date
+        LEFT JOIN payment_event pe ON pe.reservation_id = r.id
+        LEFT JOIN payment_order po ON po.checkout_id = pe.checkout_id
+        GROUP BY d.date
+        ORDER BY d.date;
+    </select>
+</mapper>

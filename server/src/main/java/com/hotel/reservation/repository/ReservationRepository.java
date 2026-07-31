@@ -5,6 +5,9 @@ import com.hotel.reservation.domain.Reservation;
 import com.hotel.reservation.domain.ReservationStatus;
 import com.hotel.reservation.domain.User;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -27,10 +30,30 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long>,
     @Query("SELECT COUNT(r.id) FROM Reservation r " +
             "WHERE r.startDate = :startDate " +
             "AND r.reservationStatus = :reservationStatus")
-    int countTodayCheckIn(@Param("startDate") LocalDate startDate,@Param("reservationStatus") ReservationStatus reservationStatus);
+    int countCheckInByDate(@Param("startDate") LocalDate startDate,@Param("reservationStatus") ReservationStatus reservationStatus);
 
     @Query("SELECT COUNT(r.id) FROM Reservation r " +
             "WHERE r.reservationStatus = :reservationStatus " +
             "AND r.room is null")
-    int countUnassigned(@Param("reservationStatus")ReservationStatus status);
+    int countUnassigned(@Param("reservationStatus")ReservationStatus reservationStatus);
+
+    @Query("SELECT r FROM Reservation r " +
+            "LEFT JOIN FETCH r.hotel " +
+            "WHERE r.reservationStatus = :status AND r.room IS NULL " +
+            "ORDER BY r.startDate ASC")
+    List<Reservation> findUnassignedPreview(
+            @Param("status") ReservationStatus status,
+            Pageable pageable
+    );
+
+    interface ReservationStatusCount {
+        ReservationStatus getStatus();
+        int getCount();
+    }
+
+    @Query("SELECT r.reservationStatus AS status, COUNT(r) AS count " +
+            "FROM Reservation r " +
+            "WHERE r.createdAt >= :start AND r.createdAt < :end " +
+            "GROUP BY r.reservationStatus")
+    List<ReservationStatusCount> countByStatusMonth(@Param("start")LocalDateTime start, @Param("end")LocalDateTime end);
 }

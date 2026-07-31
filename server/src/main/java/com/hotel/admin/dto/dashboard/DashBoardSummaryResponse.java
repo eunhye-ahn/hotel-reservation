@@ -9,8 +9,11 @@ import lombok.Getter;
 @AllArgsConstructor
 public class DashBoardSummaryResponse {
     private int todayCheckInCount;
+    private int checkInDiff;
     private int unassignedCount;
     private long todayPaymentAmount;
+    private int todayPaymentCount;
     private long totalPendingBalance;
+    private int pendingHotelCount;
     private int failedPaymentCount;
 }

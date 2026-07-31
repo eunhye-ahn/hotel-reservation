@@ -5,7 +5,7 @@ import type { ReservationCreateResponse, ReservationDetailResponse, ReservationI
 import type { UserInfoResponse } from "@/type/user";
 import { api } from "./axios";
 import type { PaymentConfirmRequest, PaymentConfirmResponse, PaymentPrepareResponse } from "@/type/payment";
-import type { AdminPaymentResponse, AdminPaymentSearchRequest, AdminReseervationSearchRequest, AdminReservationDetailResponse, AdminReservationSearchResponse, AdminRoomInfoResponse, AdminRoomResponse, AdminSettlementSearchRequest, AdminSettlementSearchResponse, AssignmentRoomRequest, CancelReservationByAdminRequest, DashBoardSummaryResponse, ExecuteSettlementRequest, RoomFilterOptionResponse, RoomTypeInventoryCalendarResponse, searchRoomInfoRequest, SettlementHistorySearchRequest } from "@/type/admin";
+import type { AdminPaymentResponse, AdminPaymentSearchRequest, AdminReseervationSearchRequest, AdminReservationDetailResponse, AdminReservationSearchResponse, AdminRoomInfoResponse, AdminRoomResponse, AdminSettlementSearchRequest, AdminSettlementSearchResponse, AssignmentRoomRequest, CancelReservationByAdminRequest, DailyStatisticsResponse, DashBoardSummaryResponse, ExecuteSettlementRequest, PaymentStatusStaticResponse, ReserveStatusStaticResponse, RoomFilterOptionResponse, RoomTypeInventoryCalendarResponse, searchRoomInfoRequest, SettlementHistorySearchRequest, TopPendingBalanceHotel, UnassignRoomInfo } from "@/type/admin";
 
 export const login = (request: LoginRequest) => {
     return api.post<AccessTokenResponse>("/auth/login", request);
@@ -249,4 +249,24 @@ export const getFilterOptions = (hotelId: number) => {
 
 export const getDashBoardSummaryInfo = () => {
     return api.get<DashBoardSummaryResponse>("/admin/dashboard/summary")
+}
+
+export const getDailyStatisticsInfo = () => {
+    return api.get<DailyStatisticsResponse[]>("/admin/dashboard/dailyStatistics")
+}
+
+export const getUnAssignReservationInfo = () => {
+    return api.get<UnassignRoomInfo[]>("/admin/dashboard/unAssign-reserve")
+}
+
+export const getReserveStatusByMonth = () => {
+    return api.get<ReserveStatusStaticResponse[]>("/admin/dashboard/reserve-status/statiscs")
+}
+
+export const getPaymentStatusByMonth = () => {
+    return api.get<PaymentStatusStaticResponse[]>("/admin/dashboard/payment-status/statics")
+}
+
+export const getTopPendingHotels = () => {
+    return api.get<TopPendingBalanceHotel[]>("/admin/dashboard/top-pending/hotels")
 }

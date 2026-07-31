@@ -3,7 +3,7 @@ import { Spinner } from "@/common/component/Spinner"
 import { useState } from "react"
 import { useRoomsByReservation } from "@/features/admin/hooks/reservation/useRoomsByReservation"
 import { useAssignRoom } from "../../hooks/reservation/useAssignRoom"
-import { useUnassignRoom } from "../../hooks/reservation/useUnAssignRoom"
+import { useUnassignRoomMutation } from "../../hooks/reservation/useUnAssignRoomMutation"
 
 interface RoomAssignmentFormProps {
     reservationId: number
@@ -14,7 +14,7 @@ export const RoomAssignmentForm = ({ reservationId }: RoomAssignmentFormProps) =
 
     const { data, isLoading, isError } = useRoomsByReservation(reservationId)
     const { assignRoomMutate, isAssigning } = useAssignRoom(reservationId)
-    const { unassignRoomMutate, isUnAssigning } = useUnassignRoom(reservationId)
+    const { unassignRoomMutate, isUnAssigning } = useUnassignRoomMutation(reservationId)
 
     if (isLoading) return <Spinner />
     if (isError) return <ErrorMessage />

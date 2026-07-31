@@ -1,6 +1,7 @@
 import { assignRoom } from "@/api/api"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { adminReservationKeys } from "./adminReservationKeys"
+import { adminDashboardKeys } from "../dashboard/adminDashboardKeys"
 
 export const useAssignRoom = (reservationId: number) => {
     const queryClient = useQueryClient()
@@ -11,6 +12,7 @@ export const useAssignRoom = (reservationId: number) => {
             queryClient.invalidateQueries({ queryKey: adminReservationKeys.rooms(reservationId) })
             queryClient.invalidateQueries({ queryKey: adminReservationKeys.detail(reservationId) })
             queryClient.invalidateQueries({ queryKey: adminReservationKeys.lists() })
+            queryClient.invalidateQueries({ queryKey: adminDashboardKeys.summary })
         }
     })
 

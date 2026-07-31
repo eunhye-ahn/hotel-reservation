@@ -152,8 +152,41 @@ export interface RoomTypeOption {
 
 export interface DashBoardSummaryResponse {
     todayCheckInCount: number,
+    checkInDiff: number,
     unassignedCount: number,
     todayPaymentAmount: number,
+    todayPaymentCount: number,
+    pendingHotelCount: number,
     totalPendingBalance: number,
     failedPaymentCount: number
+}
+
+export interface DailyStatisticsResponse {
+    date: string,
+    reservationCount: number,
+    paymentCount: number,
+    paymentTotal: number
+}
+
+export interface UnassignRoomInfo {
+    reservationId: number,
+    displayReservationNo: string,
+    hotelName: string,
+    startDate: string
+}
+
+export interface ReserveStatusStaticResponse {
+    status: string,
+    count: number
+}
+
+export interface PaymentStatusStaticResponse {
+    status: string,
+    count: number
+}
+
+export interface TopPendingBalanceHotel {
+    hotelId: number,
+    hotelName: string,
+    pendingBalance: number
 }
