@@ -1,11 +1,10 @@
-
 import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "../store/useAuthStore";
-import type { SignUpRequest } from "@/type/auth";
+import { useAuthStore } from "../../store/useAuthStore";
+import type { SignUpRequest } from "@/api/types/auth";
 import { toast } from "react-toastify";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import NotFoundPage from "./NotFoundPage";
+import NotFoundPage from "../../common/pages/NotFoundPage";
 import { signUp } from "@/api/api";
 
 export const SignUpPage = () => {
@@ -13,7 +12,6 @@ export const SignUpPage = () => {
     const navigate = useNavigate();
     const { setAccessToken } = useAuthStore();
 
-    //mutate: api호출 + 로딩상태관리(isPending) + 성공/실패처리
     const { mutate, isPending } = useMutation({
         mutationFn: signUp,
         onSuccess: (res) => {

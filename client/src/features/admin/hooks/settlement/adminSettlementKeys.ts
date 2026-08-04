@@ -1,4 +1,4 @@
-import type { AdminSettlementSearchRequest, SettlementHistorySearchRequest } from "@/type/admin";
+import type { AdminSettlementSearchRequest, SettlementHistorySearchRequest } from "@/api/types/admin";
 
 export const adminSettlementKeys = {
     all: ["admin-settlement"] as const,

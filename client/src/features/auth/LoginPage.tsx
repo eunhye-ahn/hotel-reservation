@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom"
-import { useAuthStore } from "../store/useAuthStore"
-import type { CustomJwtPayLoad, LoginRequest } from "@/type/auth"
+import { useAuthStore } from "@/store/useAuthStore"
+import type { CustomJwtPayLoad, LoginRequest } from "@/api/types/auth"
 import { toast } from "react-toastify"
 import { useMutation } from "@tanstack/react-query"
 import { useForm } from "react-hook-form"
@@ -32,7 +32,6 @@ export const LoginPage = () => {
             toast.error("일시적인 오류가 발생했습니다")
         }
     })
-
     return (
         <div className="min-h-screen flex items-center justify-center">
             <form

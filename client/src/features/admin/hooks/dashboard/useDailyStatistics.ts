@@ -4,7 +4,7 @@ import { adminDashboardKeys } from "./adminDashboardKeys"
 
 export const useDailyStatistics = () => {
     const { data: statisticsData, isLoading: isStatisticsLoading, isError: isStatisticsError } = useQuery({
-        queryKey: adminDashboardKeys.dailyStatistics,
+        queryKey: adminDashboardKeys.dailyStatistics(),
         queryFn: () => getDailyStatisticsInfo().then(res => res.data)
     })
 

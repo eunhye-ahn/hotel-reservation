@@ -1,4 +1,4 @@
-import type { AdminPaymentSearchRequest } from "@/type/admin";
+import type { AdminPaymentSearchRequest } from "@/api/types/admin";
 import { useState } from "react";
 
 export const usePaymentFilter = () => {

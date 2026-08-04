@@ -4,7 +4,7 @@ import { adminDashboardKeys } from "./adminDashboardKeys"
 
 export const useUnassignRoomQuery = () => {
     const { data: unassignRoomData, isLoading: isUnassignRoomLoading, isError: isUnassignRoomError } = useQuery({
-        queryKey: adminDashboardKeys.unAssignRoom,
+        queryKey: adminDashboardKeys.unAssignRoom(),
         queryFn: () => getUnAssignReservationInfo().then(res => res.data)
     })
 

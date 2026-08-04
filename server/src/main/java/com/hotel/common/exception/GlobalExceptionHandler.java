@@ -13,8 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handlerException(Exception e){
-        e.printStackTrace();
-        log.error("server error : {}", e.getMessage());
+        log.error("server error : {}", e.getMessage(), e);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorResponse(
                         500,
@@ -30,7 +29,7 @@ public class GlobalExceptionHandler {
                 .getFieldErrors()
                 .getFirst()
                 .getDefaultMessage();
-        e.printStackTrace();
+        log.error("validation error : {}", message);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse(
@@ -44,11 +43,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ErrorResponse> handlerCustomException(CustomException e){
         ErrorCode errorCode = e.getErrorCode();
-        e.printStackTrace();
+
+        if(errorCode.getStatus().is5xxServerError()){
+            log.error("[{}] {}", errorCode.name(), e.getMessage());
+        }
+        else{
+            log.warn("[{}] {}", errorCode.name(), e.getMessage());
+        }
+
         return ResponseEntity.status(errorCode.getStatus())
                 .body(new ErrorResponse(
                        errorCode.getStatus().value(),
-                        "BUISNESS",
+                        "BUSINESS",
                         errorCode.name(),
                         errorCode.getMessage()
                 ));
@@ -56,7 +62,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(OptimisticLockingFailureException.class)
     public ResponseEntity<ErrorResponse> handleOptimisticLock(OptimisticLockingFailureException e){
-        e.printStackTrace();
+        log.warn("lock conflict : {}", e.getMessage());
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
                 .body(new ErrorResponse(

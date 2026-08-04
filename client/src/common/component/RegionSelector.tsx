@@ -1,4 +1,4 @@
-import { REGIONS, type Region, type SubRegion } from "@/type/Region";
+import { REGIONS, type Region, type SubRegion } from "@/api/types/Region";
 import { useState } from "react";
 import '@/common/component/RegionSelector.css';
 

@@ -1,4 +1,4 @@
-import type { hotelResponse } from "@/type/hotel";
+import type { hotelResponse } from "@/api/types/hotel";
 
 interface HotelCardProps {
     hotel: hotelResponse;

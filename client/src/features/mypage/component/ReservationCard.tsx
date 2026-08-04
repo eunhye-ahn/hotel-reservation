@@ -1,4 +1,4 @@
-import type { ReservationResponse, ReservationStatus } from "@/type/reservation";
+import type { ReservationResponse, ReservationStatus } from "@/api/types/reservation";
 import { getPaymentStatus } from "../util/getPaymentStatus";
 import { Spinner } from "@/common/component/Spinner";
 

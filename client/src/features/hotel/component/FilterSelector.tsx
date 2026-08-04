@@ -1,5 +1,4 @@
-import { HOTEL_TYPES } from "@/type/HotelType";
-import { useState } from "react";
+import { HOTEL_TYPES } from "@/api/types/HotelType";
 import { useSearchParams } from "react-router"
 
 interface FilterSelectorProps {

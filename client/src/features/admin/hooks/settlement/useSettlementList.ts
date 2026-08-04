@@ -1,5 +1,5 @@
 import { getSettlements } from "@/api/api"
-import type { AdminSettlementSearchRequest } from "@/type/admin"
+import type { AdminSettlementSearchRequest } from "@/api/types/admin"
 import { useQuery } from "@tanstack/react-query"
 import { adminSettlementKeys } from "./adminSettlementKeys"
 

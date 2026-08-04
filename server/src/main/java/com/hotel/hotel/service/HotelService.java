@@ -217,23 +217,13 @@ public class HotelService {
     }
 
     //최근 호텔
-    public Page<HotelResponse> getSimilarHotel(int page, Long hotelId){
+    public List<HotelResponse> getSimilarHotel(Long hotelId){
         //id받고
         Hotel hotel = hotelRepository.findById(hotelId)
                 .orElseThrow(()->new CustomException(ErrorCode.HOTEL_NOT_FOUND));
         //우선 조건에 맞는 호텔 30개 반환
-        List<Hotel> hotels = hotelRepository.findSimilarTop30(hotel.getLclsSystm2(), hotel.getLDongRegnCd(), hotelId, PageRequest.of(0,30));
-        final int SUB_PAGE = 5;
-        //30개를 6개씩 페이징
-        Pageable pageable = PageRequest.of(page,SUB_PAGE);
-        //호텔리스트 subList
-        int start = page*SUB_PAGE;
-        int end = Math.min(start+SUB_PAGE, hotels.size());
+        List<Hotel> hotels = hotelRepository.findSimilarTop15(hotel.getLclsSystm2(), hotel.getLDongRegnCd(), hotelId, PageRequest.of(0,15));
 
-        return new PageImpl<>(
-                hotels.subList(start,end).stream().map(this::toResponse).toList(),
-                pageable,
-                hotels.size()
-        );
+        return hotels.stream().map(this::toResponse).toList();
     }
 }

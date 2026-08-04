@@ -117,4 +117,25 @@ public class ReservationTransactionService {
         String shortId = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
         return "RESERVE-"+datePart+"-"+shortId;
     }
+
+    //스케줄러 예약만료 상태처리 및 재구복구 트랜잭션
+    @Transactional
+    public void expireReservationInTransaction(String reservationKey){
+        Reservation reservation = reservationRepository.findByReservationKey(reservationKey)
+                .orElseThrow(()-> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
+
+        if(reservation.getPaymentStatus() != PaymentStatus.PENDING){
+            return;
+        }
+
+        reservation.updateReservationExpire();
+
+        List<RoomTypeInventory> inventories = roomTypeInventoryRepository.findByRoomTypeIdAndDateBetween(
+                reservation.getRoomType().getId(),
+                reservation.getStartDate(),reservation.getEndDate().minusDays(1));
+
+        for(RoomTypeInventory inventory : inventories){
+            inventory.restore(reservation.getNumberOfRooms());
+        }
+    }
 }

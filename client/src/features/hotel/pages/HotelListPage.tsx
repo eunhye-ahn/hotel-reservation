@@ -5,11 +5,11 @@ import { useEffect } from "react";
 import { DateGuestSelector } from "@/features/hotel/component/DateGuestSelector";
 import { Modal } from "@/common/component/Modal";
 import { FilterSelector } from "@/features/hotel/component/FilterSelector";
-import { useHotelListFilter } from "../features/hotel/hooks/useHotelListFilter";
-import { useHotelList } from "../features/hotel/hooks/useHotelList";
+import { useHotelListFilter } from "../hooks/useHotelListFilter";
+import { useHotelList } from "../hooks/useHotelList";
 import { Spinner } from "@/common/component/Spinner";
 import { ErrorMessage } from "@/common/component/ErrorMessage";
-import { useHotelListModals } from "../features/hotel/hooks/useHotelListModals";
+import { useHotelListModals } from "../hooks/useHotelListModals";
 
 export function HotelListPage() {
     const { filter } = useHotelListFilter()

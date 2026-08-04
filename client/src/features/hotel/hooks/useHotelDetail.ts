@@ -1,7 +1,8 @@
 import { getHotelDetail } from "@/api/api";
 import { useQuery } from "@tanstack/react-query";
+import { hotelKeys } from "./hotelkeys";
 
-interface UseHotelDetailProps {
+export interface UseHotelDetailProps {
     hotelId: string | undefined,
     startDate: string,
     endDate: string,
@@ -11,7 +12,7 @@ interface UseHotelDetailProps {
 
 export const useHotelDetail = ({ hotelId, startDate, endDate, numberOfRooms, numberOfGuests }: UseHotelDetailProps) => {
     const { data, isLoading, isError, error } = useQuery({
-        queryKey: ["hotelDetails", hotelId, startDate, endDate, numberOfRooms, numberOfGuests],
+        queryKey: hotelKeys.detail({ hotelId, startDate, endDate, numberOfGuests, numberOfRooms }),
         queryFn: () => getHotelDetail(Number(hotelId), startDate, endDate, numberOfRooms, numberOfGuests).then((res) => res.data)
     });
 

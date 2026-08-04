@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -71,17 +72,21 @@ public class WishService {
                 .orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
         WishCollection wishCollection;
 
-        if(collectionId != null){
-            wishCollection = wishCollectionRepository.findByIdAndUserId(collectionId, userId)
-                    .orElseThrow(()->new CustomException(ErrorCode.COLLECTION_NOT_FOUND));
-        }
-
-        else if(!wishCollectionRepository.existsByUserId(userId)){
-            wishCollection = createCollection(userId, "기본");
-        }
-
-        else {
+        if (collectionId == null) {
             throw new CustomException(ErrorCode.COLLECTION_SELECT_REQUIRED);
+        }
+
+        Optional<WishCollection> myCollection = wishCollectionRepository.findByIdAndUserId(collectionId, userId);
+
+        if(myCollection.isPresent()){
+            wishCollection = myCollection.get();
+        } else{
+            if(!wishCollectionRepository.existsByUserId(userId)){
+                wishCollection = createCollection(userId, "기본");
+            }
+            else {
+                throw new CustomException(ErrorCode.COLLECTION_SELECT_REQUIRED);
+            }
         }
 
         WishList wishList = wishListRepository.save(new WishList(wishCollection, hotel));

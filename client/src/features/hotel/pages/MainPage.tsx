@@ -2,9 +2,9 @@
 import { useNavigate } from "react-router";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { getHotels } from "@/api/api";
-import type { CursorResponse } from '@/type/hotel';
+import type { CursorResponse } from '@/api/types/hotel';
 import { useState } from 'react';
-import { getDisplayName, type Region, type SubRegion } from '@/type/Region';
+import { getDisplayName, type Region, type SubRegion } from '@/api/types/Region';
 import { RegionSelector } from '@/common/component/RegionSelector';
 import { Modal } from '@/common/component/Modal';
 import { useRegionStore } from '@/store/useRegionStore';

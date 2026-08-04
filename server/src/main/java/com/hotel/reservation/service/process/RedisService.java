@@ -1,4 +1,4 @@
-package com.hotel.reservation.service;
+package com.hotel.reservation.service.process;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;

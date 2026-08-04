@@ -1,29 +1,27 @@
 
-import type { ReservationDetailResponse } from "@/type/reservation";
 import { useNavigate, useParams } from "react-router"
 import dayjs from 'dayjs';
-import { useQuery } from "@tanstack/react-query";
-import NotFoundPage from "./NotFoundPage";
+import NotFoundPage from '@/common/pages/NotFoundPage';
 import { toast } from "react-toastify";
-import { reservationConfirm } from "@/api/api";
+import { getErrorCode, getErrorMessage } from '@/api/errorHelpers';
+import { useReservationConfirm } from '../hooks/useReservationConfirm';
+import { Spinner } from "@/common/component/Spinner";
 
 export const ReservationConfirmPage = () => {
     const { reservationKey } = useParams();
-    const navigate = useNavigate();
     if (!reservationKey) return;
+    const navigate = useNavigate()
 
-    const { data, isLoading, isError, error } = useQuery<ReservationDetailResponse>({
-        queryKey: ["reservationConfirm", reservationKey],
-        queryFn: () => reservationConfirm(reservationKey).then((res) => res.data)
-    })
+    const { data, error, isLoading, isError } = useReservationConfirm({ reservationKey })
 
-    if (isLoading) return <p>Loading...</p>
+
+    if (isLoading) return <Spinner />
     if (isError) {
-        const code = (error as any).response.data.code
+        const code = getErrorCode(error)
         if (code === "RESERVATION_NOT_FOUND") {
             return <NotFoundPage />
         }
-        toast.error("일시적인 오류가 발생했습니다")
+        toast.error(getErrorMessage(error))
         navigate(-1)
         return null;
     }
@@ -38,8 +36,6 @@ export const ReservationConfirmPage = () => {
             return "결제완료"
         }
     }
-
-
 
     return (
         <div className="detail-container">

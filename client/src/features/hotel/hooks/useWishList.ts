@@ -2,6 +2,10 @@ import { addWishList, cancelWishList, getWishedChecked } from "@/api/api";
 import { useWishModalStore } from "@/store/useWishModalStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { hotelKeys } from "./hotelkeys";
+import { getErrorCode, getErrorMessage } from "@/api/errorHelpers";
+import { toast } from "react-toastify";
+import { wishCollectionKeys } from "@/features/mypage/hooks/wishCollectionKeys";
 
 //위시 조회 + 추가/취소 mutation
 export const useWishList = (hotelId?: number) => {
@@ -16,7 +20,7 @@ export const useWishList = (hotelId?: number) => {
 
     //위시여부확인 query => 호텔아이디 props
     const { data: hotelWishCheck } = useQuery<boolean>({
-        queryKey: ["wishCheck", hotelId],
+        queryKey: hotelKeys.wish(hotelId!),
         queryFn: () => getWishedChecked(Number(hotelId)).then((res) => res.data),
         enabled: isValidId
     })
@@ -25,7 +29,6 @@ export const useWishList = (hotelId?: number) => {
     useEffect(() => {
         if (hotelWishCheck != undefined) {
             setIsWished(hotelWishCheck)
-            console.log(hotelWishCheck)
         }
     }, [hotelWishCheck])
 
@@ -34,14 +37,21 @@ export const useWishList = (hotelId?: number) => {
         mutationFn: addWishList,
         onSuccess: (res) => {
             setIsWished(true)
-            queryClient.invalidateQueries({ queryKey: ["wishList", "wishs"] })
+            queryClient.invalidateQueries({ queryKey: wishCollectionKeys.list() })
+            queryClient.invalidateQueries({ queryKey: hotelKeys.wish(hotelId!) })
         },
         onError: (err: any, variables) => {
-            console.log(err.response.data.code)
-            if (err.response.data.code === "COLLECTION_SELECT_REQUIRED") {
+            const code = getErrorCode(err)
+            if (code === "COLLECTION_SELECT_REQUIRED") {
                 open(variables)
+                return
             }
-            console.log(err)
+            if (code === "WISHLIST_NOT_FOUND" || code === "COLLECTION_NOT_FOUND") {
+                queryClient.invalidateQueries({ queryKey: wishCollectionKeys.list() })
+                queryClient.invalidateQueries({ queryKey: hotelKeys.wish(hotelId!) })
+                toast.error(getErrorMessage(err))
+                return
+            }
         }
     })
 
@@ -50,10 +60,17 @@ export const useWishList = (hotelId?: number) => {
         mutationFn: cancelWishList,
         onSuccess: (res) => {
             setIsWished(false)
-            queryClient.invalidateQueries({ queryKey: ["wishList"] })
+            queryClient.invalidateQueries({ queryKey: wishCollectionKeys.list() })
+            queryClient.invalidateQueries({ queryKey: hotelKeys.wish(hotelId!) })
         },
         onError: (err: any) => {
-            console.log(err)
+            const code = getErrorCode(err)
+
+            if (code === "WISHLIST_NOT_FOUND") {
+                queryClient.invalidateQueries({ queryKey: hotelKeys.wish(hotelId!) })
+                queryClient.invalidateQueries({ queryKey: wishCollectionKeys.list() })
+            }
+            toast.error(getErrorMessage(err))
         }
     })
 

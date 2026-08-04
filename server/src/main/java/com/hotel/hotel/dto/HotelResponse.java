@@ -60,4 +60,5 @@ public class HotelResponse {
                 .imageUrl(hotel.getImageUrl())
                 .build();
     }
+
 }

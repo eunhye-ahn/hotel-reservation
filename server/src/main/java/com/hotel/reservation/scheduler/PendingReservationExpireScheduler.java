@@ -2,9 +2,8 @@ package com.hotel.reservation.scheduler;
 
 import com.hotel.reservation.domain.PaymentStatus;
 import com.hotel.reservation.domain.Reservation;
-import com.hotel.reservation.domain.ReservationStatus;
 import com.hotel.reservation.repository.ReservationRepository;
-import com.hotel.reservation.service.ReservationExpireProcessor;
+import com.hotel.reservation.service.process.ReservationExpireProcessor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -32,8 +31,6 @@ public class PendingReservationExpireScheduler {
         LocalDateTime limitTime = LocalDateTime.now().minusMinutes(10);
 
         List<Reservation> expiredReservations = reservationRepository.findByPaymentStatusAndCreatedAtBefore(PaymentStatus.PENDING,limitTime);
-
-        //log.info("만료된 예약: {}건",expiredReservations.size());
 
         for(Reservation reservation : expiredReservations){
             try{

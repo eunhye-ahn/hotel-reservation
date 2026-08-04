@@ -1,4 +1,3 @@
-import type { NumberFieldDecrement } from "@base-ui/react";
 
 export interface AdminReservationSearchResponse {
     id: number,

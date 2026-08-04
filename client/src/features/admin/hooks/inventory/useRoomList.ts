@@ -1,5 +1,5 @@
 import { searchByRoomInfo } from "@/api/api"
-import type { searchRoomInfoRequest } from "@/type/admin"
+import type { searchRoomInfoRequest } from "@/api/types/admin"
 import { useQuery } from "@tanstack/react-query"
 import { adminInventoryKeys } from "./adminInventorykey"
 

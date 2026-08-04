@@ -1,5 +1,5 @@
 import { getSettlementByHotel } from "@/api/api"
-import type { SettlementHistorySearchRequest } from "@/type/admin"
+import type { SettlementHistorySearchRequest } from "@/api/types/admin"
 import { useQuery } from "@tanstack/react-query"
 import { adminSettlementKeys } from "./adminSettlementKeys"
 

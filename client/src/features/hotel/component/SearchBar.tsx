@@ -5,12 +5,16 @@ import { useLocation, useNavigate } from "react-router";
 import styles from '@/layout/Header.module.css'
 
 export const SearchBar = () => {
-    const [q, setQ] = useState<string>();
+    const [q, setQ] = useState<string>("");
     const navigate = useNavigate();
     const [suggestions, setSuggestions] = useState<string[]>([])
-    const timerRef = useRef<ReturnType<typeof setTimeout>>(0)
+    const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined)
     const [open, setOpen] = useState<boolean>(false)
     const location = useLocation()
+
+    useEffect(() => {
+        return () => clearTimeout(timerRef.current)
+    }, [])
 
     useEffect(() => {
         if (!location.pathname.startsWith("/hotels")) {
@@ -23,6 +27,7 @@ export const SearchBar = () => {
     const handleSearch = (keyword?: string) => {
         const target = keyword ?? q
         if (!target?.trim()) return;
+        clearTimeout(timerRef.current)
         setOpen(false)
         setSuggestions([])
         navigate(`/hotels/list?q=${target}`)
@@ -39,7 +44,6 @@ export const SearchBar = () => {
             if (value.trim()) {
                 getSearchAutocomplete(value)
                     .then((res) => {
-                        console.log(res.data)
                         setSuggestions(res.data)
                         setOpen(true)
                     })
@@ -67,7 +71,7 @@ export const SearchBar = () => {
                 className={styles.input}
             />
             {open && (
-                <div className={styles.dropdown}>
+                <ul className={styles.dropdown}>
                     {suggestions.map((s) => (
                         <li key={s}
                             className={styles.dropdownItem}
@@ -79,7 +83,7 @@ export const SearchBar = () => {
                             {s}
                         </li>
                     ))}
-                </div>
+                </ul>
             )}
         </div>
     )

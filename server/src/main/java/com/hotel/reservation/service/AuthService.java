@@ -8,6 +8,7 @@ import com.hotel.reservation.dto.SignUpRequest;
 import com.hotel.reservation.dto.TokenResponse;
 import com.hotel.common.jwt.JwtProvider;
 import com.hotel.reservation.repository.UserRepository;
+import com.hotel.reservation.service.process.RedisService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;

@@ -1,16 +1,17 @@
 import { useState } from "react"
 import { useNavigate, useParams } from "react-router";
 import { toast } from "react-toastify";
-import NotFoundPage from "./NotFoundPage";
+import NotFoundPage from "@/common/pages/NotFoundPage";
 import { Map } from "@/common/component/Map";
 import { useWishList } from "@/features/hotel/hooks/useWishList";
-import { useCreateReservation } from "@/features/hotel/hooks/useCreateReservation";
+import { useCreateReservation } from "@/features/reservation/hooks/useCreateReservation";
 import { addDays, format } from "date-fns";
-import { useHotelDetail } from "../features/hotel/hooks/useHotelDetail";
+import { useHotelDetail } from "../hooks/useHotelDetail";
 import { Spinner } from "@/common/component/Spinner";
-import { RoomSearchBar } from "../features/hotel/component/RoomSearchBar";
-import { HotelDetailInfo } from "../features/hotel/component/HotelDetailInfo";
-import { RoomCard } from "../features/hotel/component/RoomCard";
+import { RoomSearchBar } from "../component/RoomSearchBar";
+import { HotelDetailInfo } from "../component/HotelDetailInfo";
+import { RoomCard } from "../component/RoomCard";
+import { getErrorMessage } from "@/api/errorHelpers";
 
 export const HotelDetailPage = () => {
     const today = format(new Date(), 'yyyy-MM-dd')
@@ -46,7 +47,7 @@ export const HotelDetailPage = () => {
             return <NotFoundPage />
         }
 
-        toast.error("일시적인 오류가 발생했습니다")
+        toast.error(getErrorMessage(error))
         navigate("/")
         return null
     }

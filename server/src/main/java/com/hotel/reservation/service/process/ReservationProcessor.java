@@ -1,8 +1,9 @@
-package com.hotel.reservation.service;
+package com.hotel.reservation.service.process;
 
 import com.hotel.common.exception.CustomException;
 import com.hotel.common.exception.ErrorCode;
 import com.hotel.reservation.dto.ReservationRequest;
+import com.hotel.reservation.service.ReservationTransactionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;

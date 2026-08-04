@@ -1,4 +1,4 @@
-import type { AdminSettlementSearchResponse } from "@/type/admin"
+import type { AdminSettlementSearchResponse } from "@/api/types/admin"
 import { useState } from "react"
 import { Spinner } from "@/common/component/Spinner"
 import { ErrorMessage } from "@/common/component/ErrorMessage"

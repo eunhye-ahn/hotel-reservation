@@ -1,11 +1,11 @@
-import type { AccessTokenResponse, LoginRequest, SignUpRequest } from "@/type/auth";
+import type { AccessTokenResponse, LoginRequest, SignUpRequest } from "@/api/types/auth";
 import axios from "axios";
-import type { AddWishListResponse, AdminInventorySummaryResponse, CursorResponse, HotelDetailResponse, HotelListFilter, hotelResponse, MoveWishRequest, MoveWishResponse, Page, searchInventorySummaryRequest, SettlementHistoryResponse, WishCollectionsRequest, WishListCollectionResponse } from "@/type/hotel";
-import type { ReservationCreateResponse, ReservationDetailResponse, ReservationInfoResponse, ReservationRequest, ReservationResponse, RoomTypeReservationResponse } from "@/type/reservation";
-import type { UserInfoResponse } from "@/type/user";
+import type { AddWishListResponse, AdminInventorySummaryResponse, CursorResponse, HotelDetailResponse, HotelListFilter, hotelResponse, MoveWishRequest, MoveWishResponse, Page, searchInventorySummaryRequest, SettlementHistoryResponse, WishCollectionsRequest, WishListCollectionResponse } from "@/api/types/hotel";
+import type { ReservationCreateResponse, ReservationDetailResponse, ReservationInfoResponse, ReservationRequest, ReservationResponse, RoomTypeReservationResponse } from "@/api/types/reservation";
+import type { UserInfoResponse } from "./types/user";
 import { api } from "./axios";
-import type { PaymentConfirmRequest, PaymentConfirmResponse, PaymentPrepareResponse } from "@/type/payment";
-import type { AdminPaymentResponse, AdminPaymentSearchRequest, AdminReseervationSearchRequest, AdminReservationDetailResponse, AdminReservationSearchResponse, AdminRoomInfoResponse, AdminRoomResponse, AdminSettlementSearchRequest, AdminSettlementSearchResponse, AssignmentRoomRequest, CancelReservationByAdminRequest, DailyStatisticsResponse, DashBoardSummaryResponse, ExecuteSettlementRequest, PaymentStatusStaticResponse, ReserveStatusStaticResponse, RoomFilterOptionResponse, RoomTypeInventoryCalendarResponse, searchRoomInfoRequest, SettlementHistorySearchRequest, TopPendingBalanceHotel, UnassignRoomInfo } from "@/type/admin";
+import type { PaymentConfirmRequest, PaymentConfirmResponse, PaymentPrepareResponse } from "@/api/types/payment";
+import type { AdminPaymentResponse, AdminPaymentSearchRequest, AdminReseervationSearchRequest, AdminReservationDetailResponse, AdminReservationSearchResponse, AdminRoomInfoResponse, AdminRoomResponse, AdminSettlementSearchRequest, AdminSettlementSearchResponse, AssignmentRoomRequest, CancelReservationByAdminRequest, DailyStatisticsResponse, DashBoardSummaryResponse, ExecuteSettlementRequest, PaymentStatusStaticResponse, ReserveStatusStaticResponse, RoomFilterOptionResponse, RoomTypeInventoryCalendarResponse, searchRoomInfoRequest, SettlementHistorySearchRequest, TopPendingBalanceHotel, UnassignRoomInfo } from "@/api/types/admin";
 
 export const login = (request: LoginRequest) => {
     return api.post<AccessTokenResponse>("/auth/login", request);
@@ -98,9 +98,9 @@ export const getSearchAutocomplete = (q?: string) => {
     })
 }
 
-export const getSimilarHotel = (hotelId: number, page: number) => {
+export const getSimilarHotel = (hotelId: number) => {
     return api.get<Page<hotelResponse>>("/hotels/similarHotel", {
-        params: { hotelId, page }
+        params: { hotelId }
     })
 }
 

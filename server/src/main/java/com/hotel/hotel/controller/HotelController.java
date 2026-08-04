@@ -113,9 +113,8 @@ public class HotelController {
 
     //최근본 호텔 기준
     @GetMapping("/similarHotel")
-    public ResponseEntity<?> getSimilarHotel(@RequestParam(required = false, defaultValue = "0") int page,
-                                             @RequestParam(required = true) Long hotelId){
-        Page<HotelResponse> result = hotelService.getSimilarHotel(page, hotelId);
+    public ResponseEntity<List<HotelResponse>> getSimilarHotel(@RequestParam(required = true) Long hotelId){
+        List<HotelResponse> result = hotelService.getSimilarHotel(hotelId);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

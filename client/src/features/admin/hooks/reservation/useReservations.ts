@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { getReservations } from "@/api/api";
-import type { AdminReseervationSearchRequest } from "@/type/admin";
+import type { AdminReseervationSearchRequest } from "@/api/types/admin";
 import { adminReservationKeys } from "./adminReservationKeys";
 
 export const useReservations = (filter: AdminReseervationSearchRequest) => {

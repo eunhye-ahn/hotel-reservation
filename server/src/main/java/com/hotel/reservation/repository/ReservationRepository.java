@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Select;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDate;
@@ -56,4 +57,16 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long>,
             "WHERE r.createdAt >= :start AND r.createdAt < :end " +
             "GROUP BY r.reservationStatus")
     List<ReservationStatusCount> countByStatusMonth(@Param("start")LocalDateTime start, @Param("end")LocalDateTime end);
+
+    //예약 체크아웃처리
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE Reservation r " +
+            "SET r.reservationStatus = :newStatus " +
+            "WHERE r.reservationStatus = :oldStatus " +
+            "AND r.startDate < :today")
+    int markCompletedAfterCheckOut(
+            @Param("oldStatus") ReservationStatus oldStatus,
+            @Param("newStatus") ReservationStatus newStatus,
+            @Param("today") LocalDate today
+    );
 }

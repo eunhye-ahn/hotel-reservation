@@ -1,4 +1,4 @@
-import type { AdminReseervationSearchRequest } from "@/type/admin";
+import type { AdminReseervationSearchRequest } from "@/api/types/admin";
 
 export const adminReservationKeys = {
     all: ["admin-reservation"] as const,
@@ -9,5 +9,6 @@ export const adminReservationKeys = {
     details: () => [...adminReservationKeys.all, "detail"] as const,
     detail: (reservationId: number) => [...adminReservationKeys.details(), reservationId] as const,
 
-    rooms: (reservationId: number) => [...adminReservationKeys.all, "rooms", reservationId] as const
+    rooms: () => [...adminReservationKeys.all, "room"] as const,
+    room: (reservationId: number) => [...adminReservationKeys.all, "rooms", reservationId] as const
 }

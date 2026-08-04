@@ -1,4 +1,4 @@
-import type { AdminReseervationSearchRequest } from "@/type/admin";
+import type { AdminReseervationSearchRequest } from "@/api/types/admin";
 import { useState } from "react";
 
 export const useReservationsFilter = () => {

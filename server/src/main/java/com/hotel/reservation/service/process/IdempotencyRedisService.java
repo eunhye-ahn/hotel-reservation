@@ -1,4 +1,4 @@
-package com.hotel.reservation.service;
+package com.hotel.reservation.service.process;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hotel.reservation.dto.IdempotencyValue;

@@ -1,9 +1,13 @@
 import { createReservation } from "@/api/api";
-import type { HotelDetailResponse } from "@/type/hotel";
+import { getErrorCode, getErrorMessage } from "@/api/errorHelpers";
+import { reservationKeys } from "@/features/mypage/hooks/reservationKeys";
+import type { HotelDetailResponse } from "@/api/types/hotel";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRef } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
+import { hotelKeys } from "../../hotel/hooks/hotelkeys";
+import * as Sentry from "@sentry/react"
 
 interface UseReservationParams {
     hotelId?: string,
@@ -24,7 +28,7 @@ export const useCreateReservation = ({ hotelId, data, startDate, endDate, number
     const { mutate: createReservationMutate, isPending } = useMutation({
         mutationFn: createReservation,
         onSuccess: (res) => {
-            queryClient.invalidateQueries({ queryKey: ["myReservationList"] })
+            queryClient.invalidateQueries({ queryKey: reservationKeys.myLists() })
             const { reservationKey, orderId } = res.data;
             const roomType = data?.roomTypes.find(r => r.roomTypeId === selectedRoomTypeIdRef.current);
             navigate(`/reservations/${reservationKey}/reservation-info`, {
@@ -44,10 +48,25 @@ export const useCreateReservation = ({ hotelId, data, startDate, endDate, number
                 }
             });
         },
-        onError: (err: any) => {
-            console.log(err.response?.data ?? err)
-            toast.error("일시적인 오류가 발생했습니다")
-            navigate(`/hotels/${hotelId}`)
+        onError: (err) => {
+            const code = getErrorCode(err)
+            if (code === "RESERVATION_UNAVAILABLE") {
+                toast.info(getErrorMessage(err))
+                queryClient.invalidateQueries({
+                    queryKey: hotelKeys.detail({ hotelId, startDate, endDate, numberOfRooms, numberOfGuests })
+                })
+                return
+            }
+            if (code === "RESERVATION_CONFLICT") {
+                toast.error(getErrorMessage(err))
+                navigate(`/hotels/${hotelId}`)
+                return
+            }
+            if (code === "INVALID_DATE_RANGE" || code === "EXCEED_MAX_OCCUPANCY") {
+                Sentry.captureMessage(`[${code}] ${getErrorMessage(err)}`, "warning")
+                toast.error("입력값을 다시 확인해주세요")
+                return
+            }
         }
     })
 

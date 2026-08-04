@@ -9,6 +9,8 @@ import com.hotel.hotel.repository.RoomTypeInventoryRepository;
 import com.hotel.reservation.domain.*;
 import com.hotel.reservation.dto.*;
 import com.hotel.reservation.repository.*;
+import com.hotel.reservation.service.process.IdempotencyRedisService;
+import com.hotel.reservation.service.process.ReservationProcessor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

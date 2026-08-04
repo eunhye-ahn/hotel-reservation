@@ -3,7 +3,11 @@ import { useAuthStore } from "../store/useAuthStore";
 import { toast } from 'react-toastify';
 import { reissue } from "./api";
 import { jwtDecode } from "jwt-decode";
-import type { CustomJwtPayLoad } from "@/type/auth";
+import type { CustomJwtPayLoad } from "./types/auth";
+import { SentryNetworkError } from "./SentryNetworkError"
+import { getSeverityLevel } from "./CustomSeverityLevel";
+import * as Sentry from "@sentry/react"
+import { getErrorCode } from "./errorHelpers";
 
 export const api = axios.create({
     baseURL: "http://localhost:8080/api/v1",
@@ -16,7 +20,6 @@ export const api = axios.create({
  * config: 요청 설정 객체 - url, headers, method, data 등
  * error: 요청 설정 실패하면 에러처리 
  */
-
 api.interceptors.request.use(
     (config) => {
         const token = useAuthStore.getState().accessToken;
@@ -36,13 +39,18 @@ api.interceptors.response.use(
     (response) => response,
 
     async (error) => {
+
         if (!error.response) {
-            // 네트워크 에러 -> undefined일 경우 타입에러 방지
-            //토스트안줘도될려나?
+            toast.error("네트워크 연결을 확인해주세요")
             return Promise.reject(error);
         }
 
-        const status = error.response.status;
+        const status = error.response.status
+
+        if (status === 404) {
+            window.location.href = "/404"
+            return Promise.reject(error)
+        }
 
         if (status === 401 && !error.config._retry) {
             error.config._retry = true;
@@ -59,10 +67,16 @@ api.interceptors.response.use(
                 return Promise.reject(e);
             }
         }
+
         if (status === 403) {
             toast.error('접근 권한이 없습니다');
         }
-        if (status === 500) {
+
+        if (status >= 500) {
+            Sentry.withScope((scope) => {
+                scope.setLevel(getSeverityLevel(getErrorCode(error)))
+                Sentry.captureException(new SentryNetworkError(error))
+            })
             toast.error('일시적인 오류가 발생했습니다. 다시 시도해주세요');
         }
         return Promise.reject(error);

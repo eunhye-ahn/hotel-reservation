@@ -1,8 +1,9 @@
-import { getCollection } from "@/api/api";
+import { ErrorMessage } from "@/common/component/ErrorMessage";
+import { Spinner } from "@/common/component/Spinner";
 import { SearchFilterBar } from "@/features/hotel/component/SearchFilterBar";
-import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router"
+import { useWishCollectionDetail } from "../hooks/useWishCollectionDetail";
 
 export function WishListPage() {
     const { collectionId } = useParams();
@@ -23,17 +24,13 @@ export function WishListPage() {
     const numberOfGuests = Number(searchParams.get("numberOfGuests") ?? 3);
     const numberOfRooms = Number(searchParams.get("roomToReserve") ?? 1);
 
-
-    const { data, isLoading, isError } = useQuery({
-        queryKey: ["wishList"],
-        queryFn: () => getCollection(Number(collectionId)).then(res => {
-            console.log(res.data)
-            return res.data
-        })
+    const { data, isLoading, isError } = useWishCollectionDetail({
+        collectionId: Number(collectionId)
     })
 
-    if (isLoading) return <div>로딩 중...</div>
-    if (isError) return <div>에러가 발생했습니다</div>
+
+    if (isLoading) return <Spinner />
+    if (isError) return <ErrorMessage />
 
     return (
         <div>
