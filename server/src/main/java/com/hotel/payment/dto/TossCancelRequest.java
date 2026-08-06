@@ -1,10 +1,5 @@
 package com.hotel.payment.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
-public class TossCancelRequest {
-    private String cancelReason;
-}
+public record TossCancelRequest (
+    String cancelReason
+){}

@@ -1,6 +1,7 @@
 package com.hotel.admin.controller;
 
 import com.hotel.admin.dto.payment.AdminPaymentResponse;
+import com.hotel.admin.dto.payment.AdminPaymentSearchRequest;
 import com.hotel.admin.service.AdminPaymentService;
 import com.hotel.payment.domain.PaymentOrderStatus;
 import com.hotel.payment.domain.PaymentSearchType;
@@ -22,14 +23,16 @@ public class AdminPaymentController {
 
     //결제내역 조회
     @GetMapping
-    public ResponseEntity<Page<AdminPaymentResponse>> getPayments(@RequestParam(required = false) PaymentSearchType searchType,
-                                                                  @RequestParam(required = false) String keyword,
-                                                                  @RequestParam(required = false) LocalDate startDate,
-                                                                  @RequestParam(required = false) LocalDate endDate,
-                                                                  @RequestParam(required = false) PaymentOrderStatus status,
-                                                                  @RequestParam(required = false, defaultValue = "0")int page) {
-        Pageable pageable = PageRequest.of(page,10);
-        Page<AdminPaymentResponse> result = adminPaymentService.getPayments(searchType, keyword, startDate, endDate, status, pageable);
+    public ResponseEntity<Page<AdminPaymentResponse>> getPayments(@ModelAttribute AdminPaymentSearchRequest request) {
+        Pageable pageable = PageRequest.of(request.page(),10);
+        Page<AdminPaymentResponse> result = adminPaymentService.getPayments(
+                request.searchType(),
+                request.keyword(),
+                request.startDate(),
+                request.endDate(),
+                request.status(),
+                pageable
+        );
 
         return ResponseEntity
                 .status(HttpStatus.OK)

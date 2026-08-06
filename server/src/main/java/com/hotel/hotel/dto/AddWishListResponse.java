@@ -1,12 +1,20 @@
 package com.hotel.hotel.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
-@Getter
-@AllArgsConstructor
-public class AddWishListResponse {
-    private Long collectionId;
-    private String collectionName;
-    private String hotelImageUrl;
+import com.hotel.hotel.domain.WishCollection;
+import com.hotel.hotel.domain.WishList;
+
+public record AddWishListResponse (
+        Long collectionId,
+        String collectionName,
+        String hotelImageUrl
+){
+    public static AddWishListResponse from(WishCollection collection, WishList wishList){
+
+        return new  AddWishListResponse(
+                collection.getId(),
+                collection.getName(),
+                wishList.getHotel().getImageUrl()
+        );
+    }
 }

@@ -1,8 +1,5 @@
 package com.hotel.payment.dto;
 
-import lombok.Builder;
-import lombok.Getter;
-
 /**
  * [결제 준비 응답 DTO]
  *
@@ -14,12 +11,8 @@ import lombok.Getter;
  * → 클라이언트가 paymentOrderId를 orderId로 토스 SDK 호출
  * → 토스 외부 결제창 열림
  */
-@Getter
-@Builder
-public class PaymentPrepareResponse {
-    private String paymentOrderId;  // 토스 SDK orderId로 사용
-    private int amount;             // 결제 금액 검증용
-    private Long userId;            //customerKey: 고객식별자
-
-
-}
+public record PaymentPrepareResponse (
+    String paymentOrderId,  // 토스 SDK orderId로 사용
+     int amount,            // 결제 금액 검증용
+     Long userId            //customerKey: 고객식별자
+){}

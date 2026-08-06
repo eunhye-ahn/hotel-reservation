@@ -50,7 +50,6 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/admin/**").hasAuthority("ROLE_ADMIN")
 
                         //결제
-                        .requestMatchers("/api/v1/reservations/*/payment-info").permitAll()
                         .requestMatchers("/api/v1/reservations/*/status").permitAll()
                         .requestMatchers("/api/v1/payments/webhook").permitAll()
 

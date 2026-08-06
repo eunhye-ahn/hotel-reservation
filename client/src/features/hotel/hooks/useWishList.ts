@@ -6,10 +6,11 @@ import { hotelKeys } from "./hotelkeys";
 import { getErrorCode, getErrorMessage } from "@/api/errorHelpers";
 import { toast } from "react-toastify";
 import { wishCollectionKeys } from "@/features/mypage/hooks/wishCollectionKeys";
+import { useAuthStore } from "@/store/useAuthStore";
 
 //위시 조회 + 추가/취소 mutation
 export const useWishList = (hotelId?: number) => {
-
+    const { accessToken } = useAuthStore()
     const { open } = useWishModalStore()
 
     //상태
@@ -18,11 +19,11 @@ export const useWishList = (hotelId?: number) => {
 
     const isValidId = typeof hotelId === 'number' && !Number.isNaN(hotelId);
 
-    //위시여부확인 query => 호텔아이디 props
+    //위시여부확인
     const { data: hotelWishCheck } = useQuery<boolean>({
         queryKey: hotelKeys.wish(hotelId!),
         queryFn: () => getWishedChecked(Number(hotelId)).then((res) => res.data),
-        enabled: isValidId
+        enabled: isValidId && !!accessToken
     })
 
     //mutation 값 오면 상태변경 useEffect

@@ -46,7 +46,7 @@ export const LoginPage = () => {
                     {errors.email && <p className="text-xs text-red-500 mt-1 text-center">{errors.email.message}</p>}
                 </div>
                 <div>
-                    <label>password</label>
+                    <label className="block text-sm text-gray-500 mb-1">비밀번호</label>
                     <input type="password"
                         className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
                         {...register("password", { required: "비밀번호를 입력하세요" })} />
@@ -56,11 +56,11 @@ export const LoginPage = () => {
                 <button type="submit"
                     className="w-full mt-3 bg-gray-900 text-white rounded-lg py-2 font-medium cursor-pointer hover:bg-gray-800 disabled:opacity-40"
                     disabled={isPending}>
-                    {isPending ? "Loading..." : "Login"}
+                    {isPending ? "Loading..." : "로그인"}
                 </button>
                 <button type="button"
                     className="w-full mt-0.5 bg-gray-900 text-white rounded-lg py-2 font-medium cursor-pointer hover:bg-gray-800 disabled:opacity-40"
-                    onClick={() => navigate("/signup")}>SignUp</button>
+                    onClick={() => navigate("/signup")}>회원가입</button>
             </form>
         </div>
     )

@@ -41,12 +41,6 @@ export const HotelDetailPage = () => {
 
     if (isLoading) return <Spinner />
     if (isError) {
-        const { code } = (error as any).response.data;
-
-        if (code === "HOTEL_NOT_FOUND") {
-            return <NotFoundPage />
-        }
-
         toast.error(getErrorMessage(error))
         navigate("/")
         return null
@@ -74,6 +68,7 @@ export const HotelDetailPage = () => {
                     onWishClick={() => handleWish(data?.hotelId)}
                 />
                 <div className="font-bold text-lg mt-8 mb-4">객실선택</div>
+                {data?.roomTypes.length === 0 && <p>객실이 없습니다</p>}
                 {data?.roomTypes.map((roomType) => (
                     <RoomCard
                         roomTypeId={roomType.roomTypeId}

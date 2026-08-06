@@ -1,7 +1,7 @@
 package com.hotel.common.jwt;
 import com.hotel.common.exception.CustomException;
 import com.hotel.common.exception.ErrorCode;
-import com.hotel.reservation.service.process.RedisService;
+import com.hotel.common.idempotency.RedisService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

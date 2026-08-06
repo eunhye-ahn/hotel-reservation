@@ -1,10 +1,5 @@
 package com.hotel.payment.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
-public class TossWebhookResponse {
-    private final String reservationKey;
-}
+public record TossWebhookResponse (
+      String reservationKey
+){}

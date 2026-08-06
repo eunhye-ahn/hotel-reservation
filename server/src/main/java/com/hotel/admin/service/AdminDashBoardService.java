@@ -87,11 +87,11 @@ public class AdminDashBoardService {
         Pageable pageable = PageRequest.of(0, 5);
         return walletRepository.getTopPendingHotels(pageable)
                 .stream()
-                .map(w->TopPendingBalanceHotel.builder()
-                        .hotelId(w.getHotelId())
-                        .hotelName(w.getHotelName())
-                        .pendingBalance(w.getTotalPendingBalance())
-                        .build())
+                .map(w-> new TopPendingBalanceHotel(
+                        w.getHotelId(),
+                        w.getHotelName(),
+                        w.getTotalPendingBalance()
+                ))
                 .toList();
     }
 }

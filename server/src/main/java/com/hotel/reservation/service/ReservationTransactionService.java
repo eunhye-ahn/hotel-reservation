@@ -13,10 +13,10 @@ import com.hotel.hotel.repository.RoomTypeRepository;
 import com.hotel.reservation.domain.PaymentStatus;
 import com.hotel.reservation.domain.Reservation;
 import com.hotel.reservation.domain.ReservationStatus;
-import com.hotel.reservation.domain.User;
+import com.hotel.user.domain.User;
 import com.hotel.reservation.dto.ReservationRequest;
 import com.hotel.reservation.repository.ReservationRepository;
-import com.hotel.reservation.repository.UserRepository;
+import com.hotel.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,37 +42,37 @@ public class ReservationTransactionService {
     @Transactional
     public void createReservationInTransaction(ReservationRequest request, Long userId){
         //멱등키검사
-        if (reservationRepository.existsByReservationKey(request.getReservationKey())) {
+        if (reservationRepository.existsByReservationKey(request.reservationKey())) {
             return;
         }
 
         //엔티티조회-유효성검사
         Hotel hotel = hotelRepository
-                .findById(request.getHotelId())
+                .findById(request.hotelId())
                 .orElseThrow(() -> new CustomException(ErrorCode.HOTEL_NOT_FOUND));
-        RoomType roomType = roomTypeRepository.findById(request.getRoomTypeId())
+        RoomType roomType = roomTypeRepository.findById(request.roomTypeId())
                 .orElseThrow(() -> new CustomException(ErrorCode.ROOM_TYPE_NOT_FOUND));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         //예약날짜 서비스레벨 차단(외 @Valid 애플리케이션레벨 차단 / DB제약조건 DB레벨 차단)
-        if (!request.getStartDate().isBefore(request.getEndDate())) {
+        if (!request.startDate().isBefore(request.endDate())) {
             throw new CustomException(ErrorCode.INVALID_DATE_RANGE);
         }
         //최대인원수 검사
-        if (request.getNumberOfGuests() > roomType.getMaxOccupancy() * request.getNumberOfRooms()) {
+        if (request.numberOfGuests() > roomType.getMaxOccupancy() * request.numberOfRooms()) {
             throw new CustomException(ErrorCode.EXCEED_MAX_OCCUPANCY);
         }
 
         //기간합산 재고 조회
         List<RoomTypeInventory> inventories = roomTypeInventoryRepository
-                .findByRoomTypeIdAndDateBetween(roomType.getId(), request.getStartDate(), request.getEndDate().minusDays(1));
+                .findByRoomTypeIdAndDateBetween(roomType.getId(), request.startDate(), request.endDate().minusDays(1));
 
         //날짜별 요금조회
-        List<Rate> rates = rateRepository.findByRoomTypeIdAndDateBetween(request.getRoomTypeId(), request.getStartDate(), request.getEndDate().minusDays(1));
+        List<Rate> rates = rateRepository.findByRoomTypeIdAndDateBetween(request.roomTypeId(), request.startDate(), request.endDate().minusDays(1));
 
         //날짜수 검증 -요금누락검사
-        long expectedDays = ChronoUnit.DAYS.between(request.getStartDate(), request.getEndDate());
+        long expectedDays = ChronoUnit.DAYS.between(request.startDate(), request.endDate());
         if (rates.size() != expectedDays) {
             throw new CustomException(ErrorCode.RATE_NOT_FOUND);
         }
@@ -82,11 +82,11 @@ public class ReservationTransactionService {
 
         //가격계산
         int totalDemandRate = rates.stream().mapToInt(Rate::getDemandRate).sum();
-        int totalPrice = totalDemandRate * request.getNumberOfRooms();
+        int totalPrice = totalDemandRate * request.numberOfRooms();
 
         //재고 확인 및 차감
         for (RoomTypeInventory inventory : inventories) {
-            inventory.reserve(request.getNumberOfRooms());
+            inventory.reserve(request.numberOfRooms());
         }
 
         //orderId 생성 -분산트랜잭션(예약-결제) 식별키
@@ -95,15 +95,15 @@ public class ReservationTransactionService {
         //예약생성
         Reservation reservation = Reservation.builder()
                 .displayReservationNO(generateDisplayReservationNo())
-                .reservationKey(request.getReservationKey())
+                .reservationKey(request.reservationKey())
                 .orderId(orderId)
                 .hotel(hotel)
                 .roomType(roomType)
                 .user(user)
-                .startDate(request.getStartDate())
-                .endDate(request.getEndDate())
-                .numberOfRooms(request.getNumberOfRooms())
-                .numberOfGuests(request.getNumberOfGuests())
+                .startDate(request.startDate())
+                .endDate(request.endDate())
+                .numberOfRooms(request.numberOfRooms())
+                .numberOfGuests(request.numberOfGuests())
                 .totalPrice(totalPrice)
                 .paymentStatus(PaymentStatus.PENDING)
                 .reservationStatus(ReservationStatus.BEFORE_USE)

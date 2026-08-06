@@ -9,6 +9,7 @@ interface HotelDetailInfoProps {
 }
 
 export const HotelDetailInfo = ({ imageUrl, hotelName, address, isWished, onWishClick }: HotelDetailInfoProps) => {
+
     return (
         <div className="items-center gap-6">
             <img className="w-full h-[55vh] object-cover" src={imageUrl} />

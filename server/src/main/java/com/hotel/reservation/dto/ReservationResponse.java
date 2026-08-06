@@ -3,6 +3,7 @@ package com.hotel.reservation.dto;
 import com.hotel.reservation.domain.PaymentStatus;
 import com.hotel.reservation.domain.Reservation;
 import com.hotel.reservation.domain.ReservationStatus;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -12,6 +13,7 @@ import java.time.LocalTime;
 
 @Getter
 @Builder
+@AllArgsConstructor
 public class ReservationResponse {
     private String reservationKey;
     private String hotelName;

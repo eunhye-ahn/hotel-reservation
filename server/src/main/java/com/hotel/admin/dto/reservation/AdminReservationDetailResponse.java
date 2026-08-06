@@ -15,6 +15,7 @@ import java.time.LocalTime;
 @Builder
 public class AdminReservationDetailResponse {
     private Long reservationId;
+    private String displayReservationNO;
     private String reservationKey;
     private String username;
     private int numberOfGuests;
@@ -42,6 +43,7 @@ public class AdminReservationDetailResponse {
     public static AdminReservationDetailResponse from(Reservation reservation){
         return AdminReservationDetailResponse.builder()
                 .reservationId(reservation.getId())
+                .displayReservationNO(reservation.getDisplayReservationNO())
                 .reservationKey(reservation.getReservationKey())
                 .username(reservation.getUser().getName())
                 .numberOfGuests(reservation.getNumberOfGuests())

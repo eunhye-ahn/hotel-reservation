@@ -35,37 +35,6 @@ public class HotelController {
                 .body(result);
     }
 
-    //호텔생성 -staff,관리자
-    @PostMapping
-    public ResponseEntity<HotelCreateResponse> createHotel(@RequestBody HotelCreateRequest request){
-        HotelCreateResponse result = hotelService.addHotel(request);
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(result);
-    }
-
-    //호텔삭제 -staff,관리자
-    @DeleteMapping("/{hotelId}")
-    public ResponseEntity<Void> deleteHotel(@PathVariable Long hotelId){
-        hotelService.deleteHotel(hotelId);
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .build();
-    }
-
-    //호텔수정 -staff,관리자
-    @PutMapping("/{hotelId}")
-    public ResponseEntity<HotelUpdateResponse> updateHotel(@PathVariable Long hotelId,
-                                                           @RequestBody HotelUpdateRequest request){
-        HotelUpdateResponse result = hotelService.updateHotel(hotelId, request);
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(result);
-    }
-
     //홈 - 페이지네이션 (인기)
     @GetMapping
     public ResponseEntity<List<HotelResponse>> getPopularHotel(){

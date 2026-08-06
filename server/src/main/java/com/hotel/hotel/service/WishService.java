@@ -9,11 +9,9 @@ import com.hotel.hotel.dto.*;
 import com.hotel.hotel.repository.HotelRepository;
 import com.hotel.hotel.repository.WishCollectionRepository;
 import com.hotel.hotel.repository.WishListRepository;
-import com.hotel.reservation.domain.User;
-import com.hotel.reservation.repository.UserRepository;
+import com.hotel.user.domain.User;
+import com.hotel.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,14 +34,7 @@ public class WishService {
         return collections.stream()
                 .map(collection -> {
                     List<WishList> wishLists = wishListRepository.findByWishCollectionId(collection.getId());
-                    return WishListCollectionResponse.builder()
-                            .collectionId(collection.getId())
-                            .name(collection.getName())
-                            .items(wishLists.stream()
-                                    .map(WishListResponse::from)
-                                    .toList()
-                            )
-                            .build();
+                    return WishListCollectionResponse.from(collection, wishLists);
                 })
                 .toList();
     }
@@ -91,7 +82,7 @@ public class WishService {
 
         WishList wishList = wishListRepository.save(new WishList(wishCollection, hotel));
 
-        return new AddWishListResponse(wishCollection.getId(), wishCollection.getName(), wishList.getHotel().getImageUrl());
+        return AddWishListResponse.from(wishCollection, wishList);
     }
 
     //그룹 상세조회
@@ -126,6 +117,15 @@ public class WishService {
             wishListRepository.findByWishCollectionIdAndHotelId(collection.getId(),hotelId)
                     .ifPresent(list-> wishListRepository.delete(list));
         }
+    }
+
+    //콜렉션 삭제
+    @Transactional
+    public void deleteCollection(Long collectionId){
+        WishCollection collection = wishCollectionRepository.findById(collectionId)
+                        .orElseThrow(()->new CustomException(ErrorCode.COLLECTION_NOT_FOUND));
+        wishListRepository.deleteByWishCollection(collection);
+        wishCollectionRepository.deleteById(collectionId);
     }
 
     //위시상태 조회

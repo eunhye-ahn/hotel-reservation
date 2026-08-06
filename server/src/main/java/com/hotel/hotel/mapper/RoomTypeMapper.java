@@ -1,6 +1,5 @@
 package com.hotel.hotel.mapper;
 
-import com.hotel.cart.dto.CartRoomTypeParam;
 import com.hotel.hotel.dto.RoomTypeInventoryParam;
 import com.hotel.hotel.dto.RoomTypeResponse;
 import org.apache.ibatis.annotations.Mapper;

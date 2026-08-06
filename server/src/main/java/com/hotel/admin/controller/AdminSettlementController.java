@@ -1,6 +1,8 @@
 package com.hotel.admin.controller;
 
 import com.hotel.admin.dto.payment.AdminSettlementSearchResponse;
+import com.hotel.admin.dto.settlement.AdminSettlementByHotelSearchRequest;
+import com.hotel.admin.dto.settlement.AdminSettlementSearchRequest;
 import com.hotel.admin.dto.settlement.ExecuteSettlementRequest;
 import com.hotel.admin.dto.settlement.SettlementHistoryResponse;
 import com.hotel.admin.service.AdminSettlementService;
@@ -27,7 +29,7 @@ public class AdminSettlementController {
     @PostMapping("/{hotelId}/execute")
     public ResponseEntity<Void> executeSettlementByAdmin(@PathVariable Long hotelId,
                                                          @RequestBody ExecuteSettlementRequest request){
-        adminSettlementService.executeSettlementByAdmin(hotelId, request.getPeriodStart(), request.getPeriodEnd());
+        adminSettlementService.executeSettlementByAdmin(hotelId, request.periodStart(), request.periodEnd());
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -36,13 +38,15 @@ public class AdminSettlementController {
 
     //전체 호텔 정산내역 조회
     @GetMapping
-public ResponseEntity<Page<AdminSettlementSearchResponse>> getSettlements(@RequestParam(required = false) SettlementSearchType searchType,
-                                                                              @RequestParam(required = false) String keyword,
-                                                                              @RequestParam(required = false)Boolean hasPendingBalance,
-                                                                              @RequestParam(required = false) SettlementSortType sortType,
-                                                                              @RequestParam(required = false,defaultValue = "0")int page){
-        Pageable pageable = PageRequest.of(page,10);
-        Page<AdminSettlementSearchResponse> result = adminSettlementService.getSettlements(searchType, keyword, hasPendingBalance,sortType, pageable);
+public ResponseEntity<Page<AdminSettlementSearchResponse>> getSettlements(@ModelAttribute AdminSettlementSearchRequest request){
+        Pageable pageable = PageRequest.of(request.page(),10);
+        Page<AdminSettlementSearchResponse> result = adminSettlementService.getSettlements(
+                request.searchType(),
+                request.keyword(),
+                request.hasPendingBalance(),
+                request.sortType(),
+                pageable
+        );
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -62,15 +66,16 @@ public ResponseEntity<Page<AdminSettlementSearchResponse>> getSettlements(@Reque
 
     //특정 호텔 정산이력 조회
     @GetMapping("{hotelId}/list")
-    public ResponseEntity<Page<SettlementHistoryResponse>> getSettlementByHotel(@PathVariable Long hotelId,
-                                                                                @RequestParam(required = false)LocalDate startDate,
-                                                                                @RequestParam(required = false)LocalDate endDate,
-                                                                                @RequestParam(required = false) SettlementStatus status,
+    public ResponseEntity<Page<SettlementHistoryResponse>> getSettlementByHotel(@ModelAttribute AdminSettlementByHotelSearchRequest request){
+        Pageable pageable =  PageRequest.of(request.page(),10);
 
-                                                                                @RequestParam(required = false,defaultValue = "0")int page){
-        Pageable pageable =  PageRequest.of(page,10);
-
-        Page<SettlementHistoryResponse> result = adminSettlementService.getSettlementByHotel(hotelId, startDate, endDate, status, pageable);
+        Page<SettlementHistoryResponse> result = adminSettlementService.getSettlementByHotel(
+                request.hotelId(),
+                request.startDate(),
+                request.endDate(),
+                request.status(),
+                pageable
+        );
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(result);

@@ -5,6 +5,7 @@ import com.hotel.common.exception.ErrorCode;
 import com.hotel.hotel.domain.Hotel;
 import com.hotel.hotel.domain.Room;
 import com.hotel.hotel.domain.RoomType;
+import com.hotel.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

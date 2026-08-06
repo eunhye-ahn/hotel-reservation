@@ -5,14 +5,12 @@ import lombok.Getter;
 
 import java.time.LocalDate;
 
-@Getter
-@Builder
-public class RoomTypeInventoryParam {
-    private Long hotelId;
-    private LocalDate today;
-    private LocalDate startDate;
-    private LocalDate endDate;
-    private Integer totalDays;
-    private Integer numberOfRooms;
-    private Integer numberOfGuests;
-}
+public record RoomTypeInventoryParam (
+        Long hotelId,
+        LocalDate today,
+        LocalDate startDate,
+        LocalDate endDate,
+        Integer totalDays,
+        Integer numberOfRooms,
+        Integer numberOfGuests
+){ }

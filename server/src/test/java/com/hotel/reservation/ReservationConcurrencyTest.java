@@ -61,16 +61,15 @@ public class ReservationConcurrencyTest {
         for(int i=0;i<threadCount;i++){
             executor.submit(()->{
                 try{
-                    ReservationRequest request = ReservationRequest
-                            .builder()
-                            .reservationKey(UUID.randomUUID().toString())   //각 요청마다 다른키
-                            .hotelId(1L)
-                            .roomTypeId(1L)
-                            .startDate(LocalDate.now())
-                            .endDate(LocalDate.now().plusDays(1))
-                            .numberOfRooms(2)
-                            .numberOfGuests(2)
-                            .build();
+                    ReservationRequest request = new ReservationRequest(
+                            UUID.randomUUID().toString(),   //각 요청마다 다른키
+                            1L,
+                            1L,
+                            LocalDate.now(),
+                            LocalDate.now().plusDays(1),
+                            2,
+                            2
+                    );
 
                     reservationProcessor.processWithRetry(request, 1L);
                 }catch(Exception e){

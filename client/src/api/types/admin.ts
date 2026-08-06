@@ -23,6 +23,7 @@ export interface AdminReseervationSearchRequest {
 }
 
 export interface AdminReservationDetailResponse {
+    displayReservationNO: number,
     reservationKey: string,
     username: string,
     numberOfGuests: number,

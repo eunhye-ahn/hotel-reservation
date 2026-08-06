@@ -4,7 +4,7 @@ import { useRecentHotelStore } from "@/store/useRecentHotelStore";
 import { HotelCard } from "./HotelCard";
 
 interface HotelCardListProps {
-    data: Page<hotelResponse> | undefined,
+    data: hotelResponse[] | Page<hotelResponse> | undefined,
     onRemove?: (hotelId: number) => void
 }
 
@@ -12,11 +12,17 @@ export const HotelCardList = ({ data, onRemove }: HotelCardListProps) => {
     const navigate = useNavigate();
     const { saveRecentHotel } = useRecentHotelStore();
 
+    const hotels = data
+        ? Array.isArray(data)
+            ? data
+            : data.content
+        : []
+
     return (
         <div className="page-container">
-            {data?.content.length === 0 && <p>호텔이 없습니다</p>}
+            {hotels?.length === 0 && <p>호텔이 없습니다</p>}
             <div className="grid grid-cols-4 gap-2">
-                {data?.content.map((hotel) => (
+                {hotels?.map((hotel) => (
                     <HotelCard
                         key={hotel.hotelId}
                         hotel={hotel}

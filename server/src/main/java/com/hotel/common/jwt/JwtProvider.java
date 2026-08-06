@@ -2,7 +2,7 @@ package com.hotel.common.jwt;
 
 import com.hotel.common.exception.CustomException;
 import com.hotel.common.exception.ErrorCode;
-import com.hotel.reservation.domain.Role;
+import com.hotel.user.domain.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;

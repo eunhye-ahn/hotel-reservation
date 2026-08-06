@@ -13,7 +13,7 @@ import org.springframework.util.StringUtils;
 
 //static 선언
 import static com.hotel.reservation.domain.QReservation.reservation;
-import static com.hotel.reservation.domain.QUser.user;
+import static com.hotel.user.domain.QUser.user;
 import static com.hotel.hotel.domain.QHotel.hotel;
 
 import java.time.LocalDate;

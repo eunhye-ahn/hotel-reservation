@@ -3,7 +3,6 @@ package com.hotel.reservation.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.hotel.reservation.domain.PaymentStatus;
 import com.hotel.reservation.domain.Reservation;
-import com.hotel.reservation.domain.ReservationStatus;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -30,7 +29,6 @@ public class ReservationDetailResponse {
     private String roomTypeImageUrl;
     private  String hotelImageUrl;
 
-    //reservation -> dto변환
     public static ReservationDetailResponse from(Reservation reservation){
         return ReservationDetailResponse.builder()
                 .reservationKey(reservation.getReservationKey())

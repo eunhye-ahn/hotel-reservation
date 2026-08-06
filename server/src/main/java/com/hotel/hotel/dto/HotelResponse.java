@@ -2,24 +2,44 @@ package com.hotel.hotel.dto;
 
 import com.hotel.hotel.domain.Hotel;
 import com.hotel.hotel.domain.Rate;
-import lombok.Builder;
-import lombok.Getter;
-
 import java.time.LocalTime;
 
-@Getter
-@Builder
-public class HotelResponse {
-    private Long hotelId;
-    private String name;
-    private Integer maxRate;
-    private Integer demandRate; //최저가
-    private Integer discountRate;
-    private LocalTime checkInTime;
-    private String address;
-    private String imageUrl;
+public record HotelResponse (
+        Long hotelId,
+        String name,
+        Integer maxRate,
+        Integer demandRate,
+        Integer discountRate,
+        LocalTime checkInTime,
+        String address,
+        String imageUrl
+){
+    public static HotelResponse from(Hotel hotel, Rate cheapestRate){
+        return new HotelResponse(
+                hotel.getId(),
+                hotel.getName(),
+                cheapestRate != null ? cheapestRate.getMaxRate() : null,
+                cheapestRate != null ? cheapestRate.getDemandRate() : null,
+                cheapestRate != null ? cheapestRate.calculateDiscountRate() : null,
+                hotel.getCheckInTime(),
+                hotel.getAddress(),
+                hotel.getImageUrl()
+        );
+    }
 
-    //정적팩토리메서드
+    public static HotelResponse from(Hotel hotel, CheapestRateResult cheapestRate) {
+        return new HotelResponse(
+                hotel.getId(),
+                hotel.getName(),
+                cheapestRate != null ? cheapestRate.totalMaxRate() : null,
+                cheapestRate != null ? cheapestRate.totalDemandRate() : null,
+                cheapestRate != null ? cheapestRate.calculateDiscountRate() : null,
+                hotel.getCheckInTime(),
+                hotel.getAddress(),
+                hotel.getImageUrl()
+      );
+    }
+}
     /**
      * 호텔 목록 조회 응답 dto
      *
@@ -33,32 +53,4 @@ public class HotelResponse {
      *
      *
      * 정적 메서드 -> 객체없는 상태에서 객체생성할때
-     */
-    public static HotelResponse from(Hotel hotel, Rate cheapestRate){
-
-        return HotelResponse.builder()
-                .hotelId(hotel.getId())
-                .name(hotel.getName())
-                .maxRate(cheapestRate != null ? cheapestRate.getMaxRate() : null)
-                .demandRate(cheapestRate != null ? cheapestRate.getDemandRate() : null)
-                .discountRate(cheapestRate != null ? cheapestRate.calculateDiscountRate() : null)
-                .checkInTime(hotel.getCheckInTime())
-                .address(hotel.getAddress())
-                .imageUrl(hotel.getImageUrl())
-                .build();
-    }
-
-    public static HotelResponse from(Hotel hotel, CheapestRateResult cheapestRate) {
-        return HotelResponse.builder()
-                .hotelId(hotel.getId())
-                .name(hotel.getName())
-                .maxRate(cheapestRate != null ? cheapestRate.getTotalMaxRate() : null)
-                .demandRate(cheapestRate != null ? cheapestRate.getTotalDemandRate() : null)
-                .discountRate(cheapestRate != null ? cheapestRate.calculateDiscountRate() : null)
-                .checkInTime(hotel.getCheckInTime())
-                .address(hotel.getAddress())
-                .imageUrl(hotel.getImageUrl())
-                .build();
-    }
-
-}
+*/

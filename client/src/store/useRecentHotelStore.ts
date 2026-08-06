@@ -27,10 +27,10 @@ export const useRecentHotelStore = create<RecentHotelState>()(
         (set, get) => ({
             recentHotels: [],
 
-            //중복제거+맨앞에 추가+최대10개
+            //중복제거+맨앞에 추가+최대8개
             saveRecentHotel: (hotel) => {
                 const filtered = get().recentHotels.filter(h => h.hotelId !== hotel.hotelId)
-                const updated = [hotel, ...filtered].slice(0, 10)
+                const updated = [hotel, ...filtered].slice(0, 8)
                 set({ recentHotels: updated })
             },
 

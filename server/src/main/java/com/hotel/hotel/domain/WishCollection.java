@@ -1,10 +1,8 @@
 package com.hotel.hotel.domain;
 
 import com.hotel.common.domain.BaseTime;
-import com.hotel.reservation.domain.User;
+import com.hotel.user.domain.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

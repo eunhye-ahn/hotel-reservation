@@ -152,6 +152,11 @@ export const confirmPayment = (request: PaymentConfirmRequest) => {
 }
 
 
+export const deleteCollection = (collectionId: number) => {
+    return api.delete<void>("/wish/collection/delete", {
+        params: { collectionId }
+    })
+}
 
 
 //============관리자

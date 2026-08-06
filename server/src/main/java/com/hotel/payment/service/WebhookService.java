@@ -33,14 +33,14 @@ public class WebhookService {
     public TossWebhookResponse handleWebhook(TossWebhookRequest request){
 
         //payment_status_changed 이벤트만 처리
-        if(!request.getEventType().equals("PAYMENT_STATUS_CHANGED")){
-            log.info("not wanted event type : {}", request.getEventType());
+        if(!request.eventType().equals("PAYMENT_STATUS_CHANGED")){
+            log.info("not wanted event type : {}", request.eventType());
             return null;
         }
 
-        String orderId = request.getData().getOrderId();
-        String status = request.getData().getStatus();
-        String paymentKey = request.getData().getPaymentKey();
+        String orderId = request.data().orderId();
+        String status = request.data().status();
+        String paymentKey = request.data().paymentKey();
 
         PaymentOrder paymentOrder = paymentOrderRepository.findById(orderId)
                 .orElseThrow(()-> new CustomException(ErrorCode.PAYMENT_NOT_FOUND));
@@ -57,13 +57,13 @@ public class WebhookService {
         switch (status){
             case "DONE" -> {
                 paymentProcessService.processDone(orderId, paymentKey, paymentOrder, paymentEvent);
-                log.info("payment completed processed- orderId : {}", request.getData().getOrderId());
+                log.info("payment completed processed- orderId : {}", request.data().orderId());
             }
             case "CANCELED", "ABORTED", "EXPIRED", "PARTIAL_CANCELED" -> {
                 //결제실패처리 -> 상태만 변경하므로 트랜잭션분리X
                 paymentOrder.fail();
                 paymentOrderRepository.save(paymentOrder);
-                log.info("payment failed processed- orderId : {}", request.getData().getOrderId());
+                log.info("payment failed processed- orderId : {}", request.data().orderId());
             }
             default -> log.warn("unknown payment status : {}", status);
         }
@@ -72,7 +72,7 @@ public class WebhookService {
 
     @Recover
     public TossWebhookResponse recover(DataAccessException e, TossWebhookRequest request){
-        log.error("웹훅 처리 재시도 모두 실패 - orderId: {}", request.getData().getOrderId(), e);
+        log.error("웹훅 처리 재시도 모두 실패 - orderId: {}", request.data().orderId(), e);
         // 실패기록 테이블 저장
         throw new CustomException(ErrorCode.PAYMENT_PROCESSING_FAILED);
     }

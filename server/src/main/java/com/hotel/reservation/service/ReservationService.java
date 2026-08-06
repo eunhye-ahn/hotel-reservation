@@ -4,13 +4,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.hotel.common.exception.CustomException;
 import com.hotel.common.exception.ErrorCode;
+import com.hotel.common.idempotency.IdempotencyValue;
 import com.hotel.hotel.domain.RoomTypeInventory;
 import com.hotel.hotel.repository.RoomTypeInventoryRepository;
 import com.hotel.reservation.domain.*;
 import com.hotel.reservation.dto.*;
 import com.hotel.reservation.repository.*;
-import com.hotel.reservation.service.process.IdempotencyRedisService;
+import com.hotel.common.idempotency.IdempotencyRedisService;
 import com.hotel.reservation.service.process.ReservationProcessor;
+import com.hotel.user.domain.User;
+import com.hotel.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -39,15 +42,15 @@ public class ReservationService {
 
         //2.redis선점시도
         boolean isFirst = idempotencyRedisService.tryProcessing(
-                request.getReservationKey(), userId, requestHash
+                request.reservationKey(), userId, requestHash
         );
 
         //3.중복요청이면 이전 요청으로 처리
         if (!isFirst) {
-            handleDuplicate(request.getReservationKey(), userId, requestHash);
+            handleDuplicate(request.reservationKey(), userId, requestHash);
             return new ReservationCreateResponse(
-                    request.getReservationKey(),
-                    reservationRepository.findByReservationKey(request.getReservationKey())
+                    request.reservationKey(),
+                    reservationRepository.findByReservationKey(request.reservationKey())
                             .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND))
                             .getOrderId()
             );
@@ -56,15 +59,15 @@ public class ReservationService {
         //4.새요청이면 예약처리(여기서 엔티티유효성검사 등하고 response 반환)
         try {
             reservationProcessor.processWithRetry(request, userId);
-            idempotencyRedisService.complete(request.getReservationKey());
+            idempotencyRedisService.complete(request.reservationKey());
             return new ReservationCreateResponse(
-                    request.getReservationKey(),
-                    reservationRepository.findByReservationKey(request.getReservationKey())
+                    request.reservationKey(),
+                    reservationRepository.findByReservationKey(request.reservationKey())
                             .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND))
                             .getOrderId()
             );
         } catch (Exception e) {
-            idempotencyRedisService.fail(request.getReservationKey());
+            idempotencyRedisService.fail(request.reservationKey());
             throw e;
         }
     }
@@ -176,21 +179,6 @@ public class ReservationService {
         }
 
         //completed면 정상 반환 -> status를 enum으로 관리하면 코드가독성 좋아짐
-    }
-
-    //예약서비스 -> 결제서비스에 줄 데이터 담기
-    public ReservationFeignResponse getReservationForPayment(String reservationKey) {
-        Reservation reservation = reservationRepository.findByReservationKey(reservationKey)
-                .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
-
-        return ReservationFeignResponse.builder()
-                .reservationId(reservation.getId())
-                .reservationKey(reservationKey)
-                .paymentStatus(reservation.getPaymentStatus().toString())
-                .amount(reservation.getTotalPrice())
-                .sellerAccount(reservation.getHotel().getSellerAccount())
-                .userId(reservation.getUser().getId())
-                .build();
     }
 
     //예약상태확인

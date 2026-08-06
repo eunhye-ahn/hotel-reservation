@@ -1,25 +1,21 @@
 package com.hotel.hotel.dto;
 
 import com.hotel.hotel.domain.Room;
-import lombok.Builder;
-import lombok.Getter;
 
-@Getter
-@Builder
-public class RoomInfoResponse {
-    private Long roomId;
-    private String roomName;
-    private int floor;
-    private int number;
-    private boolean usable;
-
+public record RoomInfoResponse (
+        Long roomId,
+        String roomName,
+        int floor,
+        int number,
+        boolean usable
+){
     public static RoomInfoResponse from(Room room){
-        return RoomInfoResponse.builder()
-                .roomId(room.getId())
-                .roomName(room.getName())
-                .floor(room.getFloor())
-                .number(room.getNumber())
-                .usable(room.isUsable())
-                .build();
+        return new RoomInfoResponse(
+                room.getId(),
+                room.getName(),
+                room.getFloor(),
+                room.getNumber(),
+                room.isUsable()
+        );
     }
 }

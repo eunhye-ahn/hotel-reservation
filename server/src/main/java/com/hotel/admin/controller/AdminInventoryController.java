@@ -1,10 +1,7 @@
 package com.hotel.admin.controller;
 
 
-import com.hotel.admin.dto.inventory.AdminInventorySummaryResponse;
-import com.hotel.admin.dto.inventory.AdminRoomInfoResponse;
-import com.hotel.admin.dto.inventory.RoomFilterOptionResponse;
-import com.hotel.admin.dto.inventory.RoomTypeInventoryCalendarResponse;
+import com.hotel.admin.dto.inventory.*;
 import com.hotel.admin.service.AdminInventoryService;
 import com.hotel.hotel.domain.RoomTypeInventorySortType;
 import lombok.RequiredArgsConstructor;
@@ -25,14 +22,15 @@ public class AdminInventoryController {
     private final AdminInventoryService adminInventoryService;
     @GetMapping
     public ResponseEntity<Page<AdminInventorySummaryResponse>> searchInventorySummary(
-            @RequestParam(required = false) LocalDate date,
-            @RequestParam(required = false) String hotelName,
-            @RequestParam(required = false)RoomTypeInventorySortType sortType,
-            @RequestParam(required = false,defaultValue = "0") int page
-            ){
-        Pageable pageable = PageRequest.of(page, 10);
+            @ModelAttribute InventorySearchRequest request){
+        Pageable pageable = PageRequest.of(request.page(), 10);
 
-        Page<AdminInventorySummaryResponse> result = adminInventoryService.searchInventorySummary(date, hotelName, sortType, pageable);
+        Page<AdminInventorySummaryResponse> result = adminInventoryService.searchInventorySummary(
+                request.date(),
+                request.hotelName(),
+                request.sortType(),
+                pageable
+        );
 
         return ResponseEntity
                 .status(HttpStatus.OK)

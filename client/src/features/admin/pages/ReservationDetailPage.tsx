@@ -25,7 +25,7 @@ export const ReservationDetail = () => {
             <div className="flex items-baseline gap-2 mb-6">
                 <h1 className="text-xl font-bold">예약 상세</h1>
                 <span className="text-sm text-gray-400">
-                    예약번호 {data?.reservationKey}
+                    예약번호 {data?.displayReservationNO}
                 </span>
             </div>
 
@@ -144,7 +144,7 @@ export const ReservationDetail = () => {
                 </div>
             </div>
             {/* 객실 배정 */}
-            {showAssignForm &&
+            {showAssignForm && data?.roomAssigned &&
                 <RoomAssignmentForm reservationId={reservationId} />
             }
         </div>

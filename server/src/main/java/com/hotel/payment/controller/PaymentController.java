@@ -24,7 +24,7 @@ public class PaymentController {
             @RequestBody PaymentPrepareRequest request,
             HttpServletRequest httpRequest
     ){
-        PaymentPrepareResponse result = paymentService.preparePayment(reservationKey,request.getOrderId(), httpRequest);
+        PaymentPrepareResponse result = paymentService.preparePayment(reservationKey,request.orderId(), httpRequest);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

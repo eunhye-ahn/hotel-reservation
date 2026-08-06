@@ -85,11 +85,11 @@ public class PaymentService {
         if(existingEvent.isPresent()){
             PaymentOrder existingOrder = paymentOrderRepository.findByCheckoutId(existingEvent.get().getCheckoutId())
                     .orElseThrow();
-            return PaymentPrepareResponse.builder()
-                    .paymentOrderId(existingOrder.getPaymentOrderId())
-                    .amount(existingOrder.getAmount())
-                    .userId(reservation.getUser().getId())
-                    .build();
+            return new PaymentPrepareResponse(
+                    existingOrder.getPaymentOrderId(),
+                    existingOrder.getAmount(),
+                    reservation.getUser().getId()
+            );
         }
 
         //checkoutId 가져오기 (클라-서버 멱등키)
@@ -126,18 +126,18 @@ public class PaymentService {
         paymentOrderRepository.save(paymentOrder);
 
         //paymentOrderId, amount 반환
-        return PaymentPrepareResponse
-                .builder()
-                .paymentOrderId(paymentOrderId)
-                .amount(reservation.getTotalPrice())
-                .build();
+        return new PaymentPrepareResponse(
+                paymentOrderId,
+                reservation.getTotalPrice(),
+                reservation.getUser().getId()
+        );
     }
 
     //결제승인
     @Transactional
     public PaymentConfirmResponse confirmPayment(PaymentConfirmRequest request){
         //도메인검사
-        PaymentOrder paymentOrder = paymentOrderRepository.findById(request.getOrderId())
+        PaymentOrder paymentOrder = paymentOrderRepository.findById(request.orderId())
                 .orElseThrow(()-> new CustomException(ErrorCode.PAYMENT_NOT_FOUND));
         if(!paymentOrder.getPaymentOrderStatus().equals(PaymentOrderStatus.NOT_STARTED)){
             throw new CustomException(ErrorCode.PAYMENT_ALREADY_PROCESSED);
@@ -145,14 +145,14 @@ public class PaymentService {
 
         //금액위변조 감지
         //db에 저장된 amount와 클라이언트가 보낸 amount 비교
-        if(paymentOrder.getAmount() != request.getAmount()){
+        if(paymentOrder.getAmount() != request.amount()){
             throw new CustomException(ErrorCode.PAYMENT_AMOUNT_MISMATCH);
         }
 
         //토스 승인 API 호출
         tossPaymentClient.confirm(
                 getAuthorizationHeader(),
-                new TossConfirmRequest(request.getPaymentKey(), request.getOrderId(), request.getAmount())
+                new TossConfirmRequest(request.paymentKey(), request.orderId(), request.amount())
         );
 
         PaymentEvent paymentEvent = paymentEventRepository

@@ -23,15 +23,17 @@ public class AdminReservationController {
 
     //예약 조회 (필터)
     @GetMapping
-    public ResponseEntity<Page<AdminReservationSearchResponse>> getReservations(@RequestParam(required = false)LocalDate startDate,
-                                                                                @RequestParam(required = false)LocalDate endDate,
-                                                                                @RequestParam(required = false)ReservationSearchType searchType,
-                                                                                @RequestParam(required = false)String keyword,
-                                                                                @RequestParam(required = false)ReservationStatus status,
-                                                                                @RequestParam(required = false) Boolean roomAssigned,
-                                                                                @RequestParam(required = false, defaultValue = "0")int page){
-        Pageable pageable = PageRequest.of(page,10);
-        Page<AdminReservationSearchResponse> result = adminReservationService.getReservations(startDate, endDate, searchType, keyword, status, roomAssigned, pageable);
+    public ResponseEntity<Page<AdminReservationSearchResponse>> getReservations(@ModelAttribute AdminReservationSearchRequest request){
+        Pageable pageable = PageRequest.of(request.page(),10);
+        Page<AdminReservationSearchResponse> result = adminReservationService.getReservations(
+                request.startDate(),
+                request.endDate(),
+                request.searchType(),
+                request.keyword(),
+                request.status(),
+                request.roomAssigned(),
+                pageable
+        );
 
         return ResponseEntity
                 .status(HttpStatus.OK)

@@ -54,7 +54,8 @@ export interface WishListResponse {
     wishListItemId: number,
     hotelName: string,
     hotelImageUrl: string,
-    hotelAddress: string
+    hotelAddress: string,
+    hotelId: number
 }
 
 export interface WishListCollectionResponse {

@@ -87,17 +87,6 @@ public class ReservationController {
                 .build();
     }
 
-    /**
-     * 결제서버에서 예약 유효성 확인할 때 호출
-     */
-    @GetMapping("/{reservationKey}/payment-info")
-    public ResponseEntity<ReservationFeignResponse> getReservationForPayment(@PathVariable String reservationKey){
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(reservationService.getReservationForPayment(reservationKey)
-        );
-    }
-
     //[폴링용] 결제 후 예약상태 확정 확인을 위해
     @GetMapping("/{reservationKey}/status")
     public ResponseEntity<String> getReservationStatus(@PathVariable String reservationKey){

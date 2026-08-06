@@ -1,19 +1,16 @@
 package com.hotel.payment.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Getter;
 
-@Getter
-public class TossWebhookRequest {
-    private String eventType;
-    private String createdAt;
-    private WebhookData data;
-
-    @Getter
+public record TossWebhookRequest (
+     String eventType,
+     String createdAt,
+     WebhookData data
+){
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class WebhookData {
-        private String paymentKey;
-        private String orderId;
-        private String status;
-    }
+    public record WebhookData (
+         String paymentKey,
+         String orderId,
+         String status
+    ){}
 }

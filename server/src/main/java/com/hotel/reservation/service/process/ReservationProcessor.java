@@ -26,7 +26,7 @@ public class ReservationProcessor {
             backoff = @Backoff(delay = 100)
     )
     public void processWithRetry(ReservationRequest request, Long userId) {
-        log.info("processor retry - reservationKey: {}", request.getReservationKey());
+        log.info("processor retry - reservationKey: {}", request.reservationKey());
         reservationTransactionService.createReservationInTransaction(request, userId);
     }
 
@@ -34,14 +34,14 @@ public class ReservationProcessor {
     public void recover(ObjectOptimisticLockingFailureException e,
                         ReservationRequest request, Long userId){
         log.error("예약 재시도 모두 실패 - reservationKey: {}",
-                request.getReservationKey());
+                request.reservationKey());
         throw new CustomException(ErrorCode.RESERVATION_CONFLICT);
     }
 
     @Recover
     public void recover(CustomException e,
                         ReservationRequest request, Long userId) {
-        log.info("예약 불가 - reservationKey: {}, 사유: {}", request.getReservationKey(), e.getMessage());
+        log.info("예약 불가 - reservationKey: {}, 사유: {}", request.reservationKey(), e.getMessage());
         throw e; // 원래 예외(재고부족 등) 그대로 던짐
     }
 }

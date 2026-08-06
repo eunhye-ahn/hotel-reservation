@@ -4,15 +4,11 @@ import com.hotel.common.exception.CustomException;
 import com.hotel.common.exception.ErrorCode;
 import com.hotel.hotel.domain.Hotel;
 import com.hotel.hotel.domain.Rate;
-import com.hotel.hotel.domain.RoomTypeInventory;
 import com.hotel.hotel.dto.*;
 import com.hotel.hotel.mapper.HotelMapper;
 import com.hotel.hotel.mapper.RateMapper;
 import com.hotel.hotel.mapper.RoomTypeMapper;
 import com.hotel.hotel.repository.*;
-import com.hotel.reservation.domain.User;
-import com.hotel.reservation.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -47,14 +43,16 @@ public class HotelService {
         int totalDays = (startDate != null && endDate != null)
                 ?((int) ChronoUnit.DAYS.between(startDate, endDate)) : 0;
 
-        //매퍼
-        RoomTypeInventoryParam param = RoomTypeInventoryParam.builder()
-                .hotelId(hotelId)
-                .today(today)
-                .numberOfGuests(numberOfGuests)
-                .numberOfRooms(numberOfRooms)
-                .totalDays(totalDays)
-                .build();
+        RoomTypeInventoryParam param = new RoomTypeInventoryParam(
+                hotelId,
+                today,
+                startDate,
+                endDate,
+                totalDays,
+                numberOfRooms,
+                numberOfGuests
+        );
+
         List<RoomTypeResponse> roomTypes = roomTypeMapper.findByRoomTypeFilter(param);
 
         return HotelDetailResponse.from(hotel,roomTypes);
@@ -67,60 +65,6 @@ public class HotelService {
         return hotels.stream()
                 .map(this::toResponse)
                 .toList();
-    }
-
-
-    //호텔 생성
-    @Transactional
-    public HotelCreateResponse addHotel(HotelCreateRequest request){
-        //유효성검사
-        //이름이나 주소중복
-        if(hotelRepository.existsByName(request.getHotelName()) || hotelRepository.existsByAddress(request.getAddress())){
-            throw new CustomException(ErrorCode.HOTEL_ALREADY_EXISTS);
-        }
-
-        //db저장
-        Hotel hotel = hotelRepository.save(Hotel.builder()
-                        .name(request.getHotelName())
-                        .address(request.getAddress())
-                        .latitude(request.getLatitude())
-                        .longitude(request.getLongitude())
-                        .imageUrl(request.getImageUrl())
-                        .checkInTime(request.getCheckInTime())
-                        .checkOutTime(request.getCheckOutTime())
-                .build());
-
-        return HotelCreateResponse.from(hotel);
-    }
-
-    //호텔삭제 -staff,관리자
-    public void deleteHotel(Long hotelId){
-        //엔티티검사
-        Hotel hotel = hotelRepository.findById(hotelId)
-                        .orElseThrow(()-> new CustomException(ErrorCode.HOTEL_NOT_FOUND));
-
-        //hotel삭제
-        hotelRepository.delete(hotel);
-    }
-
-    //호텔수정 -staff,관리자
-    public HotelUpdateResponse updateHotel(Long hotelId, HotelUpdateRequest request){
-        //엔티티검사
-        Hotel hotel = hotelRepository.findById(hotelId)
-                .orElseThrow(()-> new CustomException(ErrorCode.HOTEL_NOT_FOUND));
-
-        //hotel수정
-        hotel.update(
-                request.getHotelName(),
-                request.getAddress(),
-                request.getLatitude(),
-                request.getLongitude(),
-                request.getImageUrl(),
-                request.getCheckInTime(),
-                request.getCheckOutTime()
-        );
-
-        return HotelUpdateResponse.from(hotel);
     }
 
     //조회(전체조회 / 필터조회)
@@ -139,28 +83,24 @@ public class HotelService {
         }
         log.info("es result hotelIds: {}", hotelIds);
 
-        //available
         //totalDays 계산
         int totalDays = (startDate != null && endDate != null)
         ?((int) ChronoUnit.DAYS.between(startDate, endDate)) : 0;
 
-
-        //List<Hotel> hotels = hotelRepository.findByRegionWithCursor(lDongRegnCd, lDongSignguCd, int numberOfGuests, cursorId, PAGE_SIZE);
-        //여기서 mybatis로 동적쿼리 필터링으로 변경할 것
-        HotelSearchParam param = HotelSearchParam.builder()
-                .hotelIds(hotelIds)
-                .lDongRegnCd(lDongRegnCd)
-                .lDongSignguCd(lDongSignguCd)
-                .lclsSystm2(lclsSystm2)
-                .startDate(startDate)
-                .endDate(endDate)
-                .numberOfGuests(numberOfGuests)
-                .numberOfRooms(numberOfRooms)
-                .offset(pageable.getOffset())
-                .totalDays(totalDays)
-                .today(LocalDate.now())
-                .size(pageable.getPageSize())
-                .build();
+        HotelSearchParam param = new HotelSearchParam(
+                hotelIds,
+                lDongRegnCd,
+                lDongSignguCd,
+                lclsSystm2,
+                startDate,
+                endDate,
+                numberOfGuests,
+                numberOfRooms,
+                LocalDate.now(),
+                totalDays,
+                pageable.getOffset(),
+                pageable.getPageSize()
+        );
 
         List<Hotel> hotels = hotelMapper.findByHotelFilter(param);
         long totalCount = hotelMapper.countByHotelFilter(param);
@@ -203,10 +143,9 @@ public class HotelService {
 
     //최근 호텔
     public List<HotelResponse> getSimilarHotel(Long hotelId){
-        //id받고
         Hotel hotel = hotelRepository.findById(hotelId)
                 .orElseThrow(()->new CustomException(ErrorCode.HOTEL_NOT_FOUND));
-        //우선 조건에 맞는 호텔 30개 반환
+        //조건에 맞는 호텔 15개 반환
         List<Hotel> hotels = hotelRepository.findSimilarTop15(hotel.getLclsSystm2(), hotel.getLDongRegnCd(), hotelId, PageRequest.of(0,15));
 
         return hotels.stream().map(this::toResponse).toList();
