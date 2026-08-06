@@ -3,6 +3,7 @@ import { Spinner } from "@/common/component/Spinner";
 import { useNavigate, useParams } from "react-router"
 import { useWishCollectionDetail } from "../hooks/useWishCollectionDetail";
 import { useDeleteCollection } from "../hooks/useDeleteCollection";
+import { PrevBtn } from "@/common/component/prevBtn";
 
 export function WishListPage() {
     const { collectionId } = useParams();
@@ -23,6 +24,7 @@ export function WishListPage() {
 
     return (
         <div className="detail-container">
+            <PrevBtn />
             <div className="flex items-center justify-between mt-8 mb-6">
                 <h2 className="text-xl font-bold mt-8 mb-6">{data?.name}</h2>
                 <button

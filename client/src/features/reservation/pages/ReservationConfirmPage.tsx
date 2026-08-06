@@ -1,11 +1,13 @@
 
 import { useNavigate, useParams } from "react-router"
 import dayjs from 'dayjs';
-import NotFoundPage from '@/common/pages/NotFoundPage';
 import { toast } from "react-toastify";
-import { getErrorCode, getErrorMessage } from '@/api/errorHelpers';
+import { getErrorMessage } from '@/api/errorHelpers';
 import { useReservationConfirm } from '../hooks/useReservationConfirm';
 import { Spinner } from "@/common/component/Spinner";
+import { getPaymentStatus } from "@/features/mypage/util/getPaymentStatus";
+import { getCancelType } from "@/features/mypage/util/getCancelType";
+import { PrevBtn } from "@/common/component/prevBtn";
 
 export const ReservationConfirmPage = () => {
     const { reservationKey } = useParams();
@@ -17,10 +19,6 @@ export const ReservationConfirmPage = () => {
 
     if (isLoading) return <Spinner />
     if (isError) {
-        const code = getErrorCode(error)
-        if (code === "RESERVATION_NOT_FOUND") {
-            return <NotFoundPage />
-        }
         toast.error(getErrorMessage(error))
         navigate(-1)
         return null;
@@ -28,17 +26,9 @@ export const ReservationConfirmPage = () => {
 
     const numberOfNights = dayjs(data?.endDate).diff(dayjs(data?.startDate), 'day');
 
-    const getPaymentStatus = (status: string | undefined) => {
-        if (status == "PENDING") {
-            return "결제미완료"
-        }
-        else if (status == "PAID") {
-            return "결제완료"
-        }
-    }
-
     return (
         <div className="detail-container">
+            <PrevBtn />
             <div className="text-xl font-bold mb-6 mt-10">예약 확인서</div>
 
             <div className="mb-5">
@@ -64,9 +54,16 @@ export const ReservationConfirmPage = () => {
                     <p className="font-semibold text-sm">{data?.hotelName}</p>
                     <p className="text-xs text-gray-500 mt-1">{data?.roomTypeName}</p>
                 </div>
-                <span className="text-xs px-3 py-1.5 rounded-lg bg-gray-900 text-white">
-                    {getPaymentStatus(data?.status)}
-                </span>
+                <div className="flex flex-col">
+                    <span className="text-center text-xs px-3 py-1.5 rounded-lg bg-gray-900 text-white">
+                        {data?.reservationStatus === "CANCELED" ?
+                            getCancelType(data.cancelType)
+                            : getPaymentStatus(data?.paymentStatus)}
+                    </span>
+                    <p className="text-xs text-gray-500 mb-8 text-right mt-2">
+                        {data?.reservationStatus === "CANCELED" && data.cancelReason != null && '취소사유 : ' + data.cancelReason}
+                    </p>
+                </div>
             </div>
 
             <div className="text-xs text-gray-500 mb-8 text-right">
@@ -92,6 +89,7 @@ export const ReservationConfirmPage = () => {
                     <span>{data?.totalPrice.toLocaleString()}</span>
                 </div>
             </div>
+
         </div>
     )
 }

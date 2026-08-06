@@ -1,5 +1,6 @@
 package com.hotel.reservation.dto;
 
+import com.hotel.reservation.domain.CancelType;
 import com.hotel.reservation.domain.PaymentStatus;
 import com.hotel.reservation.domain.Reservation;
 import com.hotel.reservation.domain.ReservationStatus;
@@ -25,6 +26,8 @@ public class ReservationResponse {
     private String hotelImageUrl;
     private ReservationStatus reservationStatus;
     private PaymentStatus paymentStatus;
+    private CancelType  cancelType;
+    private String cancelReason;
 
     public static ReservationResponse from(Reservation reservation){
         return ReservationResponse.builder()
@@ -38,6 +41,8 @@ public class ReservationResponse {
                 .hotelImageUrl(reservation.getHotel().getImageUrl()) //n+1
                 .reservationStatus(reservation.getReservationStatus())
                 .paymentStatus(reservation.getPaymentStatus())
+                .cancelType(reservation.getCancelType())
+                .cancelReason(reservation.getCancelReason())
                 .build();
     }
 }

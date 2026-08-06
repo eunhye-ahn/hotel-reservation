@@ -1,8 +1,10 @@
 package com.hotel.reservation.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.hotel.reservation.domain.CancelType;
 import com.hotel.reservation.domain.PaymentStatus;
 import com.hotel.reservation.domain.Reservation;
+import com.hotel.reservation.domain.ReservationStatus;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -22,7 +24,11 @@ public class ReservationDetailResponse {
     private LocalTime checkOutTime;
     private int numberOfRooms; //예약객실수
     private int totalPrice; //결제금액
-    private PaymentStatus status;
+    private PaymentStatus paymentStatus;
+    private ReservationStatus reservationStatus;
+    private String displayReservationNO;
+    private CancelType cancelType;
+    private String cancelReason;
 
     @JsonFormat(pattern = "yyyy.MM.dd HH:mm")
     private LocalDateTime createdAt;
@@ -42,8 +48,12 @@ public class ReservationDetailResponse {
                 .checkOutTime(reservation.getHotel().getCheckOutTime())
                 .numberOfRooms(reservation.getNumberOfRooms())
                 .totalPrice(reservation.getTotalPrice())
-                .status(reservation.getPaymentStatus())
+                .reservationStatus(reservation.getReservationStatus())
+                .paymentStatus(reservation.getPaymentStatus())
                 .createdAt(reservation.getCreatedAt())
+                .displayReservationNO(reservation.getDisplayReservationNO())
+                .cancelType(reservation.getCancelType())
+                .cancelReason(reservation.getCancelReason())
                 .build();
     }
 }

@@ -8,7 +8,7 @@ export interface ReservationRequest {
     numberOfRooms: number
 }
 
-export interface ReservationCreateResponse{
+export interface ReservationCreateResponse {
     reservationKey: string,
     orderId: string
 }
@@ -19,8 +19,9 @@ export interface RoomTypeReservationResponse {
     totalPrice: number
 }
 
-export interface ReservationDetailResponse{
+export interface ReservationDetailResponse {
     reservationKey: string,
+    displayReservationNO: string,
     hotelImageUrl: string,
     roomTypeImageUrl: string,
     hotelName: string,
@@ -32,8 +33,11 @@ export interface ReservationDetailResponse{
     numberOfRooms: number,
     numberOfGuests: number,
     totalPrice: number,
-    status: string,
-    createdAt: string
+    paymentStatus: string,
+    createdAt: string,
+    cancelType: string,
+    cancelReason: string,
+    reservationStatus: string
 }
 
 export interface ReservationResponse {
@@ -46,10 +50,12 @@ export interface ReservationResponse {
     checkInTime: string,
     checkOutTime: string,
     reservationStatus: string,
-    paymentStatus: string
+    paymentStatus: string,
+    cancelType: string,
+    cancelReason: string
 }
 
-export interface ReservationInfoResponse{
+export interface ReservationInfoResponse {
     availableCount: number,
     totalPrice: number
 }

@@ -67,16 +67,6 @@ public class ReservationController {
                 .body(result);
     }
 
-    //전체예약조회 -관리자
-    @GetMapping("/all")
-    public ResponseEntity<List<ReservationResponse>> getReservations(){
-        List<ReservationResponse> result = reservationService.getReservations();
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(result);
-    }
-
     //예약 취소
     @DeleteMapping("{reservationKey}")
     public ResponseEntity<Void> cancelReservationByUser(@AuthenticationPrincipal Long userId, @PathVariable String reservationKey){

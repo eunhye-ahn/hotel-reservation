@@ -1,6 +1,7 @@
 import type { ReservationResponse, ReservationStatus } from "@/api/types/reservation";
 import { getPaymentStatus } from "../util/getPaymentStatus";
 import { Spinner } from "@/common/component/Spinner";
+import { getCancelType } from "../util/getCancelType";
 
 interface ReservationCardProps {
     isPending: boolean,
@@ -19,7 +20,13 @@ export const ReservationCard = ({ reservation, isPending, status, onDetailClick,
                     <span className="text-sm font-semibold">
                         {status === 'AFTER_USE' ? '이용완료' : status === 'BEFORE_USE' ? '이용전' : '취소'}
                     </span>
-                    <span className="text-xs text-gray-500">{getPaymentStatus(reservation.paymentStatus)}</span>
+                    <span className="text-xs text-gray-500">
+                        {status === "BEFORE_USE" ?
+                            getPaymentStatus(reservation.paymentStatus)
+                            : status === "CANCELED" &&
+                            getCancelType(reservation.cancelType)
+                        }
+                    </span>
                 </div>
                 <div className="flex gap-2">
                     <button
@@ -28,7 +35,7 @@ export const ReservationCard = ({ reservation, isPending, status, onDetailClick,
                     >
                         상세보기
                     </button>
-                    {reservation.paymentStatus != "PAID" &&
+                    {reservation.paymentStatus != "PAID" && reservation.reservationStatus != "CANCELED" &&
                         <button
                             className="px-3 py-1.5 text-xs text-red-500 border border-red-500 rounded-full cursor-pointer hover:font-bold disabled:opacity-40 disabled:cursor-not-allowed"
                             onClick={onCancelClick}
