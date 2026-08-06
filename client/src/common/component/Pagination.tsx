@@ -8,18 +8,22 @@ interface PaginationProps {
 
 export const Pagination = ({ page, totalPages, isFirst, isLast, onPageChange }: PaginationProps) => {
     return (
-        <div>
-            <button onClick={() => onPageChange(page - 1)}
-                disabled={isFirst}>
-                이전
-            </button>
+        <div className="flex items-center justify-center gap-1 mt-6 mb-6">
+            {!isFirst &&
+                <button onClick={() => onPageChange(page - 1)}
+                    className="px-1 py-0.5 bg-gray-200 mx-1 border border-gray-300 hover:bg-gray-400">
+                    이전
+                </button>
+            }
             <span>
                 {page + 1} / {totalPages ?? 1}
             </span>
-            <button onClick={() => onPageChange(page + 1)}
-                disabled={isLast}>
-                다음
-            </button>
+            {!isLast &&
+                <button onClick={() => onPageChange(page + 1)}
+                    className="px-1 py-0.5 bg-gray-200 mx-1 border border-gray-300 hover:bg-gray-400">
+                    다음
+                </button>
+            }
         </div>
     )
 }

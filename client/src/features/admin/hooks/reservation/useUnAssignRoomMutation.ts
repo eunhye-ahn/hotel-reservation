@@ -9,10 +9,11 @@ export const useUnassignRoomMutation = (reservationId: number) => {
     const { mutate: unassignRoomMutate, isPending: isUnAssigning } = useMutation({
         mutationFn: () => unassignRoom(reservationId),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: adminReservationKeys.rooms(reservationId) })
+            queryClient.invalidateQueries({ queryKey: adminReservationKeys.rooms() })
             queryClient.invalidateQueries({ queryKey: adminReservationKeys.detail(reservationId) })
             queryClient.invalidateQueries({ queryKey: adminReservationKeys.lists() })
-            queryClient.invalidateQueries({ queryKey: adminDashboardKeys.summary })
+            queryClient.invalidateQueries({ queryKey: adminDashboardKeys.summary() })
+
         }
     })
 

@@ -19,45 +19,52 @@ export const SimilarHotels = () => {
 
 
     return (
-        <div style={{ marginBlock: '3rem' }}>
+        < div style={{ marginBlock: '3rem' }
+        }>
             <h2 className="font-bold text-gray-800 text-lg mb-2">회원님을 위한 맞춤 추천</h2>
-            {isLoading
-                ? <Spinner />
-                : isError ? <ErrorMessage />
-                    : (
-                        <Swiper
-                            modules={[Navigation, Pagination, Autoplay]}
-                            navigation
-                            pagination={{ clickable: true }}
-                            spaceBetween={20}
-                            slidesPerView={3}
-                            autoplay={{
-                                delay: 3000,
-                                disableOnInteraction: false,
-                            }}
-                        >
-                            {(data?.data.content ?? []).map((hotel) => (
-                                <SwiperSlide key={hotel.hotelId}>
-                                    <HotelCard
-                                        hotel={hotel}
-                                        onClick={() => {
-                                            saveRecentHotel({
-                                                hotelId: hotel.hotelId,
-                                                name: hotel.name,
-                                                imageUrl: hotel.imageUrl,
-                                                address: hotel.address,
-                                                checkInTime: hotel.checkInTime,
-                                                maxRate: hotel.maxRate,
-                                                demandRate: hotel.demandRate,
-                                                discountRate: hotel.discountRate,
-                                            });
-                                            navigate(`/hotels/${hotel.hotelId}`);
-                                        }}
-                                    />
-                                </SwiperSlide>
-                            ))}
-                        </Swiper>
-                    )}
-        </div>
+            {
+                isLoading
+                    ? <Spinner />
+                    : isError ? <ErrorMessage />
+                        : (
+                            <Swiper
+                                modules={[Navigation, Pagination, Autoplay]}
+                                navigation
+                                pagination={{ clickable: true }}
+                                spaceBetween={15}
+                                slidesPerView={3}
+                                slidesPerGroup={3}
+                                autoplay={{
+                                    delay: 3000,
+                                    disableOnInteraction: false,
+                                }}
+                            >
+
+                                {data?.map((hotel) => (
+                                    <SwiperSlide key={hotel.hotelId}>
+                                        <HotelCard
+                                            hotel={hotel}
+                                            onClick={() => {
+                                                saveRecentHotel({
+                                                    hotelId: hotel.hotelId,
+                                                    name: hotel.name,
+                                                    imageUrl: hotel.imageUrl,
+                                                    address: hotel.address,
+                                                    checkInTime: hotel.checkInTime,
+                                                    maxRate: hotel.maxRate,
+                                                    demandRate: hotel.demandRate,
+                                                    discountRate: hotel.discountRate,
+                                                });
+                                                navigate(`/hotels/${hotel.hotelId}`);
+                                            }}
+                                        />
+                                    </SwiperSlide>
+                                ))}
+                            </Swiper>
+                        )
+            }
+
+        </div >
+
     )
 }

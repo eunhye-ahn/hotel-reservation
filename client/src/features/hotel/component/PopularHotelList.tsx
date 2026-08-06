@@ -1,22 +1,23 @@
-import { useNavigate } from "react-router";
-import type { hotelResponse, Page } from "@/api/types/hotel"
-import { useRecentHotelStore } from "@/store/useRecentHotelStore";
-import { HotelCard } from "./HotelCard";
+import { Spinner } from "@/common/component/Spinner"
+import { usePopularHotel } from "../hooks/usePopularHotel"
+import { ErrorMessage } from "@/common/component/ErrorMessage"
+import { HotelCard } from "./HotelCard"
+import { useRecentHotelStore } from "@/store/useRecentHotelStore"
+import { useNavigate } from "react-router"
 
-interface HotelCardListProps {
-    data: Page<hotelResponse> | undefined,
-    onRemove?: (hotelId: number) => void
-}
+export const PopularHotelList = () => {
+    const { data, isLoading, isError } = usePopularHotel()
+    const { saveRecentHotel } = useRecentHotelStore()
+    const navigate = useNavigate()
 
-export const HotelCardList = ({ data, onRemove }: HotelCardListProps) => {
-    const navigate = useNavigate();
-    const { saveRecentHotel } = useRecentHotelStore();
+    if (isLoading) return <Spinner />
+    if (isError) return <ErrorMessage />
 
     return (
         <div className="page-container">
-            {data?.content.length === 0 && <p>호텔이 없습니다</p>}
+            {data?.length === 0 && <p>호텔이 없습니다</p>}
             <div className="grid grid-cols-4 gap-2">
-                {data?.content.map((hotel) => (
+                {data?.map((hotel) => (
                     <HotelCard
                         key={hotel.hotelId}
                         hotel={hotel}
@@ -33,7 +34,6 @@ export const HotelCardList = ({ data, onRemove }: HotelCardListProps) => {
                             })
                             navigate(`/hotels/${hotel.hotelId}`)
                         }}
-                        onRemove={onRemove ? () => onRemove(hotel.hotelId) : undefined}
                     />
                 ))}
             </div>

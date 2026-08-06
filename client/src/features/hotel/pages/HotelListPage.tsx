@@ -1,7 +1,7 @@
 import { HotelCardList } from "@/features/hotel/component/HotelCardList";
 import { SearchFilterBar } from "@/features/hotel/component/SearchFilterBar";
 import { useRegionStore } from "@/store/useRegionStore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { DateGuestSelector } from "@/features/hotel/component/DateGuestSelector";
 import { Modal } from "@/common/component/Modal";
 import { FilterSelector } from "@/features/hotel/component/FilterSelector";
@@ -10,17 +10,28 @@ import { useHotelList } from "../hooks/useHotelList";
 import { Spinner } from "@/common/component/Spinner";
 import { ErrorMessage } from "@/common/component/ErrorMessage";
 import { useHotelListModals } from "../hooks/useHotelListModals";
+import { Pagination_BLOCK } from "@/common/component/Pagination_BLOCK";
+import { useSearchParams } from "react-router"
 
 export function HotelListPage() {
     const { filter } = useHotelListFilter()
-
+    const [searchParams, setSearchParams] = useSearchParams()
     const { isDateOpen, setIsDateOpen, isFilterOpen, setIsFilterOpen, setIsSortOpen } = useHotelListModals()
 
     const { displayName, resetRegion } = useRegionStore();
 
-    const { data, isLoading, isError, fetchNextPage, hasNextPage } = useHotelList(filter)
-    const hotels = data?.pages.flatMap(page => page.content) ?? [];
 
+
+    const page = Number(searchParams.get('page') ?? 0)
+
+    const { data, isLoading, isError } = useHotelList(filter, page)
+    const handlePageChange = (newPage: number) => {
+        setSearchParams(prev => {
+            const params = new URLSearchParams(prev)
+            params.set('page', String(newPage))
+            return params
+        })
+    }
 
     useEffect(() => {
         return () => {
@@ -30,7 +41,7 @@ export function HotelListPage() {
 
     //displayname => 새로고침하면 잊는 이슈
     return (
-        <div className="hotel-list-page">
+        <div className="page-container">
             {displayName
                 && <h3 className="font-bold text-lg text-center mt-8">{displayName}</h3>}
             <SearchFilterBar
@@ -55,11 +66,16 @@ export function HotelListPage() {
             {isLoading ? <Spinner />
                 : isError ? <ErrorMessage />
                     : (
-                        <HotelCardList
-                            data={hotels}
-                            fetchNextPage={fetchNextPage}
-                            hasNextPage={hasNextPage}
-                        />
+                        <div className="w-80px">
+                            <HotelCardList
+                                data={data}
+                            />
+                            <Pagination_BLOCK
+                                page={page}
+                                totalPages={data?.totalPages}
+                                onPageChange={handlePageChange}
+                            />
+                        </div>
                     )}
         </div>
     )

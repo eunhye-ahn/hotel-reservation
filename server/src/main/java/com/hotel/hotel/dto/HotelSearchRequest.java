@@ -1,10 +1,21 @@
 package com.hotel.hotel.dto;
 
-import lombok.Builder;
-import lombok.Getter;
+import java.time.LocalDate;
 
-@Getter
-@Builder
-public class HotelSearchRequest {
-    private String q;
+public record HotelSearchRequest (
+    String q,
+    String lDongRegnCd,
+    String lDongSignguCd,
+    String lclsSystm2,
+    LocalDate startDate,
+    LocalDate endDate,
+    Integer numberOfGuests,
+    Integer numberOfRooms,
+    int page
+) {
+    public HotelSearchRequest {
+        if(numberOfRooms == null ){
+            numberOfRooms = 1;
+        }
+    }
 }

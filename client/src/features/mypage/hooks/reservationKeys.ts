@@ -4,8 +4,8 @@ export const reservationKeys = {
     all: ["reservations"] as const,
 
     myLists: () => [...reservationKeys.all, "myList"] as const,
-    myList: (status: ReservationStatus) =>
-        [...reservationKeys.myLists(), status] as const,
+    myList: (status: ReservationStatus, page: number) =>
+        [...reservationKeys.myLists(), status, page] as const,
 
     info: (reservationKey: string) =>
         [...reservationKeys.all, "info", reservationKey] as const,

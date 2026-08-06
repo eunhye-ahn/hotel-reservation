@@ -12,6 +12,8 @@ import com.hotel.hotel.repository.WishListRepository;
 import com.hotel.reservation.domain.User;
 import com.hotel.reservation.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,8 +33,6 @@ public class WishService {
         User user = userRepository.findById(userId).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
         //유저의 컬렉션 가져오기
         List<WishCollection> collections = wishCollectionRepository.findByUserIdOrderByCreatedAtDesc(user.getId());
-        //컬렉션이 이미 리스트인데 여기서 내부리스트를 어떻게 또 가져오지????
-        //=> 컬렉션 하나하나마다 내부 위시리스트 조회해서 DTO로 변환
         return collections.stream()
                 .map(collection -> {
                     List<WishList> wishLists = wishListRepository.findByWishCollectionId(collection.getId());

@@ -5,6 +5,9 @@ import com.hotel.reservation.dto.*;
 import com.hotel.reservation.service.ReservationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -31,9 +34,11 @@ public class ReservationController {
 
     //내 예약조회
     @GetMapping
-    public ResponseEntity<List<ReservationResponse>> getMyReservations(@AuthenticationPrincipal Long userId,
-                                                                       @RequestParam ReservationStatus status){
-        List<ReservationResponse> result = reservationService.getMyReservations(userId, status);
+    public ResponseEntity<Page<ReservationResponse>> getMyReservations(@AuthenticationPrincipal Long userId,
+                                                                       @RequestParam ReservationStatus status,
+                                                                       @RequestParam(required = false, defaultValue = "0")int page){
+        Pageable pageable = PageRequest.of(page, 5);
+        Page<ReservationResponse> result = reservationService.getMyReservations(userId, status, pageable);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

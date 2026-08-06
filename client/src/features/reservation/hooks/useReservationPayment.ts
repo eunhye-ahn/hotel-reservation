@@ -1,5 +1,5 @@
 import { preparePayment, reservationInfo } from "@/api/api";
-import { getErrorCode, getErrorMessage, handleDefenseError } from "@/api/errorHelpers";
+import { getErrorCode, handleDefenseError } from "@/api/errorHelpers";
 import type { ReservationInfoResponse } from "@/api/types/reservation";
 import { reservationKeys } from "@/features/mypage/hooks/reservationKeys";
 import { useQuery } from "@tanstack/react-query";
@@ -45,20 +45,17 @@ export const useReservationPayment = () => {
                 failUrl: `${window.location.origin}/payments/fail`,
             });
 
-        } catch (err) {
-            //토스 SDK 에러 
+        } catch (err: any) {
+            if (err?.code === "USER_CANCEL") return;
 
             //서버에러
             const code = getErrorCode(err)
-            const msg = getErrorMessage(err)
             //사용자가 결제취소
-            if (code === "MISSING_IDEMPOTENCY_KEY") {
+            if (code === "PAYMENT_ALREADY_PROCESSED" || code === "MISSING_IDEMPOTENCY_KEY") {
                 handleDefenseError(err, () => { })
-                navigate(`/hotels/${state.hotelId}`)
+                navigate(`/reservations/${reservationKey}`)
                 return
             }
-            //타임아웃 시 (또는 네트워크오류?) 같은멱등키로 시도 로직 추가
-            console.log(err)
             toast.error("결제 중 오류가 발생했습니다")
             navigate("/");
         }

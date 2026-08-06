@@ -77,7 +77,7 @@ public class PaymentService {
 
         //paymentStatus PENDING 확인
         if(!reservation.getPaymentStatus().equals(PaymentStatus.PENDING)){
-            throw new IllegalStateException("결제 가능한 예약이 아닙니다.");
+            throw new CustomException(ErrorCode.PAYMENT_ALREADY_PROCESSED);
         }
 
         //기존 paymentEvent있으면 재사용 :결제창닫고 다시 결제를 열 경우 예약ID unique 방지
@@ -131,14 +131,6 @@ public class PaymentService {
                 .paymentOrderId(paymentOrderId)
                 .amount(reservation.getTotalPrice())
                 .build();
-    }
-
-    public String getReservationKey(String orderId){
-        PaymentOrder paymentOrder = paymentOrderRepository.findById(orderId)
-                .orElseThrow(()->new CustomException(ErrorCode.PAYMENT_NOT_FOUND));
-        PaymentEvent paymentEvent = paymentEventRepository.findByCheckoutId(paymentOrder.getCheckoutId())
-                .orElseThrow();
-        return paymentEvent.getReservationKey();
     }
 
     //결제승인

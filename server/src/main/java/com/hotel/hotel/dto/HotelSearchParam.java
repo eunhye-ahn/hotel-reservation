@@ -20,6 +20,6 @@ public class HotelSearchParam {
     private LocalDate today;
     private int totalDays;      //모든날짜에 재고가 있는 호텔 필터용도(서비스단에서 계산)
     //private boolean available;
-    private Long cursorId;
+    private long offset;
     private int size;
 }

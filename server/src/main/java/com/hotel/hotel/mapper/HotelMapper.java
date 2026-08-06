@@ -9,4 +9,6 @@ import java.util.List;
 @Mapper
 public interface HotelMapper {
     List<Hotel> findByHotelFilter(HotelSearchParam param);
+
+    long countByHotelFilter(HotelSearchParam param);
 }

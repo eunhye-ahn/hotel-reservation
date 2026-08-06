@@ -4,6 +4,8 @@ import com.hotel.hotel.dto.*;
 import com.hotel.hotel.service.HotelService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,23 +19,16 @@ import java.util.List;
 @RequestMapping("/api/v1/hotels")
 public class HotelController {
     private final HotelService hotelService;
-
-//    @GetMapping
-//    public ResponseEntity<Page<HotelResponse>> getHotels(@RequestParam(defaultValue = "0") int page){
-//        Page<HotelResponse> result = hotelService.getHotels(page);
-//
-//        return ResponseEntity
-//                .status(HttpStatus.OK)
-//                .body(result);
-//    }
-
+    //호텔상세
     @GetMapping("/{hotelId}")
     public ResponseEntity<HotelDetailResponse> getHotelDetail(@PathVariable Long hotelId,
-                                                              @RequestParam(required = false) LocalDate startDate,
-                                                              @RequestParam(required = false) LocalDate endDate,
-                                                              @RequestParam(required = false, defaultValue = "1") Integer numberOfRooms,
-                                                              @RequestParam(required = false) Integer numberOfGuests){
-        HotelDetailResponse result = hotelService.getHotelDetail(hotelId, startDate, endDate, numberOfRooms, numberOfGuests);
+                                                              @ModelAttribute RoomTypeSearchParam request){
+        HotelDetailResponse result = hotelService.getHotelDetail(hotelId,
+                request.startDate(),
+                request.endDate(),
+                request.numberOfRooms(),
+                request.numberOfGuests()
+        );
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -72,29 +67,32 @@ public class HotelController {
     }
 
     //홈 - 페이지네이션 (인기)
-
-
-    /**
-     * 지역별 호텔 목록 조회(무한스크롤)
-     * GET /api/hotels?lDongRegnCd=11&cursorId=10
-     *
-     * @param lDongRegnCd   지역 코드 (전체조회에서는 없어야하고 필터에서는 필수인데.)..
-     * @return cursorId     마지막으로 조회한 호텔 ID (첫 요청 시 null)
-     */
     @GetMapping
-    public ResponseEntity<CursorResponse> searchByFilter(@RequestParam(required = false) String q,
-                                                         @RequestParam(required = false) String lDongRegnCd,
-                                                         @RequestParam(required = false) String lDongSignguCd,
-                                                         @RequestParam(required = false) String lclsSystm2,
-                                                         @RequestParam(required = false) LocalDate startDate,
-                                                         @RequestParam(required = false) LocalDate endDate,
-                                                         @RequestParam(required = false) Integer numberOfGuests,
-                                                         @RequestParam(required = false, defaultValue = "1") Integer numberOfRooms,
-                                                         @RequestParam(required = false) Long cursorId){
+    public ResponseEntity<List<HotelResponse>> getPopularHotel(){
+        Pageable pageable = PageRequest.of(0, 20);
+        List<HotelResponse> result = hotelService.getPopularHotels(pageable);
 
-        CursorResponse result = hotelService.searchByFilter(q, lDongRegnCd, lDongSignguCd, lclsSystm2, startDate, endDate,
-                numberOfGuests, numberOfRooms,
-                cursorId);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(result);
+    }
+
+
+    @GetMapping("/filter")
+    public ResponseEntity<Page<HotelResponse>> searchByFilter(@ModelAttribute HotelSearchRequest request){
+
+        Pageable pageable = PageRequest.of(request.page(), 20);
+        Page<HotelResponse> result = hotelService.searchByFilter(
+                request.q(),
+                request.lDongRegnCd(),
+                request.lDongSignguCd(),
+                request.lclsSystm2(),
+                request.startDate(),
+                request.endDate(),
+                request.numberOfGuests(),
+                request.numberOfRooms(),
+                pageable
+        );
 
         return ResponseEntity
                 .status(HttpStatus.OK)

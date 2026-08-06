@@ -30,16 +30,12 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class HotelService {
-    private final int PAGE_SIZE = 21;
     private final HotelRepository hotelRepository;
     private final RateRepository rateRepository;
-    private final RoomTypeRepository roomTypeRepository;
-    private final RoomTypeInventoryRepository roomTypeInventoryRepository;
     private final RateMapper rateMapper;
     private final HotelMapper hotelMapper;
     private final RoomTypeMapper roomTypeMapper;
     private final HotelSearchQueryRepository hotelSearchQueryRepository;
-    private final UserRepository userRepository;
 
     LocalDate today = LocalDate.now();
 
@@ -61,18 +57,16 @@ public class HotelService {
                 .build();
         List<RoomTypeResponse> roomTypes = roomTypeMapper.findByRoomTypeFilter(param);
 
-        //위시리스트 여부 가져오기
+        return HotelDetailResponse.from(hotel,roomTypes);
+    }
 
+    //홈 -인기순정렬
+    public List<HotelResponse> getPopularHotels(Pageable pageable){
+        List<Hotel> hotels = hotelRepository.findPopularByWishCount(pageable);
 
-        return HotelDetailResponse.builder()
-                .hotelId(hotelId)
-                .hotelName(hotel.getName())
-                .address(hotel.getAddress())
-                .imageUrl(hotel.getImageUrl())
-                .checkInTime(hotel.getCheckInTime())
-                .checkOutTime(hotel.getCheckOutTime())
-                .roomTypes(roomTypes)
-                .build();
+        return hotels.stream()
+                .map(this::toResponse)
+                .toList();
     }
 
 
@@ -129,26 +123,14 @@ public class HotelService {
         return HotelUpdateResponse.from(hotel);
     }
 
-    //페이지네이션 조회 - 메인용 [예정]
-    public void searchByFilterAndPagination(String q,
-                                               String lDongRegnCd,String lDongSignguCd,
-                                               String lclsSystm2,
-                                               LocalDate startDate, LocalDate endDate,
-                                               Integer numberOfGuests, //게스트 수 처리..........
-                                               Integer numberOfRooms,
-                                               Pageable pageable){
-
-
-    }
-
     //조회(전체조회 / 필터조회)
-    public CursorResponse searchByFilter(String q,
+    public Page<HotelResponse> searchByFilter(String q,
                                          String lDongRegnCd,String lDongSignguCd,
                                          String lclsSystm2,
                                          LocalDate startDate, LocalDate endDate,
                                          Integer numberOfGuests, //게스트 수 처리..........
                                          Integer numberOfRooms,
-                                         Long cursorId){
+                                         Pageable pageable){
 
         //검색어 있는 경우
         List<Long> hotelIds = null;
@@ -174,13 +156,14 @@ public class HotelService {
                 .endDate(endDate)
                 .numberOfGuests(numberOfGuests)
                 .numberOfRooms(numberOfRooms)
-                .cursorId(cursorId)
+                .offset(pageable.getOffset())
                 .totalDays(totalDays)
                 .today(LocalDate.now())
-                .size(PAGE_SIZE+1)
+                .size(pageable.getPageSize())
                 .build();
 
         List<Hotel> hotels = hotelMapper.findByHotelFilter(param);
+        long totalCount = hotelMapper.countByHotelFilter(param);
 
         //요금계산
         List<HotelResponse> list = hotels.stream()
@@ -189,7 +172,9 @@ public class HotelService {
                     : toResponse(hotel))                    //없으면 오늘 기준(기간내합산로직X)
                 .toList();
 
-        return CursorResponse.of(list, PAGE_SIZE);
+
+
+        return new PageImpl<>(list, pageable, totalCount);
     }
 
     //전체조회 -오늘날짜 기준 가장 저렴한 객실의 가격 반환

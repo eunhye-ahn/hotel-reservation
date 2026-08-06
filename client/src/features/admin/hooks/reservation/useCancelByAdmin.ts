@@ -18,14 +18,17 @@ export const useCancelByAdmin = (reservationId: number) => {
         },
         onError: (err) => {
             const code = getErrorCode(err)
-
+            if (code === "REFUND_FAILED") {
+                handleDefenseError(err, () => queryClient.invalidateQueries({ queryKey: adminReservationKeys.lists() }))
+                return
+            }
             if (code === "INVALID_RESTORE") {
                 handleDefenseError(err, () => {
                     queryClient.invalidateQueries({ queryKey: adminReservationKeys.lists() })
                 })
                 return
             }
-            if (code === "CANNOT_CANCEL_RESERVATION" || code === "CANNOT_REFUND_RESERVATION") {
+            if (code === "CANNOT_CANCEL_RESERVATION" || code === "CANNOT_REFUND_RESERVATION" || code === "PAYMENT_CANCEL_FAILED") {
                 handleDefenseError(err, () => queryClient.invalidateQueries({
                     queryKey: adminReservationKeys.lists()
                 }))

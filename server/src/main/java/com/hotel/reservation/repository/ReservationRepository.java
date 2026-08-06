@@ -20,7 +20,7 @@ import java.util.Optional;
 public interface ReservationRepository extends JpaRepository<Reservation, Long>,ReservationRepositoryCustom {
     Optional<Reservation> findByUserIdAndReservationKey(Long userId, String reservationKey);
 
-    List<Reservation> findByUserAndReservationStatusOrderByCreatedAtDesc(User user, ReservationStatus reservationStatus);
+    Page<Reservation> findByUserAndReservationStatusOrderByCreatedAtDesc(User user, ReservationStatus reservationStatus, Pageable pageable);
 
     Optional<Reservation> findByReservationKey(String reservationKey);
 

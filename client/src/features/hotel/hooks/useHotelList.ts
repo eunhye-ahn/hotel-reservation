@@ -1,15 +1,14 @@
 import { getHotelsByFilter } from "@/api/api"
-import type { CursorResponse, HotelListFilter } from "@/api/types/hotel"
-import { useInfiniteQuery } from "@tanstack/react-query"
+import type { HotelListFilter } from "@/api/types/hotel"
+import { useQuery } from "@tanstack/react-query"
 import { hotelKeys } from "./hotelkeys"
 
-export const useHotelList = (filter: HotelListFilter) => {
-    const { data, isLoading, isError, fetchNextPage, hasNextPage } = useInfiniteQuery<CursorResponse>({
-        queryKey: hotelKeys.list(filter),
-        queryFn: ({ pageParam }) => getHotelsByFilter(filter, pageParam as number ?? 0).then((res) => res.data),
-        initialPageParam: undefined,
-        getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined
+export const useHotelList = (filter: HotelListFilter, page: number) => {
+    console.log('page prop:', page, 'queryKey:', hotelKeys.list(filter, page))
+    const { data, isLoading, isError } = useQuery({
+        queryKey: hotelKeys.list(filter, page),
+        queryFn: () => getHotelsByFilter(filter, page).then((res) => res.data),
     })
 
-    return { data, isLoading, isError, fetchNextPage, hasNextPage }
+    return { data, isLoading, isError }
 }

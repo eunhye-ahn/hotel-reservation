@@ -3,9 +3,9 @@ import { Spinner } from "@/common/component/Spinner";
 import { useReservationDetail } from "@/features/admin/hooks/reservation/useReservationDetail";
 import { useState } from "react";
 import { useParams } from "react-router"
-import { RoomAssignmentForm } from "./RoomAssignmentForm";
-import { AssignRoomInfoTable } from "./AssignRoomInfoTable";
-import { CancelByAdminForm } from "./CancelByAdminForm";
+import { RoomAssignmentForm } from "../component/reservation/RoomAssignmentForm";
+import { AssignRoomInfoTable } from "../component/reservation/AssignRoomInfoTable";
+import { CancelByAdminForm } from "../component/reservation/CancelByAdminForm";
 
 export const ReservationDetail = () => {
     const { id } = useParams<{ id: string }>()
@@ -70,7 +70,7 @@ export const ReservationDetail = () => {
                         ) : (
                             <div className="">
                                 <button
-                                    className="px-4 py-2 text-sm text-red-500 border border-red-500 cursor-pointer hover:bg-gray-100"
+                                    className="px-4 py-2 text-sm text-red-500 border border-red-500 cursor-pointer hover:bg-gray-100 mx-1"
                                     onClick={() => setShowCancelForm(!showCancelForm)}>{showCancelForm ? '취소' : '예약취소'}</button>
                                 {showCancelForm &&
                                     <CancelByAdminForm
@@ -122,14 +122,14 @@ export const ReservationDetail = () => {
                                                     usable={data?.usable}
                                                 />
                                                 <button
-                                                    className="px-4 py-2 text-sm text-red-500 border border-red-500 cursor-pointer hover:bg-gray-100" onClick={() => setShowAssignFrom(!showAssignForm)}>{showAssignForm ? '취소' : '배정변경'}</button>
-                                                {showAssignForm &&
-                                                    <RoomAssignmentForm reservationId={reservationId} />
-                                                }
+                                                    className="px-4 py-2 text-sm text-red-500 border border-red-500 cursor-pointer hover:bg-gray-100 mt-5 mx-1"
+                                                    onClick={() => setShowAssignFrom(!showAssignForm)}>{showAssignForm ? '취소' : '배정변경'}</button>
                                             </>
                                         ) : (
                                             <div>
-                                                <button onClick={() => setShowAssignFrom(!showAssignForm)}>{showAssignForm ? '취소' : '배정하기'}</button>
+                                                <button
+                                                    className="px-4 py-2 text-sm text-red-500 border border-red-500 cursor-pointer hover:bg-gray-100 mt-5 mx-1"
+                                                    onClick={() => setShowAssignFrom(!showAssignForm)}>{showAssignForm ? '취소' : '배정하기'}</button>
 
                                             </div>
                                         )
@@ -144,7 +144,9 @@ export const ReservationDetail = () => {
                 </div>
             </div>
             {/* 객실 배정 */}
-            <RoomAssignmentForm reservationId={reservationId} />
+            {showAssignForm &&
+                <RoomAssignmentForm reservationId={reservationId} />
+            }
         </div>
     )
 }

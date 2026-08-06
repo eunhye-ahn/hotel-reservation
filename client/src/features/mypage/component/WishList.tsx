@@ -11,7 +11,7 @@ export const WishList = () => {
     const navigate = useNavigate()
     const [collectionName, setCollectionName] = useState<string>("")
 
-    const { data, isLoading, isError } = useWishCollections()
+    const { wishes, isLoading, isError, handleLoadMore, hasMore, handleCollapse, isExpanded } = useWishCollections()
 
     const { mutate, isPending, errorMsg, clearError } = useCreateWishCollection(() => {
         setIsWishOpen(false)
@@ -26,7 +26,7 @@ export const WishList = () => {
     if (isError) return <ErrorMessage />
 
     return (
-        <div className="detail-container">
+        <div className="page-container">
             <div className="flex items-center mb-5 gap-5 justify-between">
                 <h2 className="text-lg font-bold">위시 리스트</h2>
                 <button
@@ -35,6 +35,17 @@ export const WishList = () => {
                         clearError()
                         setIsWishOpen(true)
                     }}>+</button>
+                {hasMore && (
+                    <button onClick={handleLoadMore}>
+                        더보기
+                    </button>
+                )}
+                {isExpanded && !hasMore && (
+                    <button
+                        onClick={handleCollapse}                >
+                        접기
+                    </button>
+                )}
             </div>
             {isWishOpen &&
                 <Modal isOpen={isWishOpen} onClose={() => setIsWishOpen(false)} title="위시리스트 만들기">
@@ -55,8 +66,8 @@ export const WishList = () => {
                     </div>
                 </Modal>
             }
-            <div className="grid grid-cols-4 gap-4">
-                {data?.map((colleciton) => (
+            <div className="grid grid-cols-5 gap-4">
+                {wishes?.map((colleciton) => (
                     <div className="cursor-pointer" key={colleciton.collectionId} onClick={() => navigate(`/wishlists/${colleciton.collectionId}`)}>
                         <div className="grid grid-cols-2 gap-0.5 objecr-cover">
                             {colleciton.items.slice(0, 4).map((item, index) => (

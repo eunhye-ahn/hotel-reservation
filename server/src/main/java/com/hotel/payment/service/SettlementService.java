@@ -37,33 +37,41 @@ public class SettlementService {
         }
 
         for(Wallet wallet : wallets){
-            int periodAmount = ledgerRepository.calculateSettlementAmount(
-                    wallet.getSellerAccount(),
-                    AccountType.SELLER,
-                    periodStart.atTime(0,0,0),
-                    periodEnd.atTime(23,59,59)
-            );
+            settleWallet(wallet, periodStart, periodEnd);
+        }
+    }
 
-            if(periodAmount <= 0){
-                continue;
-            }
+    public void dailySettlement(){
+        LocalDate yesterday = LocalDate.now().minusDays(1);
+        List<Wallet> targets = walletRepository.findAllByBalanceGreaterThan(0);
+        for (Wallet wallet : targets) {
+            settleWallet(wallet, yesterday, yesterday);
+        }
+    }
 
-            //정산시작(PENDING)
-            Long settlementId = settlementTransactionService.createPendingSettlement(
-                    wallet.getSellerAccount(),
-                    periodAmount,
-                    periodStart,
-                    periodEnd
-            );
+    private void settleWallet(Wallet wallet, LocalDate periodStart, LocalDate periodEnd) {
+        int periodAmount = ledgerRepository.calculateSettlementAmount(
+                wallet.getSellerAccount(),
+                AccountType.SELLER,
+                periodStart.atTime(0, 0, 0),
+                periodEnd.atTime(23, 59, 59)
+        );
 
-            //(가정) 외부 정산 대행사 API 호출
-            try{
-                //정산완료(COMPLETED)
-                settlementTransactionService.completedSettlement(settlementId,wallet.getSellerAccount(), periodAmount);
-            }catch(Exception e){
-                //정산실패(FAILED) => 배치로 재처리
-                settlementTransactionService.failedSettlement(settlementId);
-            }
+        if (periodAmount <= 0) {
+            return;
+        }
+
+        Long settlementId = settlementTransactionService.createPendingSettlement(
+                wallet.getSellerAccount(),
+                periodAmount,
+                periodStart,
+                periodEnd
+        );
+
+        try {
+            settlementTransactionService.completedSettlement(settlementId, wallet.getSellerAccount(), periodAmount);
+        } catch (Exception e) {
+            settlementTransactionService.failedSettlement(settlementId);
         }
     }
 }

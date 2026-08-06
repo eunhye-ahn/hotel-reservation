@@ -1,23 +1,28 @@
 package com.hotel.hotel.dto;
 
-import lombok.Builder;
-import lombok.Getter;
+import com.hotel.hotel.domain.Hotel;
 
 import java.time.LocalTime;
 import java.util.List;
 
-//junit
-//jackson 라이브러리
-
-@Getter
-@Builder
-public class HotelDetailResponse {
-    private Long hotelId;
-    private String hotelName;
-    private String address;
-    private String imageUrl;
-    private LocalTime checkInTime;
-    private LocalTime checkOutTime;
-
-    private List<RoomTypeResponse> roomTypes;
+public record HotelDetailResponse (
+    Long hotelId,
+    String hotelName,
+    String address,
+    String imageUrl,
+    LocalTime checkInTime,
+    LocalTime checkOutTime,
+    List<RoomTypeResponse> roomTypes
+){
+    public static HotelDetailResponse from(Hotel hotel, List<RoomTypeResponse> roomTypes){
+        return new HotelDetailResponse(
+                hotel.getId(),
+                hotel.getName(),
+                hotel.getAddress(),
+                hotel.getImageUrl(),
+                hotel.getCheckInTime(),
+                hotel.getCheckOutTime(),
+                roomTypes
+        );
+    }
 }

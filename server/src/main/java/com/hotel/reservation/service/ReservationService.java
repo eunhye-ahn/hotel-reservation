@@ -12,6 +12,8 @@ import com.hotel.reservation.repository.*;
 import com.hotel.reservation.service.process.IdempotencyRedisService;
 import com.hotel.reservation.service.process.ReservationProcessor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -68,19 +70,15 @@ public class ReservationService {
     }
 
     //내 예약조회
-    public List<ReservationResponse> getMyReservations(Long userId, ReservationStatus status) {
+    public Page<ReservationResponse> getMyReservations(Long userId, ReservationStatus status, Pageable pageable) {
         //엔티티 조회
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         //내예약조회
-        List<ReservationResponse> reservations = reservationRepository.findByUserAndReservationStatusOrderByCreatedAtDesc(user, status)
-                .stream().map(ReservationResponse::from)
-                .toList();
+        Page<Reservation> reservations = reservationRepository.findByUserAndReservationStatusOrderByCreatedAtDesc(user, status, pageable);
 
-        //오늘 기준
-
-        return reservations;
+        return reservations.map(ReservationResponse::from);
     }
 
     //예약상세조회 -예약확인

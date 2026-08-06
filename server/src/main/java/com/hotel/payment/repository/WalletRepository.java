@@ -38,4 +38,6 @@ public interface WalletRepository extends JpaRepository<Wallet, Long> {
             "GROUP BY h.id, h.name " +
             "ORDER BY SUM(w.balance) DESC")
     List<HotelPendingBalance> getTopPendingHotels(Pageable pageable);
+
+    List<Wallet> findAllByBalanceGreaterThan(int amount);
 }

@@ -26,16 +26,14 @@ export const signUp = (request: SignUpRequest) => {
     return api.post<AccessTokenResponse>("/auth/signUp", request);
 }
 
-//호텔전체조회
-export const getHotels = (cursorId?: number) => {
-    return api.get<CursorResponse>("/hotels", {
-        params: { cursorId }
-    })
+
+export const getPopularHotel = () => {
+    return api.get<hotelResponse[]>("/hotels")
 }
 
 //호텔필터조회
-export const getHotelsByFilter = (filter: HotelListFilter, cursorId: number = 0) => {
-    return api.get<CursorResponse>("/hotels", {
+export const getHotelsByFilter = (filter: HotelListFilter, page: number = 0) => {
+    return api.get<Page<hotelResponse>>("/hotels/filter", {
         params: {
             q: filter.q || undefined,
             lDongRegnCd: filter.regionCode,
@@ -45,7 +43,7 @@ export const getHotelsByFilter = (filter: HotelListFilter, cursorId: number = 0)
             endDate: filter.checkOut,
             numberOfGuests: filter.numberOfGuests,
             numberOfRooms: filter.numberOfRooms,
-            cursorId
+            page
         }
     });
 }
@@ -74,9 +72,9 @@ export const getMyInfo = () => {
     return api.get<UserInfoResponse>("/user/myInfo")
 }
 
-export const getMyReservations = (status: string) => {
-    return api.get<ReservationResponse[]>("/reservations", {
-        params: { status }
+export const getMyReservations = (status: string, page: number) => {
+    return api.get<Page<ReservationResponse>>("/reservations", {
+        params: { status, page }
     })
 }
 
@@ -99,7 +97,7 @@ export const getSearchAutocomplete = (q?: string) => {
 }
 
 export const getSimilarHotel = (hotelId: number) => {
-    return api.get<Page<hotelResponse>>("/hotels/similarHotel", {
+    return api.get<hotelResponse[]>("/hotels/similarHotel", {
         params: { hotelId }
     })
 }

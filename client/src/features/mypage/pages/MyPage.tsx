@@ -10,13 +10,15 @@ import { useMyInfo } from "../hooks/useMyInfo";
 import { ReservationCard } from "../component/ReservationCard";
 import { Spinner } from "@/common/component/Spinner";
 import { userCancelReservationByUser } from "../hooks/useCancelReservationByUser";
+import { Pagination } from "@/common/component/Pagination";
 
 
 export const MyPage = () => {
-    const [status, setStatus] = useState<ReservationStatus>('BEFORE_USE');
-    const navigate = useNavigate();
+    const [status, setStatus] = useState<ReservationStatus>('BEFORE_USE')
+    const navigate = useNavigate()
+    const [page, setPage] = useState(0)
 
-    const { accessToken } = useAuthStore();
+    const { accessToken } = useAuthStore()
 
     useEffect(() => {
         if (!accessToken) {
@@ -26,7 +28,8 @@ export const MyPage = () => {
 
     const { myInfo, isMyInfoLoading, isMyInfoError } = useMyInfo(!!accessToken)
 
-    const { reservations, isReservationListLoading } = useMyReservationList(status, !!accessToken)
+    const { reservations, isReservationListLoading } = useMyReservationList(status, page, !!accessToken)
+    console.log(reservations)
 
     const { isCanceling, reserationCacelMutate } = userCancelReservationByUser()
 
@@ -34,7 +37,11 @@ export const MyPage = () => {
     if (isMyInfoError) {
         toast.error("일시적인 오류가 발생했습니다")
         navigate(-1)
-        return null;
+        return null
+    }
+
+    const handlePageChange = (newPage: number) => {
+        setPage(newPage)
     }
 
     const tabs: { key: ReservationStatus; label: string }[] = [
@@ -42,6 +49,8 @@ export const MyPage = () => {
         { key: 'AFTER_USE', label: '이용후' },
         { key: 'CANCELED', label: '취소됨' },
     ]
+
+    console.log(reservations)
 
     return (
         <div className="detail-container">
@@ -69,7 +78,7 @@ export const MyPage = () => {
                     ))}
                 </div>
                 <div className="flex flex-col gap-5">
-                    {reservations?.map((reservation) => (
+                    {reservations?.content.map((reservation) => (
                         <ReservationCard
                             key={reservation.reservationKey}
                             reservation={reservation}
@@ -80,6 +89,13 @@ export const MyPage = () => {
                         />
                     ))}
                 </div>
+                <Pagination
+                    page={reservations?.number ?? 0}
+                    totalPages={reservations?.totalPages}
+                    isFirst={reservations?.first}
+                    isLast={reservations?.last}
+                    onPageChange={handlePageChange}
+                />
             </div>
         </div>
     )

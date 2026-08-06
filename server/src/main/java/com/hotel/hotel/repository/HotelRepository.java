@@ -14,13 +14,14 @@ import java.util.List;
 
 
 public interface HotelRepository extends JpaRepository<Hotel,Long> {
-    /**
-     * JpaRepository 기본 제공 -> findAll(Pageable)
-     * 하지만 Rate있는 호텔만 필터링해야함
-     */
-    @Query("select distinct r.hotel from Rate r where r.date = :date")
-    Page<Hotel> findAllWithRate(@Param("date") LocalDate date, Pageable pageable);
 
+
+    @Query("SELECT h " +
+            "FROM Hotel h " +
+            "LEFT JOIN WishList w ON w.hotel = h " +
+            "GROUP BY h " +
+            "ORDER BY COUNT(w) DESC")
+    List<Hotel> findPopularByWishCount(Pageable pageable);
 
     boolean existsByName(String name);
 

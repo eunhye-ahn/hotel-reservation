@@ -4,7 +4,7 @@ import type { HotelListFilter } from "@/api/types/hotel"
 export const hotelKeys = {
     all: ["hotels"] as const,
     lists: () => [...hotelKeys.all, "list"] as const,
-    list: (filter: HotelListFilter) => [...hotelKeys.lists(), filter] as const,
+    list: (filter: HotelListFilter, page: number) => [...hotelKeys.lists(), filter, page] as const,
 
     details: () => [...hotelKeys.all, "detail"] as const,
     detail: (params: UseHotelDetailProps) => [...hotelKeys.details(), params] as const,
@@ -14,4 +14,6 @@ export const hotelKeys = {
 
     wishes: () => [...hotelKeys.all, "wish"] as const,
     wish: (hotelId: number) => [...hotelKeys.wishes(), hotelId] as const,
+
+    popular: () => [...hotelKeys.all, "popular"] as const,
 }
