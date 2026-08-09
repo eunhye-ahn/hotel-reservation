@@ -27,7 +27,7 @@ export const DashBoardSummary = () => {
                 </div>
                 <div className="border border-gray-500 p-5 bg-white">
                     <p className="text-sm text-gray-500 mb-2">오늘 결제금액</p>
-                    <p className="text-2xl font-bold text-gray-500">{summaryData?.todayPaymentAmount}</p>
+                    <p className="text-2xl font-bold text-gray-500">{summaryData?.todayPaymentAmount.toLocaleString()}</p>
                     <p className="text-sm text-gray-500 mb-2">결제 성공 {summaryData?.todayPaymentCount}건</p>
                 </div>
                 <div className="border border-gray-500 p-5 bg-white">

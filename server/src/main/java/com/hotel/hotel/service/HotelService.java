@@ -47,7 +47,7 @@ public class HotelService {
                 hotelId,
                 today,
                 startDate,
-                endDate,
+                endDate != null ? endDate.minusDays(1) : null,
                 totalDays,
                 numberOfRooms,
                 numberOfGuests

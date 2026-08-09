@@ -61,8 +61,8 @@ public class ReservationConcurrencyTest {
         for(int i=0;i<threadCount;i++){
             executor.submit(()->{
                 try{
+                    String reservationKey = UUID.randomUUID().toString();
                     ReservationRequest request = new ReservationRequest(
-                            UUID.randomUUID().toString(),   //각 요청마다 다른키
                             1L,
                             1L,
                             LocalDate.now(),
@@ -71,7 +71,7 @@ public class ReservationConcurrencyTest {
                             2
                     );
 
-                    reservationProcessor.processWithRetry(request, 1L);
+                    reservationProcessor.processWithRetry(request, 1L, reservationKey);
                 }catch(Exception e){
                     log.info("충돌 발생: {}", e.getMessage());
                 }finally{

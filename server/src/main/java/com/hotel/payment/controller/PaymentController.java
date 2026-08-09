@@ -22,9 +22,9 @@ public class PaymentController {
     public ResponseEntity<PaymentPrepareResponse> preparedPayment(
             @PathVariable String reservationKey,
             @RequestBody PaymentPrepareRequest request,
-            HttpServletRequest httpRequest
+            @RequestHeader("Idempotency-Key") String checkoutId
     ){
-        PaymentPrepareResponse result = paymentService.preparePayment(reservationKey,request.orderId(), httpRequest);
+        PaymentPrepareResponse result = paymentService.preparePayment(reservationKey,request.orderId(), checkoutId);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

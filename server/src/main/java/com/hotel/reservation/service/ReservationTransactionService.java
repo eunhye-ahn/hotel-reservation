@@ -40,9 +40,9 @@ public class ReservationTransactionService {
 
     //실제 예약 생성
     @Transactional
-    public void createReservationInTransaction(ReservationRequest request, Long userId){
+    public void createReservationInTransaction(ReservationRequest request, Long userId, String reservationKey){
         //멱등키검사
-        if (reservationRepository.existsByReservationKey(request.reservationKey())) {
+        if (reservationRepository.existsByReservationKey(reservationKey)) {
             return;
         }
 
@@ -95,7 +95,7 @@ public class ReservationTransactionService {
         //예약생성
         Reservation reservation = Reservation.builder()
                 .displayReservationNO(generateDisplayReservationNo())
-                .reservationKey(request.reservationKey())
+                .reservationKey(reservationKey)
                 .orderId(orderId)
                 .hotel(hotel)
                 .roomType(roomType)

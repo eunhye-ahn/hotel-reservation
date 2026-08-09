@@ -22,11 +22,8 @@ public class AdminReservationCancelService {
 
     //재고 복구,예약상태변경, 방배정 철회
     @Transactional
-    public void cancelAndRestoreInventory(Long reservationId, String reason){
+    public void cancelAndRestoreInventory(Reservation reservation, String reason){
 
-
-        Reservation reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
         reservation.cancelByAdmin(reason);
 
         //재고복구(중복코드) - 룸타입서비스로 리팩토링 예정
@@ -38,11 +35,8 @@ public class AdminReservationCancelService {
 
     //취소 정산
     @Transactional
-    public void completeCancelByRefund(Long reservationId, String reason){
-        Reservation reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
-
+    public void completeReverseSettlementAndRefund(Reservation reservation){
         paymentService.reverseSettlement(reservation);
-        reservation.completeCancelByRefund();
+        reservation.refunded();
     }
 }

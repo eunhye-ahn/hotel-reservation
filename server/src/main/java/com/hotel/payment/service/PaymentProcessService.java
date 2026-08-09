@@ -8,6 +8,9 @@ import com.hotel.payment.repository.WalletRepository;
 import com.hotel.reservation.domain.Reservation;
 import com.hotel.reservation.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class PaymentProcessService {
 
     private final LedgerRepository ledgerRepository;
-    private final WalletRepository walletRepository;
+    private final WalletProcessor walletProcessor;
     private final ReservationRepository reservationRepository;
 
     //웹훅
@@ -48,13 +51,7 @@ public class PaymentProcessService {
         );
 
         //wallet 업데이트 => 임시적으로 인서트허용
-        Wallet wallet = walletRepository.findBySellerAccount(paymentOrder.getSellerAccount())
-                .orElseGet(()-> walletRepository.save(
-                        Wallet.builder()
-                                .sellerAccount(paymentOrder.getSellerAccount())
-                                .build()
-                ));
-        wallet.updateBalance(paymentOrder.getAmount());
+        walletProcessor.updateWalletBalance(paymentOrder.getSellerAccount(), paymentOrder.getAmount());
 
         paymentOrder.completedLedgerAndWalletUpdate();
         paymentOrder.success();

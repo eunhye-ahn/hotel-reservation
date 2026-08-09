@@ -27,6 +27,6 @@ public class ReservationExpireProcessor {
 
     @Recover
     public void expireRecover(RuntimeException e, String reservationKey){
-        log.error("예약 만료 처리 재시도 모두 실패 - reservationKey: {}", reservationKey);
+        log.error("예약 만료 처리 재시도 모두 실패 - reservationKey: {}, 원인 : {}", reservationKey, e.getMessage(), e);
     }
 }

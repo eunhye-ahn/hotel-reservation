@@ -1,9 +1,10 @@
 import { addDays, format, subDays } from "date-fns"
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useExecuteSettlement } from "../../hooks/settlement/useExecuteSettlement"
 import { useSettlementPreview } from "../../hooks/settlement/useSettlementPreview"
 import { Spinner } from "@/common/component/Spinner"
 import { ErrorMessage } from "@/common/component/ErrorMessage"
+import { useNavigate } from "react-router"
 
 interface SettlementModalProps {
     hotelId: number,
@@ -14,6 +15,7 @@ interface SettlementModalProps {
 }
 
 export const SettlementModal = ({ hotelId, hotelName, pendingBalance, lastSettledAt, onSuccess }: SettlementModalProps) => {
+    const navigate = useNavigate()
     const defaultPeriodStart = lastSettledAt ? format(addDays(new Date(lastSettledAt), 1), 'yyyy-MM-dd')
         : format(subDays(new Date(), 7), 'yyyy-MM-dd');
 
@@ -21,12 +23,20 @@ export const SettlementModal = ({ hotelId, hotelName, pendingBalance, lastSettle
     const [periodEnd, setPeriodEnd] = useState<string | undefined>(format(new Date(), 'yyyy-MM-dd'))
 
     const { data, isLoading, isError } = useSettlementPreview({ hotelId, periodStart, periodEnd })
-    const { executeSettleMutate, isExecuting } = useExecuteSettlement({ hotelId, periodStart: periodStart!, periodEnd: periodEnd! })
+
+    const settlementKey = useRef(crypto.randomUUID())
+    const { executeSettleMutate, isExecuting } = useExecuteSettlement({
+        hotelId,
+        settlementKey: settlementKey.current,
+        periodStart: periodStart!,
+        periodEnd: periodEnd!
+    })
 
     const handleExecute = () => {
         executeSettleMutate(undefined, {
             onSuccess: () => {
                 onSuccess()
+                navigate("/admin/settlements")
             }
         })
     }
@@ -52,7 +62,7 @@ export const SettlementModal = ({ hotelId, hotelName, pendingBalance, lastSettle
                     )}
             <button onClick={handleExecute}
                 disabled={isExecuting || !periodStart || !periodEnd}>
-                정산하기
+                {isExecuting ? "Loading..." : "정산하기"}
             </button>
         </div>
     )

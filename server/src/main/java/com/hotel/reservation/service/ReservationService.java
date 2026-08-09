@@ -1,10 +1,8 @@
 package com.hotel.reservation.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.hotel.common.exception.CustomException;
 import com.hotel.common.exception.ErrorCode;
-import com.hotel.common.idempotency.IdempotencyValue;
+import com.hotel.common.idempotency.IdempotencyDomain;
 import com.hotel.hotel.domain.RoomTypeInventory;
 import com.hotel.hotel.repository.RoomTypeInventoryRepository;
 import com.hotel.reservation.domain.*;
@@ -20,9 +18,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.util.HexFormat;
 import java.util.List;
 
 @Service
@@ -35,39 +30,18 @@ public class ReservationService {
     private final RoomTypeInventoryRepository roomTypeInventoryRepository;
 
     //예약생성
-    public ReservationCreateResponse createReservation(ReservationRequest request, Long userId) {
-        //멱등키 확인 -Redis
-        //1.요청본문 해시생성
-        String requestHash = generateHash(request);
-
-        //2.redis선점시도
-        boolean isFirst = idempotencyRedisService.tryProcessing(
-                request.reservationKey(), userId, requestHash
-        );
-
-        //3.중복요청이면 이전 요청으로 처리
-        if (!isFirst) {
-            handleDuplicate(request.reservationKey(), userId, requestHash);
-            return new ReservationCreateResponse(
-                    request.reservationKey(),
-                    reservationRepository.findByReservationKey(request.reservationKey())
-                            .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND))
-                            .getOrderId()
-            );
-        }
-
-        //4.새요청이면 예약처리(여기서 엔티티유효성검사 등하고 response 반환)
+    public ReservationCreateResponse createReservation(ReservationRequest request, Long userId, String reservationKey) {
         try {
-            reservationProcessor.processWithRetry(request, userId);
-            idempotencyRedisService.complete(request.reservationKey());
+            reservationProcessor.processWithRetry(request, userId, reservationKey);
+            idempotencyRedisService.complete(IdempotencyDomain.RESERVATION, reservationKey);
             return new ReservationCreateResponse(
-                    request.reservationKey(),
-                    reservationRepository.findByReservationKey(request.reservationKey())
+                    reservationKey,
+                    reservationRepository.findByReservationKey(reservationKey)
                             .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND))
                             .getOrderId()
             );
         } catch (Exception e) {
-            idempotencyRedisService.fail(request.reservationKey());
+            idempotencyRedisService.fail(IdempotencyDomain.RESERVATION, reservationKey);
             throw e;
         }
     }
@@ -134,52 +108,6 @@ public class ReservationService {
         inventories.forEach(i -> i.restore(reservation.getNumberOfRooms()));
     }
 
-    private String generateHash(ReservationRequest request) {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.registerModule(new JavaTimeModule()); // LocalDate 직렬화
-            String json = objectMapper.writeValueAsString(request);
-
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(json.getBytes(StandardCharsets.UTF_8));
-
-            return HexFormat.of().formatHex(hash);
-        } catch (Exception e) {
-            //굳이 custom으로 해야하나 흠
-            throw new CustomException(ErrorCode.HASH_GENERATION_FAILED);
-        }
-    }
-
-    private void handleDuplicate(String reservationKey, Long userId, String requestHash) {
-        //tryProcessing() -> get() 사이에서 멱등키 만료되는 상황 방지
-        //      : 현실적으로는 TTL을 24시간으로 설정해두어서 발생할 확률이 없지만 이론상 방어
-        IdempotencyValue value = idempotencyRedisService.get(reservationKey)
-                .orElseThrow(() -> new CustomException(ErrorCode.IDEMPOTENCY_NOT_FOUND));
-
-        //다른 유저가 같은 키 사용 시도
-        if (!value.getUserId().equals(userId)) {
-            throw new CustomException(ErrorCode.IDEMPOTENCY_USER_MISMATCH);
-        }
-
-        //같은 키인데 다른 본문
-        if (!value.getRequestHash().equals(requestHash)) {
-            throw new CustomException(ErrorCode.IDEMPOTENCY_REQUEST_MISMATCH);
-        }
-
-        if (value.getStatus().equals("processing")) {
-            throw new CustomException(ErrorCode.IDEMPOTENCY_PROCESSING);
-        }
-
-        if (value.getStatus().equals("failed")) {
-            throw new CustomException(ErrorCode.IDEMPOTENCY_FAILED);
-        }
-
-        if (!value.getStatus().equals("completed")) {
-            throw new CustomException(ErrorCode.IDEMPOTENCY_UNKNOWN);
-        }
-
-        //completed면 정상 반환 -> status를 enum으로 관리하면 코드가독성 좋아짐
-    }
 
     //예약상태확인
     public String getReservationStatus(String reservationKey){

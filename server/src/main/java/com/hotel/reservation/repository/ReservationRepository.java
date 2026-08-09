@@ -39,10 +39,12 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long>,
 
     @Query("SELECT r FROM Reservation r " +
             "LEFT JOIN FETCH r.hotel " +
-            "WHERE r.reservationStatus = :status AND r.room IS NULL " +
+            "WHERE r.reservationStatus = :reservationStatus AND r.room IS NULL " +
+            "AND r.paymentStatus = :paymentStatus " +
             "ORDER BY r.startDate ASC")
     List<Reservation> findUnassignedPreview(
-            @Param("status") ReservationStatus status,
+            @Param("reservationStatus") ReservationStatus reservationStatus,
+            @Param("paymentStatus") PaymentStatus paymentStatus,
             Pageable pageable
     );
 

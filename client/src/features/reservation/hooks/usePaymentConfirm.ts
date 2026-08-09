@@ -14,7 +14,7 @@ interface UsePaymentConfirmParams {
 }
 
 const MAX_ATTEMPTS = 5;
-const POLL_INTERVAL = 20_000;
+const POLL_INTERVAL = 10_000;
 
 export const usePaymentConfirm = ({ orderId, paymentKey, amount }: UsePaymentConfirmParams) => {
     const [confirmed, setConfirmed] = useState(false)

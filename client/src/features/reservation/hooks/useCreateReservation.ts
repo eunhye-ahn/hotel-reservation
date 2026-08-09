@@ -8,6 +8,7 @@ import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import { hotelKeys } from "../../hotel/hooks/hotelkeys";
 import * as Sentry from "@sentry/react"
+import type { ReservationRequest } from "@/api/types/reservation";
 
 interface UseReservationParams {
     hotelId?: string,
@@ -26,7 +27,7 @@ export const useCreateReservation = ({ hotelId, data, startDate, endDate, number
     const reservationKey = useRef(crypto.randomUUID())
 
     const { mutate: createReservationMutate, isPending } = useMutation({
-        mutationFn: createReservation,
+        mutationFn: (request: ReservationRequest) => createReservation(request, reservationKey.current),
         onSuccess: (res) => {
             queryClient.invalidateQueries({ queryKey: reservationKeys.myLists() })
             const { reservationKey, orderId } = res.data;
@@ -74,7 +75,6 @@ export const useCreateReservation = ({ hotelId, data, startDate, endDate, number
         if (!data) return;
         selectedRoomTypeIdRef.current = roomTypeId;
         createReservationMutate({
-            reservationKey: reservationKey.current,
             hotelId: Number(hotelId),
             roomTypeId,
             startDate,

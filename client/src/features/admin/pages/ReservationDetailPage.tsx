@@ -66,15 +66,16 @@ export const ReservationDetail = () => {
                     {/* 강제취소 */}
                     <section className="min-h-[52px] flex items-center">
                         {data?.reservationStatus != "BEFORE_USE" ? (
-                            <p className="text-sm text-gray-400">이용 전 상태에서만 취소할 수 있습니다</p>
+                            <p className="text-sm text-gray-400 mt-3 mx-1">이용 전 상태에서만 취소할 수 있습니다</p>
                         ) : (
                             <div className="">
                                 <button
-                                    className="px-4 py-2 text-sm text-red-500 border border-red-500 cursor-pointer hover:bg-gray-100 mx-1"
+                                    className="px-4 py-2 text-sm text-red-500 border border-red-500 cursor-pointer hover:bg-gray-100 mt-1 mx-1"
                                     onClick={() => setShowCancelForm(!showCancelForm)}>{showCancelForm ? '취소' : '예약취소'}</button>
                                 {showCancelForm &&
                                     <CancelByAdminForm
                                         reservationId={reservationId}
+                                        paymentStatus={data.paymentStatus}
                                         refundPrice={data?.totalPrice} />
                                 }
                             </div>
@@ -111,8 +112,8 @@ export const ReservationDetail = () => {
                             <tr>
                                 <td colSpan={2}>
                                     <section className="mb-8">
-                                        {data?.reservationStatus != "BEFORE_USE" ? (
-                                            <p className="text-sm text-gray-400">이용 전 상태에서만 배정이 가능합니다</p>
+                                        {data?.reservationStatus != "BEFORE_USE" || data?.paymentStatus != "PAID" ? (
+                                            <p className="text-sm text-gray-400 mt-3 mx-3">배정할 수 없는 예약입니다</p>
                                         ) : data?.roomAssigned ? (
                                             <>
                                                 <AssignRoomInfoTable
@@ -123,7 +124,7 @@ export const ReservationDetail = () => {
                                                 />
                                                 <button
                                                     className="px-4 py-2 text-sm text-red-500 border border-red-500 cursor-pointer hover:bg-gray-100 mt-5 mx-1"
-                                                    onClick={() => setShowAssignFrom(!showAssignForm)}>{showAssignForm ? '취소' : '배정변경'}</button>
+                                                    onClick={() => setShowAssignFrom(!showAssignForm)}>{showAssignForm ? '접기' : '배정변경'}</button>
                                             </>
                                         ) : (
                                             <div>
@@ -144,7 +145,7 @@ export const ReservationDetail = () => {
                 </div>
             </div>
             {/* 객실 배정 */}
-            {showAssignForm && data?.roomAssigned &&
+            {showAssignForm &&
                 <RoomAssignmentForm reservationId={reservationId} />
             }
         </div>

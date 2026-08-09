@@ -23,6 +23,9 @@ public class Settlement extends BaseTime{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false,  unique = true, name="settlement_key")
+    private String settlementKey;
+
     @Column(nullable = false)
     private String sellerAccount;
 

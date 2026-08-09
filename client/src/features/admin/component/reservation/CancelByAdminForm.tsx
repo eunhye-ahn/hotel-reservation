@@ -3,11 +3,12 @@ import { useCancelByAdmin } from "../../hooks/reservation/useCancelByAdmin"
 
 interface CancelByAdminFormProps {
     reservationId: number,
+    paymentStatus: string,
     refundPrice: number
 }
 
 
-export const CancelByAdminForm = ({ reservationId, refundPrice }: CancelByAdminFormProps) => {
+export const CancelByAdminForm = ({ reservationId, paymentStatus, refundPrice }: CancelByAdminFormProps) => {
 
     const [customReason, setCustomReason] = useState<string>("")
     const [cancelReasonType, setCancelReasonType] = useState<string>("")
@@ -39,8 +40,12 @@ export const CancelByAdminForm = ({ reservationId, refundPrice }: CancelByAdminF
                                 />
                             )}
                         </td>
-                        <th>환불액</th>
-                        <td>{refundPrice}원</td>
+                        {paymentStatus === "PAID" &&
+                            <>
+                                <th>환불액</th>
+                                <td>{refundPrice}원</td>
+                            </>
+                        }
                     </tr>
                     <tr>
                         <td colSpan={2}>

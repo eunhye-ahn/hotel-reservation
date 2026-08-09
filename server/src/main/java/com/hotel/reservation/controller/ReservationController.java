@@ -24,8 +24,9 @@ public class ReservationController {
     //예약생성
     @PostMapping
     public ResponseEntity<ReservationCreateResponse> createReservation(@AuthenticationPrincipal Long userId,
-                                                                       @RequestBody @Valid ReservationRequest request){
-        ReservationCreateResponse result = reservationService.createReservation(request, userId);
+                                                                       @RequestBody @Valid ReservationRequest request,
+                                                                       @RequestHeader("Idempotency-Key") String reservationKey){
+        ReservationCreateResponse result = reservationService.createReservation(request, userId, reservationKey);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)

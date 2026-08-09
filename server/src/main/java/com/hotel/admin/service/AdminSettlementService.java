@@ -1,6 +1,7 @@
 package com.hotel.admin.service;
 
 import com.hotel.admin.dto.payment.AdminSettlementSearchResponse;
+import com.hotel.admin.dto.settlement.ExecuteSettlementRequest;
 import com.hotel.admin.dto.settlement.SettlementHistoryResponse;
 import com.hotel.common.exception.CustomException;
 import com.hotel.common.exception.ErrorCode;
@@ -29,8 +30,8 @@ public class AdminSettlementService {
     private final SettlementMapper mapper;
     private final SettlementRepository settlementRepository;
 
-    public void executeSettlementByAdmin(Long hotelId, LocalDate periodStart, LocalDate periodEnd){
-        settlementService.executeSettlementByAdmin(hotelId, periodStart, periodEnd);
+    public void executeSettlementByAdmin(Long hotelId, ExecuteSettlementRequest request, String settlementKey){
+        settlementService.executeSettlementByAdmin(hotelId, request.periodStart(), request.periodEnd(),settlementKey);
     }
 
     //정산내역 조회

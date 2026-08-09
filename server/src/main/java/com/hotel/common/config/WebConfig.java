@@ -14,6 +14,10 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(idempotencyInterceptor)
-                .addPathPatterns("/payments/prepare/**");
+                .addPathPatterns(
+                        "/api/v1/reservations/**",
+                        "/api/v1/payments/prepare/**",
+                        "/api/v1/settlements/**"
+                );
     }
 }

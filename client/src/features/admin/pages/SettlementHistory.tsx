@@ -8,7 +8,6 @@ import { useSettlementHistoryFilter } from "../hooks/settlement/useSettlementHis
 import { ErrorMessage } from "@/common/component/ErrorMessage"
 import { useSettlementHistory } from "../hooks/settlement/useSettlementHistory"
 import { Pagination } from "@/common/component/Pagination"
-import { SettlementStatusBadge } from "../component/settlement/SettlementStatusBadge"
 import { SettlementHistoryTable } from "../component/settlement/SettlementHistoryTable"
 
 export const SettlementHistory = () => {

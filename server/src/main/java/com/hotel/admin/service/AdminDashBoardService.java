@@ -5,6 +5,7 @@ import com.hotel.admin.mapper.StatisticMapper;
 import com.hotel.payment.domain.PaymentOrderStatus;
 import com.hotel.payment.repository.PaymentOrderRepository;
 import com.hotel.payment.repository.WalletRepository;
+import com.hotel.reservation.domain.PaymentStatus;
 import com.hotel.reservation.domain.Reservation;
 import com.hotel.reservation.domain.ReservationStatus;
 import com.hotel.reservation.repository.ReservationRepository;
@@ -57,7 +58,7 @@ public class AdminDashBoardService {
 
     public List<UnassignRoomInfo> unAssignReservationInfo(){
         Pageable pageable = PageRequest.of(0, 5);
-        List<Reservation> unassignReservation = reservationRepository.findUnassignedPreview(ReservationStatus.BEFORE_USE, pageable);
+        List<Reservation> unassignReservation = reservationRepository.findUnassignedPreview(ReservationStatus.BEFORE_USE, PaymentStatus.PAID, pageable);
 
         return unassignReservation.stream()
                 .map(UnassignRoomInfo::from)

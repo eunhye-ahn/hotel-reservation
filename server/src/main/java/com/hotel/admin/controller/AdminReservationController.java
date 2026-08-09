@@ -23,8 +23,8 @@ public class AdminReservationController {
 
     //예약 조회 (필터)
     @GetMapping
-    public ResponseEntity<Page<AdminReservationSearchResponse>> getReservations(@ModelAttribute AdminReservationSearchRequest request){
-        Pageable pageable = PageRequest.of(request.page(),10);
+    public ResponseEntity<Page<AdminReservationSearchResponse>> getReservations(@ModelAttribute AdminReservationSearchRequest request) {
+        Pageable pageable = PageRequest.of(request.page(), 10);
         Page<AdminReservationSearchResponse> result = adminReservationService.getReservations(
                 request.startDate(),
                 request.endDate(),
@@ -42,7 +42,7 @@ public class AdminReservationController {
 
     //예약 상세
     @GetMapping("/{reservationId}")
-    public ResponseEntity<AdminReservationDetailResponse> getReservationDetail(@PathVariable Long reservationId){
+    public ResponseEntity<AdminReservationDetailResponse> getReservationDetail(@PathVariable Long reservationId) {
 
         AdminReservationDetailResponse result = adminReservationService.getReservationDetail(reservationId);
 
@@ -53,7 +53,7 @@ public class AdminReservationController {
 
     //방 조회
     @GetMapping("/{reservationId}/rooms")
-    public ResponseEntity<List<AdminRoomResponse>> getRoomsByReservation(@PathVariable Long reservationId){
+    public ResponseEntity<List<AdminRoomResponse>> getRoomsByReservation(@PathVariable Long reservationId) {
         List<AdminRoomResponse> list = adminReservationService.getRoomsByReservation(reservationId);
 
         return ResponseEntity
@@ -65,7 +65,7 @@ public class AdminReservationController {
     @PatchMapping("/{reservationId}/assign-rooms")
     public ResponseEntity<Void> assignRoom(
             @PathVariable Long reservationId,
-            @RequestBody AssignmentRoomRequest request){
+            @RequestBody AssignmentRoomRequest request) {
         adminReservationService.assignRoom(reservationId, request.getRoomId());
 
         return ResponseEntity
@@ -75,20 +75,20 @@ public class AdminReservationController {
 
     //배정취소
     @PatchMapping("/{reservationId}/unassign-rooms")
-    public ResponseEntity<Void> unassignRoom(@PathVariable Long reservationId){
+    public ResponseEntity<Void> unassignRoom(@PathVariable Long reservationId) {
         adminReservationService.unassignRoom(reservationId);
 
-        return  ResponseEntity
+        return ResponseEntity
                 .status(HttpStatus.OK)
                 .build();
     }
 
-    //예약취소-관리자
+    //예약취소-관리자(결제완료된 건)
     @PostMapping("/{reservationId}/cancel")
     public ResponseEntity<Void> cancelReservationByAdmin(@PathVariable Long reservationId,
-                                                  @RequestBody CancelReservationByAdminRequest request){
+                                                         @RequestBody CancelReservationByAdminRequest request) {
 
-        adminReservationService.refundByReservation(reservationId, request.getCancelReason());
+        adminReservationService.cancelReservation(reservationId, request.cancelReason());
 
         return ResponseEntity
                 .status(HttpStatus.OK)

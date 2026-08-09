@@ -8,8 +8,6 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 public record ReservationRequest (
-     String reservationKey, //멱등키(프론트에서 생성) -UUID
-
     @NotNull(message = "호텔을 선택해주세요")
      Long hotelId,
 

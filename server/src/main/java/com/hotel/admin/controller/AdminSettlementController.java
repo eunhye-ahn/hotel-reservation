@@ -28,8 +28,9 @@ public class AdminSettlementController {
     //관리자 수동 정산 => 오류: 네트워크오류로 정산하기버튼 여러번 클릭 시, 여러번 insert되는 오류
     @PostMapping("/{hotelId}/execute")
     public ResponseEntity<Void> executeSettlementByAdmin(@PathVariable Long hotelId,
-                                                         @RequestBody ExecuteSettlementRequest request){
-        adminSettlementService.executeSettlementByAdmin(hotelId, request.periodStart(), request.periodEnd());
+                                                         @RequestBody ExecuteSettlementRequest request,
+                                                         @RequestHeader("Idempotency-Key")String settlementKey){
+        adminSettlementService.executeSettlementByAdmin(hotelId, request, settlementKey);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

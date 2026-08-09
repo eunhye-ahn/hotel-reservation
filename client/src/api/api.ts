@@ -1,11 +1,11 @@
 import type { AccessTokenResponse, LoginRequest, SignUpRequest } from "@/api/types/auth";
 import axios from "axios";
-import type { AddWishListResponse, AdminInventorySummaryResponse, CursorResponse, HotelDetailResponse, HotelListFilter, hotelResponse, MoveWishRequest, MoveWishResponse, Page, searchInventorySummaryRequest, SettlementHistoryResponse, WishCollectionsRequest, WishListCollectionResponse } from "@/api/types/hotel";
+import type { AddWishListResponse, AdminInventorySummaryResponse, HotelDetailResponse, HotelListFilter, hotelResponse, MoveWishRequest, MoveWishResponse, Page, searchInventorySummaryRequest, SettlementHistoryResponse, WishCollectionsRequest, WishListCollectionResponse } from "@/api/types/hotel";
 import type { ReservationCreateResponse, ReservationDetailResponse, ReservationInfoResponse, ReservationRequest, ReservationResponse, RoomTypeReservationResponse } from "@/api/types/reservation";
 import type { UserInfoResponse } from "./types/user";
 import { api } from "./axios";
 import type { PaymentConfirmRequest, PaymentConfirmResponse, PaymentPrepareResponse } from "@/api/types/payment";
-import type { AdminPaymentResponse, AdminPaymentSearchRequest, AdminReseervationSearchRequest, AdminReservationDetailResponse, AdminReservationSearchResponse, AdminRoomInfoResponse, AdminRoomResponse, AdminSettlementSearchRequest, AdminSettlementSearchResponse, AssignmentRoomRequest, CancelReservationByAdminRequest, DailyStatisticsResponse, DashBoardSummaryResponse, ExecuteSettlementRequest, PaymentStatusStaticResponse, ReserveStatusStaticResponse, RoomFilterOptionResponse, RoomTypeInventoryCalendarResponse, searchRoomInfoRequest, SettlementHistorySearchRequest, TopPendingBalanceHotel, UnassignRoomInfo } from "@/api/types/admin";
+import type { AdminPaymentResponse, AdminPaymentSearchRequest, AdminReseervationSearchRequest, AdminReservationDetailResponse, AdminReservationSearchResponse, AdminRoomInfoResponse, AdminRoomResponse, AdminSettlementSearchRequest, AdminSettlementSearchResponse, AssignmentRoomRequest, CancelReservationByAdminRequest, DailyStatisticsResponse, DashBoardSummaryResponse, PaymentStatusStaticResponse, ReserveStatusStaticResponse, RoomFilterOptionResponse, RoomTypeInventoryCalendarResponse, searchRoomInfoRequest, SettlementHistorySearchRequest, TopPendingBalanceHotel, UnassignRoomInfo } from "@/api/types/admin";
 
 export const login = (request: LoginRequest) => {
     return api.post<AccessTokenResponse>("/auth/login", request);
@@ -54,8 +54,10 @@ export const getHotelDetail = (hotelId: number, startDate?: string, endDate?: st
     });
 }
 
-export const createReservation = (request: ReservationRequest) => {
-    return api.post<ReservationCreateResponse>("/reservations", request)
+export const createReservation = (request: ReservationRequest, reservationKey: string) => {
+    return api.post<ReservationCreateResponse>("/reservations", request, {
+        headers: { "Idempotency-Key": reservationKey }
+    })
 }
 
 export const getRoomTypeForReservation = (hotelId: number, roomTypeId: number, startDate: string, endDate: string, numberOfRooms: number) => {
@@ -138,10 +140,10 @@ export const getWishedChecked = (hotelId: number) => {
     })
 }
 
-export const preparePayment = (reservationKey: string, orderId: string, idempotencyKey: string) => {
+export const preparePayment = (reservationKey: string, orderId: string, paymentKey: string) => {
     return api.post<PaymentPrepareResponse>(`/payments/prepare/${reservationKey}`, { orderId }, {
         headers: {
-            "Idempotency-Key": idempotencyKey
+            "Idempotency-Key": paymentKey
         }
     })
 }
@@ -214,8 +216,11 @@ export const previewSettlementAmount = (hotelId: number, periodStart?: string, p
 }
 
 //수동정산
-export const executeSettlementByAdmin = (hotelId: number, periodStart?: string, periodEnd?: string) => {
-    return api.post<void>(`admin/settlement/${hotelId}/execute`, { periodStart, periodEnd })
+export const executeSettlementByAdmin = (hotelId: number, settlementKey: string, periodStart?: string, periodEnd?: string) => {
+    return api.post<void>(`admin/settlement/${hotelId}/execute`,
+        { periodStart, periodEnd },
+        { headers: { "Idempotency-Key": settlementKey } }
+    )
 }
 
 //특정 호텔 정산내역 조회

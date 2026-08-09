@@ -30,52 +30,6 @@ public class Reservation extends BaseTime{
     @Column(name="display_reservation_no",unique = true)
     private String displayReservationNO;
 
-    /**
-     * [WHAT]
-     * 멱등키 - 같은요청이 여러번 와도 딱 한번만 처리하도록 하는 키
-     * [WHY]
-     *
-     * [흐름]
-     * 클라이언트가 reservationKey(멱등키) 생성
-     * > POST /v1/reservations 요청
-     * > 서버: Redis에서 reservationKey 조회
-     * > ┌─── 없음 → 처리 진행 → 결과 Redis에 저장 → 응답
-     *   └─── 있음 → Redis에서 이전 결과 꺼내서 → 그대로 응답
-     *
-     * [Redis 저장 구조]
-     *   key   : idempotency:{reservationId}
-     * value : {
-     *   status   : "processing" | "completed" | "failed",
-     *              ------------409 ---------- 200
-     *   result   : true/false,
-     *   userId   : 123,          // 다른 유저가 같은 키 쓰는 거 방지 - 다르면 403
-     *   request  : { ... },      // 요청 본문 해시 (변조 감지용) - 본문과 다르면 422
-     *   createdAt: "2026-04-27T..."
-     * }
-     * TTL   : 24시간 (또는 예약 정책에 맞게)
-     *
-     * [Redis SET NX]
-     * NX = "Not eXists" -> 키가 없을때만 저장, 있으면 무시
-     * # 일반 SET → 무조건 덮어씀
-     * SET foo "hello"   # 저장됨
-     * SET foo "world"   # 덮어씀 → foo = "world"
-     *
-     * # SET NX → 없을 때만 저장
-     * SET foo "hello" NX   # 저장됨 (키 없었으니까) → OK
-     * SET foo "world" NX   # 무시됨 (키 있으니까)   → nil
-     *
-     * [왜 동시성이 해결되냐?]
-     * 요청A ──┐
-     *         ├──→ SET idempotency:abc "processing" NX
-     * 요청B ──┘
-     *
-     * 결과:
-     * 요청A → OK  (내가 먼저 선점!) → 예약 처리 진행
-     * 요청B → nil (이미 있음)      → 409 반환
-     * redis는 싱글스레드라 set nx가 원자적으로 실행됨
-     *
-     *
-     */
     @Column(nullable = false)
     private String orderId;
 
@@ -193,11 +147,14 @@ public class Reservation extends BaseTime{
     }
 
     //결제 취소 성공
-    public void completeCancelByRefund(){
+    public void completeCancel(){
         if(this.reservationStatus != ReservationStatus.CANCEL_PENDING) {
             throw new CustomException(ErrorCode.CANNOT_REFUND_RESERVATION);
         }
         this.reservationStatus = ReservationStatus.CANCELED;
+    }
+
+    public void refunded(){
         this.paymentStatus = PaymentStatus.REFUNDED;
     }
 }

@@ -25,23 +25,24 @@ public class ReservationProcessor {
             maxAttempts = 3,
             backoff = @Backoff(delay = 100)
     )
-    public void processWithRetry(ReservationRequest request, Long userId) {
-        log.info("processor retry - reservationKey: {}", request.reservationKey());
-        reservationTransactionService.createReservationInTransaction(request, userId);
+    public void processWithRetry(ReservationRequest request, Long userId, String reservationKey) {
+        log.info("processor retry - reservationKey: {}", reservationKey);
+        reservationTransactionService.createReservationInTransaction(request, userId, reservationKey);
     }
 
     @Recover
     public void recover(ObjectOptimisticLockingFailureException e,
-                        ReservationRequest request, Long userId){
+                        ReservationRequest request, Long userId,
+                        String reservationKey) {
         log.error("예약 재시도 모두 실패 - reservationKey: {}",
-                request.reservationKey());
+                reservationKey);
         throw new CustomException(ErrorCode.RESERVATION_CONFLICT);
     }
 
     @Recover
     public void recover(CustomException e,
-                        ReservationRequest request, Long userId) {
-        log.info("예약 불가 - reservationKey: {}, 사유: {}", request.reservationKey(), e.getMessage());
+                        ReservationRequest request, Long userId, String reservationKey) {
+        log.info("예약 불가 - reservationKey: {}, 사유: {}", reservationKey, e.getMessage());
         throw e; // 원래 예외(재고부족 등) 그대로 던짐
     }
 }

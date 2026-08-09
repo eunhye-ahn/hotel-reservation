@@ -70,7 +70,7 @@ public class PaymentService {
     }
 
     @Transactional
-    public PaymentPrepareResponse preparePayment(String reservationKey, String orderId, HttpServletRequest request){
+    public PaymentPrepareResponse preparePayment(String reservationKey, String orderId, String checkoutId){
         //예약 유효성 확인
         Reservation reservation = reservationRepository.findByReservationKey(reservationKey)
                 .orElseThrow();
@@ -90,13 +90,6 @@ public class PaymentService {
                     existingOrder.getAmount(),
                     reservation.getUser().getId()
             );
-        }
-
-        //checkoutId 가져오기 (클라-서버 멱등키)
-        String checkoutId = request.getHeader("Idempotency-Key");
-
-        if(checkoutId == null) {
-            throw new CustomException(ErrorCode.MISSING_IDEMPOTENCY_KEY);
         }
 
         //paymentOrderId 생성 (서버-PSP 멱등키)
@@ -173,7 +166,7 @@ public class PaymentService {
                     new TossCancelRequest(cancelReason)
             );
         }catch(Exception e){
-            e.printStackTrace();
+            log.error("토스 결제취소 실패 - reservationId: {}", reservationId, e);
             throw new CustomException(ErrorCode.REFUND_FAILED);
         }
 

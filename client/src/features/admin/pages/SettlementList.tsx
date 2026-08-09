@@ -1,14 +1,12 @@
-import type { AdminSettlementSearchResponse } from "@/api/types/admin"
-import { useState } from "react"
 import { Spinner } from "@/common/component/Spinner"
 import { ErrorMessage } from "@/common/component/ErrorMessage"
 import { Pagination } from "@/common/component/Pagination"
 import { useNavigate } from "react-router"
 import { useSettlementList } from "../hooks/settlement/useSettlementList"
 import { useSettlementFilter } from "../hooks/settlement/useSettlementFilter"
+import { format } from "date-fns"
 
 export const SettlementList = () => {
-    const [settleTarget, setSettleTarget] = useState<AdminSettlementSearchResponse | null>(null)
     const { filter, setSearchType, setKeyword, setHasPendingBalance, setSortType, setPage } = useSettlementFilter()
 
     const { data, isLoading, isError } = useSettlementList(filter)
@@ -74,9 +72,9 @@ export const SettlementList = () => {
                                             state: {
                                                 hotelName: s.hotelName,
                                                 sellerAccount: s.sellerAccount,
-                                                pendingBalance: s.pendingBalance,
-                                                totalSettlementAmount: s.totalSettlementAmount,
-                                                lastSettledAt: s.lastSettledAt
+                                                pendingBalance: s.pendingBalance.toLocaleString(),
+                                                totalSettlementAmount: s.totalSettlementAmount.toLocaleString(),
+                                                lastSettledAt: s.lastSettledAt ? format(new Date(s.lastSettledAt), "yyyy-MM-dd HH:mm") : "없음"
                                             }
                                         })}>
                                         <td className="px-3 py-2 text-center">{i + 1}</td>
@@ -84,7 +82,9 @@ export const SettlementList = () => {
                                         <td className="px-3 py-2 text-center">{s.sellerAccount}</td>
                                         <td className="px-3 py-2 text-center">{s.pendingBalance.toLocaleString()}원</td>
                                         <td className="px-3 py-2 text-center">{s.totalSettlementAmount.toLocaleString()}원</td>
-                                        <td className="px-3 py-2 text-center">{s.lastSettledAt ?? "없음"}</td>
+                                        <td className="px-3 py-2 text-center">
+                                            {s.lastSettledAt ? format(new Date(s.lastSettledAt), "yyyy-MM-dd HH:mm") : "없음"}
+                                        </td>
 
                                     </tr>
                                 )}

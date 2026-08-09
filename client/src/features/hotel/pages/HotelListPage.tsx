@@ -1,7 +1,7 @@
 import { HotelCardList } from "@/features/hotel/component/HotelCardList";
 import { SearchFilterBar } from "@/features/hotel/component/SearchFilterBar";
 import { useRegionStore } from "@/store/useRegionStore";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { DateGuestSelector } from "@/features/hotel/component/DateGuestSelector";
 import { Modal } from "@/common/component/Modal";
 import { FilterSelector } from "@/features/hotel/component/FilterSelector";

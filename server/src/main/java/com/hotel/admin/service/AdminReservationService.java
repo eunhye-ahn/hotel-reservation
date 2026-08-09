@@ -8,6 +8,7 @@ import com.hotel.common.exception.ErrorCode;
 import com.hotel.hotel.domain.Room;
 import com.hotel.hotel.repository.RoomRepository;
 import com.hotel.payment.service.PaymentService;
+import com.hotel.reservation.domain.PaymentStatus;
 import com.hotel.reservation.domain.ReservationSearchType;
 import com.hotel.reservation.domain.Reservation;
 import com.hotel.reservation.domain.ReservationStatus;
@@ -88,17 +89,28 @@ public class AdminReservationService {
     }
 
     //예약취소 - 관리자
-    public void refundByReservation(Long reservationId, String reason){
-        //재고복구 및 reservation 취소대기
-        cancelService.cancelAndRestoreInventory(reservationId, reason);
-        try{
-            //토스 결제취소 API 호출
-            paymentService.cancel(reservationId, reason);
-        }catch(Exception e){
-            throw new CustomException(ErrorCode.PAYMENT_CANCEL_FAILED);
+    @Transactional
+    public void cancelReservation(Long reservationId, String reason){
+
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
+
+        //CANCEL_PENDING 전환 + room=null + 재고복구 (cancelAndRestoreInventory 내부)
+        cancelService.cancelAndRestoreInventory(reservation, reason);
+        boolean wasPaid = reservation.getPaymentStatus() == PaymentStatus.PAID;
+        if(wasPaid) {
+            try {
+                //결제된 건 -> 토스 결제취소 API 호출
+                paymentService.cancel(reservationId, reason);
+            } catch (Exception e) {
+                throw new CustomException(ErrorCode.PAYMENT_CANCEL_FAILED);
+            }
+            //paymentOrder=CANCELED, 원장기록+지갑차감, paymentStatus=REFUNDED
+            cancelService.completeReverseSettlementAndRefund(reservation);
+            reservation.refunded();
         }
-        //정산 및 reservation 취소확정
-        cancelService.completeCancelByRefund(reservationId, reason);
+        //예약취소확정: CANCEL_PENDING -> CANCELED
+        reservation.completeCancel();
     }
 
     private void validateSameRoomType(Reservation reservation, Room room){
