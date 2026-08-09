@@ -59,6 +59,7 @@ export const ReservationList = () => {
                     <option value="BEFORE_USE">이용전</option>
                     <option value="AFTER_USE">이용후</option>
                     <option value="CANCELED">취소</option>
+                    <option value="CANCELED_PENDING">취소대기</option>
                     <option value="EXPIRED">만료</option>
                 </select>
                 {filter.status === "BEFORE_USE" && (

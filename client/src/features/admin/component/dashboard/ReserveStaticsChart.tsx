@@ -4,17 +4,19 @@ import { ErrorMessage } from "@/common/component/ErrorMessage"
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts"
 
 const STATUS_COLOR: Record<string, string> = {
-    BEFORE_USE: "#2563eb",
-    EXPIRED: "#9ca3af",
-    CANCELED: "#dc2626",
-    AFTER_USE: "yellow"
+    BEFORE_USE: "blue",
+    EXPIRED: "gray",
+    CANCELED: "red",
+    AFTER_USE: "green",
+    CANCEL_PENDING: "yellow"
 }
 
 const STATUS_LABEL: Record<string, string> = {
     BEFORE_USE: "이용 전",
     EXPIRED: "만료",
     CANCELED: "취소",
-    AFTER_USE: "이용 후"
+    AFTER_USE: "이용 후",
+    CANCEL_PENDING: "취소대기"
 }
 
 export const ReserveStatisticsChart = () => {

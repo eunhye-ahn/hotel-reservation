@@ -6,7 +6,7 @@ import com.hotel.user.domain.User;
 import com.hotel.user.dto.LoginRequest;
 import com.hotel.user.dto.SignUpRequest;
 import com.hotel.user.dto.TokenResponse;
-import com.hotel.common.jwt.JwtProvider;
+import com.hotel.common.auth.JwtProvider;
 import com.hotel.user.repository.UserRepository;
 import com.hotel.common.idempotency.RedisService;
 import jakarta.transaction.Transactional;

@@ -12,19 +12,20 @@ export const UnassginRoomList = () => {
                 <span className="font-semibold text-sm">조치 필요 - 미배정 예약</span>
             </div>
             <div className="divide-y divide-gray-500">
-                {unassignRoomData?.map(r => (
-                    <div key={r.reservationId} className="flex items-center justify-between py-3">
-                        <div onClick={() => navigate(`/admin/reservations/${r.reservationId}`)}>
-                            <p className="text-sm font-medium underline">
-                                {r.displayReservationNo}
-                            </p>
-                            <p className="text-sm text-gray-500">
-                                {r.hotelName} {r.startDate}
-                            </p>
+                {unassignRoomData?.length === 0 ? <p className="text-xs text-center mt-5">미배정된 예약이 없습니다</p>
+                    : unassignRoomData?.map(r => (
+                        <div key={r.reservationId} className="flex items-center justify-between py-3">
+                            <div onClick={() => navigate(`/admin/reservations/${r.reservationId}`)}>
+                                <p className="text-sm font-medium underline">
+                                    {r.displayReservationNo}
+                                </p>
+                                <p className="text-sm text-gray-500">
+                                    {r.hotelName} {r.startDate}
+                                </p>
+                            </div>
+                            <span className="text-sm text-red-500">미배정</span>
                         </div>
-                        <span className="text-sm text-red-500">미배정</span>
-                    </div>
-                ))}
+                    ))}
             </div>
             <a href="/admin/reservations"
                 className="text-sm text-gray-500 mt-4 inline-flex items-center gap-1"

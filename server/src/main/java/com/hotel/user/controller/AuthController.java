@@ -4,7 +4,7 @@ import com.hotel.user.dto.AccessTokenResponse;
 import com.hotel.user.dto.LoginRequest;
 import com.hotel.user.dto.SignUpRequest;
 import com.hotel.user.dto.TokenResponse;
-import com.hotel.common.jwt.JwtProvider;
+import com.hotel.common.auth.JwtProvider;
 import com.hotel.user.service.AuthService;
 import com.hotel.common.util.CookieUtil;
 import jakarta.servlet.http.HttpServletRequest;

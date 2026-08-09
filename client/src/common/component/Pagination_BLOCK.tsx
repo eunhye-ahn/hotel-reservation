@@ -23,26 +23,32 @@ export const Pagination_BLOCK = ({ page, totalPages = 1, onPageChange }: Paginat
     const hasNextBlock = endpage < totalPages
 
     return (
-        <div className="flex items-center justify-center gap-1 mt-6 mb-6">
+        <div className="flex items-center justify-center gap-1 mt-10 mb-6">
             {hasPrevBlock && (
                 <button onClick={() => onPageChange(startpage - 2)}
-                    className="px-1 py-0.5 bg-gray-200 mx-1 border border-gray-300 hover:bg-gray-400">
+                    className="px-3 py-1.5 text-sm text-gray-600 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors">
                     이전
                 </button>
             )}
             {pageNumbers.map((pageNum) => (
                 <button key={pageNum}
                     onClick={() => onPageChange(pageNum - 1)}
-                    className="px-2 py-0.5 bg-gray-100 border border-gray-300 hover:bg-gray-400">
+                    className={`w-8 h-8 text-sm rounded-lg cursor-pointer transition-colors 
+                        ${pageNum === page + 1
+                            ? "bg-gray-900 text-white font-medium"
+                            : "text-gray-600 hover:bg-gray-100"
+                        }`}>
                     {pageNum}
                 </button>
-            ))}
-            {hasNextBlock && (
-                <button onClick={() => onPageChange(endpage + 1)}
-                    className="px-1 py-0.5 bg-gray-200 mx-1 border border-gray-300 hover:bg-gray-400">
-                    다음
-                </button>
-            )}
-        </div>
+            ))
+            }
+            {
+                hasNextBlock && (
+                    <button onClick={() => onPageChange(endpage + 1)}
+                        className="px-3 py-1.5 text-sm text-gray-600 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors">                    다음
+                    </button>
+                )
+            }
+        </div >
     )
 }

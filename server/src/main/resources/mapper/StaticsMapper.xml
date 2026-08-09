@@ -5,7 +5,7 @@
     <select id="getDailyStatistics" resultType="DailyStatisticsResponse">
         SELECT
             d.date,
-            COUNT(DISTINCT r.id) AS reservation_count,
+            COUNT(DISTINCT r.id) FILTER (WHERE r.payment_status = 'PAID') AS reservation_count ,
             COUNT(po.checkout_id) FILTER (WHERE po.payment_order_status = 'SUCCESS') AS payment_count,
             COALESCE(SUM(po.amount) FILTER (WHERE po.payment_order_status = 'SUCCESS'),0) AS payment_total
         FROM generate_series(

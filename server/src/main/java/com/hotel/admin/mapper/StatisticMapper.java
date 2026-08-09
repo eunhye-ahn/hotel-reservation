@@ -9,6 +9,4 @@ import java.util.List;
 @Mapper
 public interface StatisticMapper {
     List<DailyStatisticsResponse> getDailyStatistics();
-
-    List<UnassignRoomInfo> unAssignReservationInfo();
 }

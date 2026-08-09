@@ -27,6 +27,7 @@ import { ReservationList } from './features/admin/pages/ReservationList'
 import { PaymentList } from './features/admin/pages/PaymentList'
 import { SettlementList } from './features/admin/pages/SettlementList'
 import { AdminDashBoard } from './features/admin/pages/AdminDashBoard'
+import { OAuth2RedirectPage } from './features/auth/OAuth2RedirectPage'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -49,6 +50,7 @@ function App() {
           <Route path="/payments/fail" element={<PaymentFail />} />
           <Route element={<Layout />}>
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/oauth2/redirect" element={<OAuth2RedirectPage />} />
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="/" element={<MainPage />} />
             <Route path="/hotels/:hotelId" element={<HotelDetailPage />} />

@@ -78,19 +78,20 @@ export const WishList = () => {
                 </Modal>
             }
             <div className="grid grid-cols-5 gap-4">
-                {wishes?.map((collection) => (
-                    <div className="cursor-pointer" key={collection.collectionId} onClick={() => handleSelectCollection(collection.collectionId)}>
-                        <div className="grid grid-cols-2 grid-rows-2 aspect-square gap-0.5 objecr-cover">
-                            {collection.items.slice(0, 4).map((item, index) => (
-                                <img key={index} src={item.hotelImageUrl} alt={item.hotelName} className="w-full h-full object-cover" />
-                            ))}
+                {wishes?.length === 0 ? "위시리스트가 없습니다"
+                    : wishes?.map((collection) => (
+                        <div className="cursor-pointer" key={collection.collectionId} onClick={() => handleSelectCollection(collection.collectionId)}>
+                            <div className="grid grid-cols-2 grid-rows-2 aspect-square gap-0.5 objecr-cover">
+                                {collection.items.slice(0, 4).map((item, index) => (
+                                    <img key={index} src={item.hotelImageUrl} alt={item.hotelName} className="w-full h-full object-cover" />
+                                ))}
+                            </div>
+                            <div className="mt-2">
+                                <p className="font-semibold text-center">{collection.name}</p>
+                                <p className="text-xs text-center text-gray-500">저장된 항목 {collection.items.length}개</p>
+                            </div>
                         </div>
-                        <div className="mt-2">
-                            <p className="font-semibold text-center">{collection.name}</p>
-                            <p className="text-xs text-center text-gray-500">저장된 항목 {collection.items.length}개</p>
-                        </div>
-                    </div>
-                ))}
+                    ))}
             </div>
         </div >
     )

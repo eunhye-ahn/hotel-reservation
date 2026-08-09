@@ -17,7 +17,7 @@ public interface WalletRepository extends JpaRepository<Wallet, Long> {
     }
 
     @Query("SELECT COALESCE(SUM(w.balance),0) AS totalPendingBalance, " +
-            "COUNT(w) AS pendingHotelCount " +
+            "COUNT(CASE WHEN w.balance > 0 THEN 1 END) AS pendingHotelCount " +
             "FROM Wallet w")
     PendingBalanceSummary getPendingBalanceSummary();
 

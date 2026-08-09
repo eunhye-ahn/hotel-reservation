@@ -1,6 +1,6 @@
 package com.hotel.reservation;
 
-import com.hotel.common.jwt.JwtProvider;
+import com.hotel.common.auth.JwtProvider;
 import com.hotel.hotel.domain.Hotel;
 import com.hotel.hotel.repository.HotelRepository;
 import com.hotel.hotel.repository.RateRepository;

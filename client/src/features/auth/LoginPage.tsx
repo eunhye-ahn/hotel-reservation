@@ -6,7 +6,7 @@ import { useMutation } from "@tanstack/react-query"
 import { useForm } from "react-hook-form"
 import { login } from "@/api/api"
 import { jwtDecode } from "jwt-decode";
-
+import { FcGoogle } from "react-icons/fc"
 
 export const LoginPage = () => {
     const { register, handleSubmit, setError, formState: { errors } } = useForm<LoginRequest>();
@@ -58,6 +58,15 @@ export const LoginPage = () => {
                     disabled={isPending}>
                     {isPending ? "Loading..." : "로그인"}
                 </button>
+                <button type="button"
+                    className="w-full mt-1 bg-gray-900 text-white rounded-lg py-2 font-medium cursor-pointer hover:bg-gray-800 disabled:opacity-40 flex gap-2 items-center justify-center"
+                    onClick={() => {
+                        window.location.href = "http://localhost:8080/oauth2/authorization/google"
+                    }}
+                >
+                    <FcGoogle size={20} /> Google 로그인
+                </button>
+                <br />
                 <button type="button"
                     className="w-full mt-0.5 bg-gray-900 text-white rounded-lg py-2 font-medium cursor-pointer hover:bg-gray-800 disabled:opacity-40"
                     onClick={() => navigate("/signup")}>회원가입</button>

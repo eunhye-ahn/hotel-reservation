@@ -78,16 +78,17 @@ export const MyPage = () => {
                     ))}
                 </div>
                 <div className="flex flex-col gap-5">
-                    {reservations?.content.map((reservation) => (
-                        <ReservationCard
-                            key={reservation.reservationKey}
-                            reservation={reservation}
-                            isPending={isCanceling}
-                            onDetailClick={() => navigate(`/reservations/${reservation.reservationKey}`)}
-                            onCancelClick={() => reserationCacelMutate(reservation.reservationKey)}
-                            status={status}
-                        />
-                    ))}
+                    {reservations?.content.length === 0 ? "예약내역이 없습니다"
+                        : reservations?.content.map((reservation) => (
+                            <ReservationCard
+                                key={reservation.reservationKey}
+                                reservation={reservation}
+                                isPending={isCanceling}
+                                onDetailClick={() => navigate(`/reservations/${reservation.reservationKey}`)}
+                                onCancelClick={() => reserationCacelMutate(reservation.reservationKey)}
+                                status={status}
+                            />
+                        ))}
                 </div>
                 <Pagination
                     page={reservations?.number ?? 0}

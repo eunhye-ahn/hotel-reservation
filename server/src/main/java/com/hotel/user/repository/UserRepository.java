@@ -1,5 +1,6 @@
 package com.hotel.user.repository;
 
+import com.hotel.user.domain.AuthProvider;
 import com.hotel.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -9,4 +10,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
 
     boolean existsByEmail(String email);
+
+    Optional<User> findByProviderAndProviderId(AuthProvider provider, String providerId);
 }

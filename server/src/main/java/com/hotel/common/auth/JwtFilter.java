@@ -1,4 +1,4 @@
-package com.hotel.common.jwt;
+package com.hotel.common.auth;
 import com.hotel.common.exception.CustomException;
 import com.hotel.common.exception.ErrorCode;
 import com.hotel.common.idempotency.RedisService;

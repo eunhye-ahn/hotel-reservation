@@ -1,5 +1,8 @@
 package com.hotel.common.config;
 
+import com.hotel.common.auth.CustomOAuth2UserService;
+import com.hotel.common.auth.OAuth2SuccessHandler;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -18,9 +21,13 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, com.hotel.common.jwt.JwtFilter jwtFilter) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, com.hotel.common.auth.JwtFilter jwtFilter) throws Exception {
         http
                 .headers(headers -> headers
                         .frameOptions(frame -> frame.sameOrigin()) // H2 콘솔 iframe 허용
@@ -60,6 +67,11 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/user/**").authenticated()
 
                         .anyRequest().authenticated()
+                )
+
+                .oauth2Login(oauth2 -> oauth2
+                        .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
+                        .successHandler(oAuth2SuccessHandler)
                 )
 
                 .exceptionHandling(e->e

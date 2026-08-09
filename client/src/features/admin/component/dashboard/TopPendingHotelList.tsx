@@ -17,15 +17,16 @@ export const TopPendingHotelList = () => {
                 <span className="font-semibold text-sm">미정산 잔액 TOP 5</span>
             </div>
             <div className="divide-y divide-gray-100">
-                {pendingHotelData?.map(h => (
-                    <div key={h.hotelId}
-                        onClick={() => navigate(`/admin/settlements/${h.hotelId}`)}
-                        className="flex justify-between py-2 text-sm">
-                        <span>{h.hotelName}</span>
-                        <span>{h.pendingBalance.toLocaleString()}원</span>
-                    </div>
+                {pendingHotelData?.length === 0 ? <p className="text-xs text-center mt-5">미정산된 잔액이 없습니다</p>
+                    : pendingHotelData?.map(h => (
+                        <div key={h.hotelId}
+                            onClick={() => navigate(`/admin/settlements/${h.hotelId}`)}
+                            className="flex justify-between py-2 text-sm">
+                            <span>{h.hotelName}</span>
+                            <span>{h.pendingBalance.toLocaleString()}원</span>
+                        </div>
 
-                ))}
+                    ))}
             </div>
             <a href="/admin/settlements"
                 className="text-sm text-gray-500 mt-4 inline-flex items-center gap-1"
