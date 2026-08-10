@@ -1,18 +1,8 @@
-# 흐름도
-
-- **낙관적락**
-
-  ![](images/낙관적락.drawio.png)
-
----
-
-
-- **멱등키**
-
-  ![](images/멱등키.drawio.png)
-
-
----
-
-
-# 설계전략
+- [프로젝트 구조](./docs/PROJECT_STRUCTURE.md)
+- [요구사항 분석](./docs/REQUIREMENT.md)
+- [JWT다이어그램](./docs/JWT_FLOW.md)
+- [멱등키다이어그램](./docs/IDEMPOTENCY_FLOW.md)
+- [예약다이어그램](./docs/RESERVATION_FLOW.md)
+- [결제다이어그램](./docs/PAYMENT_FLOW.md)
+- [예약취소다이어그램](./docs/RESERVATION_CANCEL.md)
+- [정산다이어그램](./docs/SETTLEMENT_FLOW.md)
