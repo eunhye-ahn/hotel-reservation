@@ -47,7 +47,7 @@ export const SettlementHistory = () => {
                 </div>
                 <div className="border border-gray-500 p-5 bg-white">
                     <p className="text-sm text-gray-500 mb-2">최근 정산일</p>
-                    <p className="text-2xl font-bold text-gray-500">{state.lastSettledAt ?? "없음"}</p>
+                    <p className="text-2xl font-bold text-gray-500">{state.lastSettledAtDisplay ?? "없음"}</p>
                 </div>
             </div>
             <div className="flex flex-wrap items-center gap-2 mb-4">

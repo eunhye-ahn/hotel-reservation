@@ -1,6 +1,6 @@
 import { Outlet } from "react-router";
 import { Header } from "@/layout/Header";
-import { HeroSection } from "../common/component/HeroSection";
+import { Footer } from "@/layout/Footer";
 
 export default function Layout() {
     return (
@@ -9,6 +9,7 @@ export default function Layout() {
             <main>
                 <Outlet />
             </main>
+            <Footer />
         </>
     );
 }

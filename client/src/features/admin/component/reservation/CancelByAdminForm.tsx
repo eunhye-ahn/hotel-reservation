@@ -44,7 +44,7 @@ export const CancelByAdminForm = ({ reservationId, paymentStatus, refundPrice }:
                                     value={customReason}
                                     onChange={(e) => setCustomReason(e.target.value)}
                                     placeholder="사유를 입력하세요"
-                                    className="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full max-w-xs"
+                                    className="mt-2 border border-gray-300 rounded-lg px-3 py-2 text-sm w-full max-w-xs"
                                 />
                             )}
                         </td>
@@ -56,10 +56,10 @@ export const CancelByAdminForm = ({ reservationId, paymentStatus, refundPrice }:
                         }
                     </tr>
                     <tr>
-                        <td colSpan={2}>
+                        <td colSpan={2} className="text-right">
                             <button onClick={() => cancelByAdminMutate(cancelReason)}
                                 disabled={isCanceling || !cancelReason}
-                                className="px-4 py-2 text-sm text-white bg-red-500 cursor-pointer hover:bg-red-600 disabled:opacity-40 disabled:cursor-not-allowed">
+                                className="px-4 py-2 text-sm text-white mb-3 mx-1 bg-red-500 cursor-pointer hover:bg-red-600 disabled:bg-gray-500 disabled:cursor-not-allowed">
                                 {isCanceling ? "처리 중..." : "예약취소"}
                             </button>
                         </td>

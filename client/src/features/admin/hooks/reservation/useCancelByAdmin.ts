@@ -11,10 +11,8 @@ export const useCancelByAdmin = (reservationId: number) => {
     const { mutate: cancelByAdminMutate, isPending: isCanceling } = useMutation({
         mutationFn: (cancelReason: string) => cancelReservationByAdmin(reservationId, cancelReason),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: adminReservationKeys.room(reservationId) })
-            queryClient.invalidateQueries({ queryKey: adminReservationKeys.detail(reservationId) })
-            queryClient.invalidateQueries({ queryKey: adminReservationKeys.lists() })
-            queryClient.invalidateQueries({ queryKey: adminDashboardKeys.summary() })
+            queryClient.invalidateQueries({ queryKey: adminReservationKeys.all })
+            queryClient.invalidateQueries({ queryKey: adminDashboardKeys.all })
         },
         onError: (err) => {
             const code = getErrorCode(err)

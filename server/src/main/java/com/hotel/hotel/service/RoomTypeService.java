@@ -28,7 +28,7 @@ public class RoomTypeService {
                 .orElseThrow(() -> new CustomException(ErrorCode.ROOM_TYPE_NOT_FOUND));
 
         //잔여객실조회
-        List<RoomTypeInventory> inventories = roomTypeInventoryRepository.findByRoomTypeIdAndDateBetween(roomTypeId, startDate, endDate.minusDays(1));
+        List<RoomTypeInventory> inventories = roomTypeInventoryRepository.findByRoomTypeIdAndDateBetweenOrderByDateAsc(roomTypeId, startDate, endDate.minusDays(1));
 
         //가격계산
         List<Rate> rates = rateRepository.findByRoomTypeIdAndDateBetween(roomTypeId, startDate, endDate.minusDays(1));

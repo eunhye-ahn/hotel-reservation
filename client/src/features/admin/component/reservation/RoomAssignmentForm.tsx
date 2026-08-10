@@ -34,7 +34,6 @@ export const RoomAssignmentForm = ({ reservationId }: RoomAssignmentFormProps) =
                 <thead className="bg-gray-100">
                     <tr>
                         <th className="px-3 py-2 text-center font-medium whitespace-nowrap">연번</th>
-                        <th className="px-3 py-2 text-center font-medium whitespace-nowrap">방이름</th>
                         <th className="px-3 py-2 text-center font-medium whitespace-nowrap">층</th>
                         <th className="px-3 py-2 text-center font-medium whitespace-nowrap">호수</th>
                         <th className="px-3 py-2 text-center font-medium whitespace-nowrap">방타입</th>
@@ -46,7 +45,6 @@ export const RoomAssignmentForm = ({ reservationId }: RoomAssignmentFormProps) =
                     {rooms?.map((room, i) =>
                         <tr key={room.id} className="hover:bg-gray-50">
                             <td className="px-3 py-2 text-center">{i + 1}</td>
-                            <td className="px-3 py-2 text-center">{room.roomName}</td>
                             <td className="px-3 py-2 text-center">{room.floor}층</td>
                             <td className="px-3 py-2 text-center">{room.roomNumber}호</td>
                             <td className="px-3 py-2 text-center">{room.roomTypeName}</td>

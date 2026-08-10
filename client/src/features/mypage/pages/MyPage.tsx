@@ -57,7 +57,9 @@ export const MyPage = () => {
             <div className="mt-8">
                 <p className="text-xl font-bold mb-1">{myInfo?.name}님 안녕하세요</p>
                 <p className="text-sm text-gray-500">{myInfo?.email}</p>
-                <p className="text-sm text-gray-500">{myInfo?.phone}</p>
+                <p className="text-sm text-gray-500">
+                    {myInfo?.phone.substring(0, 3)}-{myInfo?.phone.substring(3, 7)}-{myInfo?.phone.substring(7, 11)}
+                </p>
             </div>
             <div className="mt-8">
                 <WishList />

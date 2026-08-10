@@ -1,5 +1,7 @@
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts"
 import { useDailyStatistics } from "../../hooks/dashboard/useDailyStatistics"
+import { ErrorMessage } from "@/common/component/ErrorMessage"
+import { Spinner } from "@/common/component/Spinner"
 
 export const DailyStatisticsChart = () => {
     const { statisticsData, isStatisticsError, isStatisticsLoading } = useDailyStatistics()
@@ -9,6 +11,9 @@ export const DailyStatisticsChart = () => {
         예약건수: d.reservationCount,
         결제금액: Math.round(d.paymentTotal / 10000)
     }))
+
+    if (isStatisticsLoading) return <Spinner />
+    if (isStatisticsError) return <ErrorMessage />
 
     return (
         <div>

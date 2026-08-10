@@ -16,7 +16,7 @@ import { useSearchParams } from "react-router"
 export function HotelListPage() {
     const { filter } = useHotelListFilter()
     const [searchParams, setSearchParams] = useSearchParams()
-    const { isDateOpen, setIsDateOpen, isFilterOpen, setIsFilterOpen, setIsSortOpen } = useHotelListModals()
+    const { isDateOpen, setIsDateOpen, isFilterOpen, setIsFilterOpen } = useHotelListModals()
 
     const { displayName, resetRegion } = useRegionStore();
 
@@ -51,7 +51,6 @@ export function HotelListPage() {
                 roomToReserve={filter.numberOfRooms}
                 onDateClick={() => setIsDateOpen(true)}
                 onFilterClick={() => setIsFilterOpen(true)}
-                onSortClick={() => setIsSortOpen(true)}
             />
             {isDateOpen && (
                 <Modal isOpen={isDateOpen} onClose={() => setIsDateOpen(false)} title="날짜,인원 선택">

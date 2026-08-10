@@ -8,6 +8,7 @@ import com.hotel.common.exception.ErrorCode;
 import com.hotel.hotel.domain.Room;
 import com.hotel.hotel.repository.RoomRepository;
 import com.hotel.payment.service.PaymentService;
+import com.hotel.payment.service.PaymentTransactionService;
 import com.hotel.reservation.domain.PaymentStatus;
 import com.hotel.reservation.domain.ReservationSearchType;
 import com.hotel.reservation.domain.Reservation;
@@ -29,6 +30,7 @@ public class AdminReservationService {
     private final RoomRepository roomRepository;
     private final PaymentService paymentService;
     private final AdminReservationCancelService cancelService;
+    private final PaymentTransactionService transactionService;
 
     public Page<AdminReservationSearchResponse> getReservations(LocalDate startDate, LocalDate endDate, ReservationSearchType searchType, String keyword, ReservationStatus status, Boolean roomAssigned, Pageable pageable) {
 
@@ -89,13 +91,12 @@ public class AdminReservationService {
     }
 
     //예약취소 - 관리자
-    @Transactional
     public void cancelReservation(Long reservationId, String reason){
 
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
 
-        //CANCEL_PENDING 전환 + room=null + 재고복구 (cancelAndRestoreInventory 내부)
+        //1. CANCEL_PENDING 전환 + room=null + 재고복구 (cancelAndRestoreInventory 내부)
         cancelService.cancelAndRestoreInventory(reservation, reason);
         boolean wasPaid = reservation.getPaymentStatus() == PaymentStatus.PAID;
         if(wasPaid) {
@@ -105,12 +106,11 @@ public class AdminReservationService {
             } catch (Exception e) {
                 throw new CustomException(ErrorCode.PAYMENT_CANCEL_FAILED);
             }
-            //paymentOrder=CANCELED, 원장기록+지갑차감, paymentStatus=REFUNDED
-            cancelService.completeReverseSettlementAndRefund(reservation);
-            reservation.refunded();
+            //2. paymentOrder=CANCELED, 원장기록+지갑차감, paymentStatus=REFUNDED
+            transactionService.confirmPaymentCancellation(reservation);
         }
-        //예약취소확정: CANCEL_PENDING -> CANCELED
-        reservation.completeCancel();
+        //3.예약취소확정 before_use => canceled
+        transactionService.completeCancelStatus(reservation);
     }
 
     private void validateSameRoomType(Reservation reservation, Room room){

@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 public class WebhookService {
     private final PaymentOrderRepository paymentOrderRepository;
     private final PaymentEventRepository paymentEventRepository;
-    private final PaymentProcessService paymentProcessService;
+    private final PaymentTransactionService paymentTransactionService;
 
     @Retryable(
             retryFor = DataAccessException.class,
@@ -56,7 +56,7 @@ public class WebhookService {
         //상태변경
         switch (status){
             case "DONE" -> {
-                paymentProcessService.processDone(orderId, paymentKey, paymentOrder, paymentEvent);
+                paymentTransactionService.processDone(orderId, paymentKey, paymentOrder, paymentEvent);
                 log.info("payment completed processed- orderId : {}", request.data().orderId());
             }
             case "CANCELED", "ABORTED", "EXPIRED", "PARTIAL_CANCELED" -> {

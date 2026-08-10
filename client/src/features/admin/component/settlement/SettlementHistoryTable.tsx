@@ -1,4 +1,4 @@
-import type { Page, SettlementHistoryResponse } from "@/type/hotel"
+import type { SettlementHistoryResponse } from "@/api/types/hotel"
 import { SettlementStatusBadge } from "./SettlementStatusBadge"
 
 export const SettlementHistoryTable = ({ settlements }: { settlements: SettlementHistoryResponse[] }) => {

@@ -41,29 +41,27 @@ export const InventorySummaryList = () => {
                         <thead className="bg-gray-50 border-y border-gray-200">
 
                             <tr>
-                                <th className="px-3 py-2 font-medium text-left">연번</th>
-                                <th className="px-3 py-2 font-medium text-left">호텔명</th>
-                                <th className="px-3 py-2 font-medium text-left">지역</th>
-                                <th className="px-3 py-2 font-medium text-right">객실타입수</th>
-                                <th className="px-3 py-2 font-medium text-left">총재고</th>
-                                <th className="px-3 py-2 font-medium text-left">예약수</th>
-                                <th className="px-3 py-2 font-medium text-left">잔여객실수</th>
-                                <th className="px-3 py-2 font-medium text-left">예약율</th>
+                                <th className="px-3 py-2 font-medium text-center">연번</th>
+                                <th className="px-3 py-2 font-medium text-center">호텔명</th>
+                                <th className="px-3 py-2 font-medium text-center">객실타입수</th>
+                                <th className="px-3 py-2 font-medium text-center">총재고</th>
+                                <th className="px-3 py-2 font-medium text-center">예약수</th>
+                                <th className="px-3 py-2 font-medium text-center">잔여객실수</th>
+                                <th className="px-3 py-2 font-medium text-center">예약율</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
                             {data?.content.map((h, i) => (
                                 <tr key={h.hotelId} onClick={() => navigate(`/admin/inventory/${h.hotelId}`)}>
-                                    <td className="px-3 py-2.5">{i + 1}</td>
+                                    <td className="px-3 py-2.5 text-center">{i + 1}</td>
                                     <td className="px-3 py-2.5">{h.hotelName}</td>
-                                    <td className="px-3 py-2.5">{h.ldongSignguCd}</td>
-                                    <td className="px-3 py-2.5 text-right font-semibold">{h.roomTypeCount}</td>
-                                    <td className="px-3 py-2.5">
+                                    <td className="px-3 py-2.5 text-center font-semibold">{h.roomTypeCount}</td>
+                                    <td className="px-3 py-2.5 text-center">
                                         {h.totalInventory}
                                     </td>
-                                    <td className="px-3 py-2.5 text-gray-500">{h.totalReserved}</td>
-                                    <td className="px-3 py-2.5 text-gray-500">{h.availableCount}</td>
-                                    <td className="px-3 py-2.5 text-gray-500">{h.reserveRate}</td>
+                                    <td className="px-3 py-2.5 text-gray-500 text-center">{h.totalReserved}</td>
+                                    <td className="px-3 py-2.5 text-gray-500 text-center">{h.availableCount}</td>
+                                    <td className="px-3 py-2.5 text-gray-500 text-center">{h.reserveRate}</td>
                                 </tr>
                             ))}
                         </tbody>

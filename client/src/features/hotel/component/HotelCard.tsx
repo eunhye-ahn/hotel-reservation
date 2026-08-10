@@ -10,10 +10,12 @@ export const HotelCard = ({ hotel, onClick, onRemove }: HotelCardProps) => {
     return (
         <div className="cursor-pointer" onClick={onClick}>
             {onRemove && (
-                <button className="" onClick={(e) => {
-                    e.stopPropagation();
-                    onRemove()
-                }}>
+                <button
+                    className="border border-gray-200 bg-gray-200 px-2 rounded-sm m-1"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onRemove()
+                    }}>
                     x
                 </button>
             )}

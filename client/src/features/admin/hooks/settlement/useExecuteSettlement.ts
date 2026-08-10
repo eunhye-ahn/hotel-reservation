@@ -16,8 +16,8 @@ export const useExecuteSettlement = ({ hotelId, settlementKey, periodStart, peri
     const { mutate: executeSettleMutate, isPending: isExecuting } = useMutation({
         mutationFn: () => executeSettlementByAdmin(hotelId, settlementKey, periodStart, periodEnd),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: adminSettlementKeys.lists() }),
-                queryClient.invalidateQueries({ queryKey: adminDashboardKeys.pendingHotels() })
+            queryClient.invalidateQueries({ queryKey: adminSettlementKeys.all })
+            queryClient.invalidateQueries({ queryKey: adminDashboardKeys.all })
         }
     })
 

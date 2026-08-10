@@ -4,7 +4,7 @@ import { adminReservationKeys } from "./adminReservationKeys"
 
 export const useRoomsByReservation = (reservationId: number) => {
     const { data, isLoading, isError } = useQuery({
-        queryKey: adminReservationKeys.rooms(reservationId),
+        queryKey: adminReservationKeys.room(reservationId),
         queryFn: () => getRoomsByReservation(reservationId).then(res => res.data)
     })
 

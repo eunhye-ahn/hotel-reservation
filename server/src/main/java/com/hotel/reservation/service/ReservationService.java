@@ -78,7 +78,7 @@ public class ReservationService {
                 .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
 
         //잔여객실조회
-        List<RoomTypeInventory> inventories = roomTypeInventoryRepository.findByRoomTypeIdAndDateBetween(reservation.getRoomType().getId(), reservation.getStartDate(),
+        List<RoomTypeInventory> inventories = roomTypeInventoryRepository.findByRoomTypeIdAndDateBetweenOrderByDateAsc(reservation.getRoomType().getId(), reservation.getStartDate(),
                 reservation.getEndDate().minusDays(1));
 
         return ReservationInfoResponse.from(inventories, reservation.getTotalPrice());
@@ -103,7 +103,7 @@ public class ReservationService {
         reservation.cancelByUser();
 
         List<RoomTypeInventory> inventories = roomTypeInventoryRepository
-                .findByRoomTypeIdAndDateBetween(reservation.getRoomType().getId(), reservation.getStartDate(), reservation.getEndDate().minusDays(1));
+                .findByRoomTypeIdAndDateBetweenOrderByDateAsc(reservation.getRoomType().getId(), reservation.getStartDate(), reservation.getEndDate().minusDays(1));
         //재고복구
         inventories.forEach(i -> i.restore(reservation.getNumberOfRooms()));
     }

@@ -11,11 +11,8 @@ export const useAssignRoom = (reservationId: number) => {
     const { mutate: assignRoomMutate, isPending: isAssigning } = useMutation({
         mutationFn: (roomId: number) => assignRoom(reservationId, roomId),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: adminReservationKeys.rooms() })
-            queryClient.invalidateQueries({ queryKey: adminReservationKeys.detail(reservationId) })
-            queryClient.invalidateQueries({ queryKey: adminReservationKeys.lists() })
-            queryClient.invalidateQueries({ queryKey: adminDashboardKeys.summary() })
-            queryClient.invalidateQueries({ queryKey: adminDashboardKeys.unAssignRoom() })
+            queryClient.invalidateQueries({ queryKey: adminReservationKeys.all })
+            queryClient.invalidateQueries({ queryKey: adminDashboardKeys.all })
         },
         onError: (err) => {
             handleDefenseError(err, () => queryClient.invalidateQueries({

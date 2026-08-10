@@ -74,7 +74,8 @@ export const SettlementList = () => {
                                                 sellerAccount: s.sellerAccount,
                                                 pendingBalance: s.pendingBalance.toLocaleString(),
                                                 totalSettlementAmount: s.totalSettlementAmount.toLocaleString(),
-                                                lastSettledAt: s.lastSettledAt ? format(new Date(s.lastSettledAt), "yyyy-MM-dd HH:mm") : "없음"
+                                                lastSettledAt: s.lastSettledAt,
+                                                lastSettledAtDisplay: s.lastSettledAt ? format(new Date(s.lastSettledAt), "yyyy-MM-dd HH:mm") : "없음"
                                             }
                                         })}>
                                         <td className="px-3 py-2 text-center">{i + 1}</td>

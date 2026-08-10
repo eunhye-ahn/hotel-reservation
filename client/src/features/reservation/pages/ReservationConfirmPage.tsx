@@ -7,7 +7,7 @@ import { useReservationConfirm } from '../hooks/useReservationConfirm';
 import { Spinner } from "@/common/component/Spinner";
 import { getPaymentStatus } from "@/features/mypage/util/getPaymentStatus";
 import { getCancelType } from "@/features/mypage/util/getCancelType";
-import { PrevBtn } from "@/common/component/prevBtn";
+import { PrevBtn } from "@/common/component/PrevBtn"
 
 export const ReservationConfirmPage = () => {
     const { reservationKey } = useParams();

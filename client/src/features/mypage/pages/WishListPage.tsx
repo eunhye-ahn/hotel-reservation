@@ -3,7 +3,7 @@ import { Spinner } from "@/common/component/Spinner";
 import { useNavigate, useParams } from "react-router"
 import { useWishCollectionDetail } from "../hooks/useWishCollectionDetail";
 import { useDeleteCollection } from "../hooks/useDeleteCollection";
-import { PrevBtn } from "@/common/component/prevBtn";
+import { PrevBtn } from "@/common/component/PrevBtn"
 
 export function WishListPage() {
     const { collectionId } = useParams();

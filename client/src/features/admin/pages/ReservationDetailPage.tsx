@@ -59,7 +59,7 @@ export const ReservationDetail = () => {
                             </tr>
                             <tr>
                                 <th className="text-left px-4 py-2.5 bg-gray-50 font-medium text-gray-500">결제금액</th>
-                                <td className="px-4 py-2.5 font-semibold">{data?.totalPrice}원</td>
+                                <td className="px-4 py-2.5 font-semibold">{data?.totalPrice.toLocaleString()}원</td>
                             </tr>
                         </tbody>
                     </table>

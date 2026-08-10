@@ -66,7 +66,7 @@ public class ReservationTransactionService {
 
         //기간합산 재고 조회
         List<RoomTypeInventory> inventories = roomTypeInventoryRepository
-                .findByRoomTypeIdAndDateBetween(roomType.getId(), request.startDate(), request.endDate().minusDays(1));
+                .findByRoomTypeIdAndDateBetweenOrderByDateAsc(roomType.getId(), request.startDate(), request.endDate().minusDays(1));
 
         //날짜별 요금조회
         List<Rate> rates = rateRepository.findByRoomTypeIdAndDateBetween(request.roomTypeId(), request.startDate(), request.endDate().minusDays(1));
@@ -130,7 +130,7 @@ public class ReservationTransactionService {
 
         reservation.updateReservationExpire();
 
-        List<RoomTypeInventory> inventories = roomTypeInventoryRepository.findByRoomTypeIdAndDateBetween(
+        List<RoomTypeInventory> inventories = roomTypeInventoryRepository.findByRoomTypeIdAndDateBetweenOrderByDateAsc(
                 reservation.getRoomType().getId(),
                 reservation.getStartDate(),reservation.getEndDate().minusDays(1));
 

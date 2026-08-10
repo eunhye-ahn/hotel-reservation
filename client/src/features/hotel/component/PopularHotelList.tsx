@@ -15,6 +15,7 @@ export const PopularHotelList = () => {
 
     return (
         <div className="page-container">
+            <h2 className="font-bold text-gray-800 text-lg mb-2 mt-3">인기 숙소</h2>
             {data?.length === 0 && <p>호텔이 없습니다</p>}
             <div className="grid grid-cols-4 gap-2">
                 {data?.map((hotel) => (

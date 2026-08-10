@@ -80,7 +80,7 @@ public class HotelController {
 
     //최근본 호텔 기준
     @GetMapping("/similarHotel")
-    public ResponseEntity<List<HotelResponse>> getSimilarHotel(@RequestParam(required = true) Long hotelId){
+    public ResponseEntity<List<HotelResponse>> getSimilarHotel(@RequestParam Long hotelId){
         List<HotelResponse> result = hotelService.getSimilarHotel(hotelId);
 
         return ResponseEntity

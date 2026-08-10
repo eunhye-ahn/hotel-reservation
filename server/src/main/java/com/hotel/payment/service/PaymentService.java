@@ -55,10 +55,6 @@ public class PaymentService {
     private final PaymentOrderRepository paymentOrderRepository;
     private final TossPaymentClient tossPaymentClient;
     private final ReservationRepository reservationRepository;
-    private final WalletRepository walletRepository;
-    private final LedgerRepository ledgerRepository;
-
-
 
     @Value("${psp.toss.secret-key}")
     private String secretKey;
@@ -127,7 +123,6 @@ public class PaymentService {
     }
 
     //결제승인
-    @Transactional
     public PaymentConfirmResponse confirmPayment(PaymentConfirmRequest request){
         //도메인검사
         PaymentOrder paymentOrder = paymentOrderRepository.findById(request.orderId())
@@ -169,38 +164,6 @@ public class PaymentService {
             log.error("토스 결제취소 실패 - reservationId: {}", reservationId, e);
             throw new CustomException(ErrorCode.REFUND_FAILED);
         }
-
-        PaymentOrder paymentOrder = paymentOrderRepository.findByCheckoutId(event.getCheckoutId())
-                .orElseThrow(()-> new CustomException(ErrorCode.PAYMENT_NOT_FOUND));
-        paymentOrder.cancel();
-    }
-
-    public void reverseSettlement(Reservation reservation){
-        PaymentEvent paymentEvent = paymentEventRepository.findByReservationId(reservation.getId())
-                .orElseThrow(()->new CustomException(ErrorCode.PAYMENT_NOT_FOUND));
-        PaymentOrder paymentOrder = paymentOrderRepository.findByCheckoutId(paymentEvent.getCheckoutId())
-                .orElseThrow(()->new CustomException(ErrorCode.PAYMENT_NOT_FOUND));
-        String paymentOrderId = paymentOrder.getPaymentOrderId();
-        int amount = reservation.getTotalPrice();
-
-        ledgerRepository.save(Ledger.builder()
-                .paymentOrderId(paymentOrderId)
-                .account(reservation.getUser().getId().toString())
-                .accountType(AccountType.BUYER)
-                .debit(0)
-                .credit(amount)
-                .build());
-        ledgerRepository.save(Ledger.builder()
-                .paymentOrderId(paymentOrderId)
-                .account(reservation.getHotel().getSellerAccount())
-                .accountType(AccountType.SELLER)
-                .debit(amount)
-                .credit(0)
-                .build());
-
-        Wallet wallet = walletRepository.findBySellerAccount(reservation.getHotel().getSellerAccount())
-                .orElseThrow(()->new CustomException(ErrorCode.WALLET_NOT_FOUND));
-        wallet.updateBalance(-amount);
     }
 
     private String generateDisplayOrderNo(){
