@@ -23,6 +23,7 @@ sequenceDiagram
     PS->>PS: orderId 생성 (서버-토스 멱등키)
     PS->>DB: PaymentEvent/PaymentOrder 저장
     DB-->>PS: 저장 완료
+    Note over PS: 트랜잭션 커밋
     PS-->>PC: 결제 데이터 반환
     PC-->>Client: 결제창 정보 응답
 
