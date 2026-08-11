@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 import java.io.File;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -52,8 +53,10 @@ public class DataLoader implements CommandLineRunner {
         List<Hotel> hotels;
 
         if(rdbEmpty) {
-            File file = new ClassPathResource("hotels.json").getFile();
-            JsonNode root = objectMapper.readTree(file);
+            InputStream inputStream = new ClassPathResource("hotels.json").getInputStream();
+            JsonNode root = objectMapper.readTree(inputStream);
+
+
             JsonNode items = root.path("response").path("body").path("items").path("item");
 
             Random random = new Random();
