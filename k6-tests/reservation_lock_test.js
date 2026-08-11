@@ -13,8 +13,8 @@ export const options = {
     scenarios: {
         concurrent_same_room: {
             executor: 'shared-iterations',
-            vus: 20,
-            iterations: 20,
+            vus: 2000,
+            iterations: 2000,
             maxDuration: '30s',
         },
     },
@@ -26,9 +26,9 @@ export const options = {
 
 // 테스트 대상 객실
 const TARGET_HOTEL_ID = 1
-const TARGET_ROOM_TYPE_ID = 4
-const CHECK_IN = '2026-09-01'
-const CHECK_OUT = '2026-09-03'
+const TARGET_ROOM_TYPE_ID = 5
+const CHECK_IN = '2026-08-11'
+const CHECK_OUT = '2026-08-12'
 const RESERVE_GUEST = 2
 const RESERVE_ROOM = 1
 

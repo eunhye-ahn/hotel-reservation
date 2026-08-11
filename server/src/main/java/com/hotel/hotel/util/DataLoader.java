@@ -6,13 +6,17 @@ import com.hotel.hotel.domain.Hotel;
 import com.hotel.hotel.domain.HotelDocument;
 import com.hotel.hotel.repository.HotelRepository;
 import com.hotel.hotel.repository.HotelSearchRepository;
+import com.hotel.hotel.repository.RoomTypeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.stereotype.Component;
 
+import javax.sql.DataSource;
 import java.io.File;
+import java.sql.Connection;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,15 +32,20 @@ public class DataLoader implements CommandLineRunner {
     private ObjectMapper objectMapper;
     @Autowired
     private HotelSearchRepository hotelSearchRepository;
+    @Autowired
+    private DataSource dataSource;
+    @Autowired
+    private RoomTypeRepository roomTypeRepository;
 
     @Override
     public void run(String... args) throws Exception {
 
         boolean rdbEmpty = hotelRepository.count() == 0;
         boolean esEmpty = hotelSearchRepository.count() == 0;
+        boolean roomTypeEmpty = roomTypeRepository.count() == 0;
 
-        if (!rdbEmpty && !esEmpty) {
-            log.info("already data load");
+        if (!rdbEmpty && !esEmpty && !roomTypeEmpty) {
+            log.info("데이터 존재, loader 스킵");
             return;
         }
 
@@ -74,6 +83,16 @@ public class DataLoader implements CommandLineRunner {
 
             hotelRepository.saveAll(hotels);
             log.info("DB 저장 완료: {}건", hotels.size());
+
+            // hotel 저장 직후 room_type/room/rate/room_type_inventory 시드 생성
+            if(roomTypeEmpty) {
+                try (Connection connection = dataSource.getConnection()) {
+                    ScriptUtils.executeSqlScript(connection, new ClassPathResource("room-seed.sql"));
+                }
+                log.info("객실/가격/재고 시드 데이터 생성 완료");
+            }else{
+                log.info("room_type 데이터 이미 존재, 시드 스크립트 스킵");
+            }
         } else{
             hotels = hotelRepository.findAll();
         }

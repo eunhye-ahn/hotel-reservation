@@ -36,6 +36,7 @@ import org.springframework.data.elasticsearch.core.geo.GeoPoint;
  *     private LocalTime checkOutTime;
  */
 @Document(indexName = "hotels")
+@Setting(settingPath = "elasticsearch/hotel-index.json")
 @Getter
 @Builder
 public class HotelDocument {
@@ -45,8 +46,13 @@ public class HotelDocument {
     @Field(type= FieldType.Long)
     private Long hotelId; //커서페이징 정렬보조키 + querydsl rdb 연결용
 
-    @Field(type=FieldType.Search_As_You_Type, analyzer = "nori_analyzer")
-    private String hotelName;   //자동완성 검색
+    @MultiField(
+            mainField = @Field(type = FieldType.Text, analyzer = "nori_analyzer"),
+            otherFields = {
+                    @InnerField(suffix = "autocomplete", type = FieldType.Search_As_You_Type)
+            }
+    )
+    private String hotelName;
 
     @Field(type=FieldType.Text, analyzer = "nori_analyzer")
     private String address; //부분 검색
