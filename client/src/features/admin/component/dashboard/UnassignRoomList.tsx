@@ -1,10 +1,14 @@
 import { useNavigate } from "react-router"
 import { useUnassignRoomQuery } from "../../hooks/dashboard/useUnassignRoomQuery"
+import { Spinner } from "@/common/component/Spinner"
+import { ErrorMessage } from "@/common/component/ErrorMessage"
 
 export const UnassginRoomList = () => {
     const { unassignRoomData, isUnassignRoomError, isUnassignRoomLoading } = useUnassignRoomQuery()
     const navigate = useNavigate()
-    console.log(unassignRoomData)
+    
+    if(isUnassignRoomError) return <Spinner/>
+    if(isUnassignRoomLoading) return <ErrorMessage/>
 
     return (
         <div>

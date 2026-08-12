@@ -36,12 +36,12 @@ export const useWishList = (hotelId?: number) => {
     //저장 mutation
     const { mutate: addWishMutation } = useMutation({
         mutationFn: addWishList,
-        onSuccess: (res) => {
+        onSuccess: () => {
             setIsWished(true)
             queryClient.invalidateQueries({ queryKey: wishCollectionKeys.list() })
             queryClient.invalidateQueries({ queryKey: hotelKeys.wish(hotelId!) })
         },
-        onError: (err: any, variables) => {
+        onError: (err, variables) => {
             const code = getErrorCode(err)
             if (code === "COLLECTION_SELECT_REQUIRED") {
                 open(variables)
@@ -59,12 +59,12 @@ export const useWishList = (hotelId?: number) => {
     //삭제 mutation
     const { mutate: cancelWishMutation } = useMutation({
         mutationFn: cancelWishList,
-        onSuccess: (res) => {
+        onSuccess: () => {
             setIsWished(false)
             queryClient.invalidateQueries({ queryKey: wishCollectionKeys.list() })
             queryClient.invalidateQueries({ queryKey: hotelKeys.wish(hotelId!) })
         },
-        onError: (err: any) => {
+        onError: (err) => {
             const code = getErrorCode(err)
 
             if (code === "WISHLIST_NOT_FOUND") {

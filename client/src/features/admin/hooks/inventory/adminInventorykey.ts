@@ -1,5 +1,5 @@
 import type { searchRoomInfoRequest } from "@/api/types/admin";
-import type { searchInventorySummaryRequest } from "@/type/hotel";
+import type { searchInventorySummaryRequest } from "@/api/types/hotel";
 
 export const adminInventoryKeys = {
     all: ["admin-inventory"] as const,

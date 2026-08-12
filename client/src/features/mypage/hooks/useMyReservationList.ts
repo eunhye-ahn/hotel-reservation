@@ -1,5 +1,5 @@
 import { getMyReservations } from "@/api/api"
-import type { ReservationResponse, ReservationStatus } from "@/api/types/reservation"
+import type { ReservationStatus } from "@/api/types/reservation"
 import { useQuery } from "@tanstack/react-query"
 import { reservationKeys } from "./reservationKeys"
 

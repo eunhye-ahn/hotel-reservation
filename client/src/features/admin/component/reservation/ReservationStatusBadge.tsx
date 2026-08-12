@@ -1,4 +1,4 @@
-export const RESERVE_LABEL: Record<string, string> = {
+const RESERVE_LABEL: Record<string, string> = {
     BEFORE_USE: '이용전',
     AFTER_USE: '이용후',
     CANCELED: '취소',
@@ -6,7 +6,7 @@ export const RESERVE_LABEL: Record<string, string> = {
     CANCELED_PENDING: '취소대기',
 }
 
-export const RESERVE_COLOR: Record<string, string> = {
+const RESERVE_COLOR: Record<string, string> = {
     BEFORE_USE: 'text-blue-500',
     AFTER_USE: 'text-green-500',
     CANCELED: 'text-red-500',

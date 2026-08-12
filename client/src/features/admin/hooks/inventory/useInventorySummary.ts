@@ -1,7 +1,7 @@
 import { searchInventorySummary } from "@/api/api"
 import { useQuery } from "@tanstack/react-query"
 import { adminInventoryKeys } from "./adminInventorykey"
-import type { searchInventorySummaryRequest } from "@/type/hotel"
+import type { searchInventorySummaryRequest } from "@/api/types/hotel"
 
 export const useInventorySummary = (filter: searchInventorySummaryRequest) => {
 

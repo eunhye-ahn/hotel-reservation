@@ -1,7 +1,8 @@
-import { useParams } from "react-router"
 import { useState } from "react"
 import { addDays, format, subDays } from "date-fns"
 import { useInventoryCalendar } from "../../hooks/inventory/useInventoryCalendar"
+import { Spinner } from "@/common/component/Spinner"
+import { ErrorMessage } from "@/common/component/ErrorMessage"
 
 export const InventoryCalendar = ({ hotelId }: { hotelId: number }) => {
 
@@ -18,6 +19,9 @@ export const InventoryCalendar = ({ hotelId }: { hotelId: number }) => {
         if (available <= 1) return "bg-orange-50 text-orange-600 border-orange-200"
         return "bg-green-50 text-green-700 border-green-200"
     }
+
+    if(isCalendarLoading) return <Spinner/>
+    if(isCalendarError) return <ErrorMessage/>
 
     return (
         <div>

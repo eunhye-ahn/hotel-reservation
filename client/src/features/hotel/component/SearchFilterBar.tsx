@@ -11,7 +11,7 @@ interface SearchFilterBarProps {
 
 
 export const SearchFilterBar = ({
-    checkIn, checkOut, guestToReserve, roomToReserve,
+    checkIn, checkOut, guestToReserve,
     onDateClick, onFilterClick
 }: SearchFilterBarProps) => {
     return (

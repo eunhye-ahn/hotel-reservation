@@ -1,5 +1,5 @@
 import { addDays, format, subDays } from "date-fns"
-import { useEffect, useRef, useState } from "react"
+import { useRef, useState } from "react"
 import { useExecuteSettlement } from "../../hooks/settlement/useExecuteSettlement"
 import { useSettlementPreview } from "../../hooks/settlement/useSettlementPreview"
 import { Spinner } from "@/common/component/Spinner"

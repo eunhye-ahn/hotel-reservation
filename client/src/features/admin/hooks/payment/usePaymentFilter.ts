@@ -28,5 +28,5 @@ export const usePaymentFilter = () => {
         setPage(0);
     };
 
-    return { filter, setSearchType, setKeyword, setStartDate, setEndDate, setPage, setStatus }
+    return { filter, setSearchType, setKeyword, setStartDate, setEndDate, setPage, setStatus, reset }
 }

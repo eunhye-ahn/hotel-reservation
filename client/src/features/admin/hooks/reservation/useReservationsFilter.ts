@@ -30,5 +30,5 @@ export const useReservationsFilter = () => {
         setPage(0);
     };
 
-    return { filter, setSearchType, setKeyword, setStartDate, setEndDate, setPage, setRoomAssigned, setStatus }
+    return { filter, setSearchType, setKeyword, setStartDate, setEndDate, setPage, setRoomAssigned, setStatus, reset }
 }

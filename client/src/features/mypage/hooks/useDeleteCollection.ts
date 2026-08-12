@@ -12,9 +12,6 @@ export const useDeleteCollection = (collectionId: number) => {
         onSuccess: (() => {
             queryClient.invalidateQueries({ queryKey: wishCollectionKeys.list() })
             navigate("/mypage")
-        }),
-        onError: ((err) => {
-
         })
     })
 

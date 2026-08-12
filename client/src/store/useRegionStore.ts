@@ -1,4 +1,4 @@
-import type { Region, SubRegion } from "@/type/Region";
+import type { Region, SubRegion } from "@/api/types/Region";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 

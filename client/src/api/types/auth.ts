@@ -1,4 +1,3 @@
-import { extend } from "dayjs"
 import type { JwtPayload } from "jwt-decode"
 
 export interface LoginRequest {

@@ -11,6 +11,9 @@ export const AdminRoomList = ({ hotelId }: { hotelId: number }) => {
     const { roomListData, isRoomListError, isRoomListLoading } = useRoomList(hotelId, filter)
     const { optionData, isOptionError, isOptionLoading } = useRoomFilterOptions(hotelId)
 
+    if(isOptionLoading) return <Spinner/>
+    if(isOptionError) return <ErrorMessage/>
+
     return (
         <div className="">
             <div className="flex items-center justify-between px-5 py-3 bg-gray-50 border-b border-gray-200">
