@@ -98,7 +98,11 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(List.of("http://localhost:5173"));
+        config.setAllowedOrigins(List.of(
+                "http://localhost:5173",
+                "https://stayn.store",
+                "https://www.stayn.store"
+        ));
         config.setAllowedMethods(List.of("GET", "POST","DELETE","PUT", "PATCH"));
         config.setAllowedHeaders(List.of("*"));
 
