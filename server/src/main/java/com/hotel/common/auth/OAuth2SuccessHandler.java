@@ -37,7 +37,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         ResponseCookie rtc = cookieUtil.createRTCookie(refreshToken);
         response.addHeader("Set-Cookie", rtc.toString());
 
-        String redirectUrl = "http://localhost:5173/oauth2/redirect?accessToken="+accessToken;
+        String frontendUrl = request.getHeader("Origin");
+        String redirectUrl = frontendUrl+"/oauth2/redirect?accessToken="+accessToken;
         response.sendRedirect(redirectUrl);
     }
 }
