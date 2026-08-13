@@ -4,6 +4,7 @@ spring:
   config:
     import: optional:file:.env[.properties]
   datasource:
+    hikari:
     url: ${SPRING_DB_URL}
     username: ${SPRING_DB_USERNAME}
     password: ${SPRING_DB_PASSWORD}

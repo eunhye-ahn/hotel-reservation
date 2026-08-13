@@ -1,27 +1,4 @@
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: hotel-app
-    environment:
-      SPRING_DB_URL: ${SPRING_DB_URL}
-      SPRING_DB_USERNAME: ${SPRING_DB_USERNAME}
-      SPRING_DB_PASSWORD: ${SPRING_DB_PASSWORD}
-      JWT_SECRET: ${JWT_SECRET}
-      TOSS_SECRET_KEY: ${TOSS_SECRET_KEY}
-      REDIS_HOST: ${REDIS_HOST}
-      REDIS_PORT: ${REDIS_PORT}
-      ELASTICSEARCH_URIS: ${ELASTICSEARCH_URIS}
-    ports:
-      - "8080:8080"
-    depends_on:
-      - hotel-postgresql
-      - redis
-      - elasticsearch
-    networks:
-      - server-network
-
   hotel-postgresql:
     image: postgres:17
     container_name: hotel-postgresql
@@ -75,31 +52,6 @@ services:
       - elasticsearch
     networks:
       - server-network
-
-  nginx:
-    image: aneunhye0416/hotel-nginx:latest
-    volumes:
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
-    container_name: hotel-nginx
-    ports:
-      - "80:80"
-      - "443:443"
-    depends_on:
-      - app
-    networks:
-      - server-network
-
-  certbot:
-    image: certbot/certbot
-    container_name: hotel-certbot
-    volumes:
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
-    networks:
-      - server-network
-
 volumes:
   hotel-postgresql-data:
   redis-data:

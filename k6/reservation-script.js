@@ -3,7 +3,7 @@ import { check } from 'k6'
 import { Counter } from 'k6/metrics'
 import { uuidv4 } from 'https://jslib.k6.io/k6-utils/1.4.0/index.js'
 
-const BASE_URL = 'http://localhost:8080/api/v1'
+const BASE_URL = __ENV.BASE_URL || 'http://localhost:8080/api/v1'
 
 const successCount = new Counter('reservation_success')
 const conflictCount = new Counter('reservation_conflict')
@@ -13,8 +13,8 @@ export const options = {
     scenarios: {
         concurrent_same_room: {
             executor: 'shared-iterations',
-            vus: 2000,
-            iterations: 2000,
+            vus: 1000,
+            iterations: 1000,
             maxDuration: '30s',
         },
     },
@@ -25,10 +25,10 @@ export const options = {
 }
 
 // 테스트 대상 객실
-const TARGET_HOTEL_ID = 1
-const TARGET_ROOM_TYPE_ID = 5
-const CHECK_IN = '2026-08-11'
-const CHECK_OUT = '2026-08-12'
+const TARGET_HOTEL_ID = 2
+const TARGET_ROOM_TYPE_ID = 6
+const CHECK_IN = '2026-08-13'
+const CHECK_OUT = '2026-08-14'
 const RESERVE_GUEST = 2
 const RESERVE_ROOM = 1
 
