@@ -50,8 +50,6 @@ export const MyPage = () => {
         { key: 'CANCELED', label: '취소됨' },
     ]
 
-    console.log(reservations)
-
     return (
         <div className="detail-container">
             <div className="mt-8">
