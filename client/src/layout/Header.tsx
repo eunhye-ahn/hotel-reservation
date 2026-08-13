@@ -3,16 +3,19 @@ import { useAuthStore } from "@/store/useAuthStore"
 import { logout } from "@/api/api"
 import { SearchBar } from "@/features/hotel/component/SearchBar"
 import styles from '@/layout/Header.module.css'
+import { useQueryClient } from "@tanstack/react-query"
 
 export const Header = () => {
     const navigate = useNavigate()
-    const { accessToken, clearAccessToken, role } = useAuthStore();
-    const location = useLocation();
-    const isMainPage = location.pathname === "/";
+    const { accessToken, clearAccessToken, role } = useAuthStore()
+    const location = useLocation()
+    const isMainPage = location.pathname === "/"
+    const queryClient = useQueryClient()
     const handleLogout = () => {
         logout()
             .then(() => {
                 clearAccessToken();
+                queryClient.clear()
                 navigate("/")
             })
     }

@@ -42,6 +42,7 @@ public class SecurityConfig {
                 //rbac
                 .authorizeHttpRequests(auth -> auth
                         //모두 접근
+                        .requestMatchers("/oauth2/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/hotels/autocomplete").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/hotels/similarHotel").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/hotels/{hotelId}").permitAll()

@@ -51,5 +51,7 @@ logging:
 psp:
   toss:
     secret-key: ${TOSS_SECRET_KEY}
+app:
+  google-redirect-url: ${GOOGLE_REDIRECT_URL}
 server:
   port: 8080

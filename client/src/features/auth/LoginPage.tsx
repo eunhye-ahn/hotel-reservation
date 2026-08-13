@@ -61,7 +61,7 @@ export const LoginPage = () => {
                 <button type="button"
                     className="w-full mt-1 bg-gray-900 text-white rounded-lg py-2 font-medium cursor-pointer hover:bg-gray-800 disabled:opacity-40 flex gap-2 items-center justify-center"
                     onClick={() => {
-                        window.location.href = "http://localhost:8080/oauth2/authorization/google"
+                        window.location.href = `${import.meta.env.VITE_OAUTH_BASE_URL}/oauth2/authorization/google`
                     }}
                 >
                     <FcGoogle size={20} /> Google 로그인

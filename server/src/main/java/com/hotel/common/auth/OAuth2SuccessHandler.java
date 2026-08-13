@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -19,6 +20,9 @@ import java.io.IOException;
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private final JwtProvider jwtProvider;
     private final CookieUtil cookieUtil;
+
+    @Value("${app.google-redirect-url}")
+    private String redirectUrl;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -37,8 +41,6 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         ResponseCookie rtc = cookieUtil.createRTCookie(refreshToken);
         response.addHeader("Set-Cookie", rtc.toString());
 
-        String frontendUrl = request.getHeader("Origin");
-        String redirectUrl = frontendUrl+"/oauth2/redirect?accessToken="+accessToken;
-        response.sendRedirect(redirectUrl);
+        response.sendRedirect(redirectUrl+"/oauth2/redirect?accessToken="+accessToken);
     }
 }

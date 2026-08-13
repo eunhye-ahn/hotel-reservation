@@ -59,30 +59,20 @@ public class WishService {
         //호텔아이디검사
         Hotel hotel = hotelRepository.findById(hotelId)
             .orElseThrow(()->new CustomException(ErrorCode.HOTEL_NOT_FOUND));
-        User user = userRepository.findById(userId)
-                .orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
-        WishCollection wishCollection;
 
-        if (collectionId == null) {
-            throw new CustomException(ErrorCode.COLLECTION_SELECT_REQUIRED);
-        }
-
-        Optional<WishCollection> myCollection = wishCollectionRepository.findByIdAndUserId(collectionId, userId);
-
-        if(myCollection.isPresent()){
-            wishCollection = myCollection.get();
-        } else{
-            if(!wishCollectionRepository.existsByUserId(userId)){
-                wishCollection = createCollection(userId, "기본");
-            }
-            else {
-                throw new CustomException(ErrorCode.COLLECTION_SELECT_REQUIRED);
-            }
-        }
+        WishCollection wishCollection = (collectionId != null)
+                ? wishCollectionRepository.findByIdAndUserId(collectionId, userId)
+                  .orElseGet(()->getOrCreateDefaultCollection(userId))
+                : getOrCreateDefaultCollection(userId);
 
         WishList wishList = wishListRepository.save(new WishList(wishCollection, hotel));
 
         return AddWishListResponse.from(wishCollection, wishList);
+    }
+
+    private WishCollection getOrCreateDefaultCollection(Long userId) {
+        return wishCollectionRepository.findTop1ByUserIdOrderByCreatedAtDesc(userId)
+                .orElseGet(() -> createCollection(userId, "기본"));
     }
 
     //그룹 상세조회
