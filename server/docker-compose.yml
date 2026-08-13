@@ -5,14 +5,14 @@ services:
       dockerfile: Dockerfile
     container_name: hotel-app
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://hotel-postgresql:5432/hotel_db
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      SPRING_DB_URL: ${SPRING_DB_URL}
+      SPRING_DB_USERNAME: ${SPRING_DB_USERNAME}
+      SPRING_DB_PASSWORD: ${SPRING_DB_PASSWORD}
       JWT_SECRET: ${JWT_SECRET}
       TOSS_SECRET_KEY: ${TOSS_SECRET_KEY}
-      SPRING_DATA_REDIS_HOST: redis
-      SPRING_DATA_REDIS_PORT: 6379
-      SPRING_ELASTICSEARCH_URIS: http://elasticsearch:9200
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      ELASTICSEARCH_URIS: ${ELASTICSEARCH_URIS}
     ports:
       - "8080:8080"
     depends_on:
@@ -27,8 +27,8 @@ services:
     container_name: hotel-postgresql
     environment:
       POSTGRES_DB: hotel_db
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${SPRING_DB_USERNAME}
+      POSTGRES_PASSWORD: ${SPRING_DB_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
