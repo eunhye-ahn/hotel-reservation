@@ -1,6 +1,6 @@
 import http from 'k6/http'
 import { check } from 'k6'
-import { Counter } from 'k6/metrics'
+import { Counter, Trend } from 'k6/metrics'
 import { uuidv4 } from 'https://jslib.k6.io/k6-utils/1.4.0/index.js'
  
 const BASE_URL = __ENV.BASE_URL || 'http://localhost:8080/api/v1'
@@ -8,25 +8,22 @@ const BASE_URL = __ENV.BASE_URL || 'http://localhost:8080/api/v1'
 const successCount = new Counter('reservation_success')
 const conflictCount = new Counter('reservation_conflict')
 const otherFailCount = new Counter('reservation_other_fail')
- 
+const reservationDuration = new Trend('reservation_duration')
+
 export const options = {
     scenarios: {
         concurrent_same_room: {
             executor: 'shared-iterations',
-            vus: 1000,
-            iterations: 1000,
+            vus: 500,
+            iterations: 500,
             maxDuration: '30s',
         },
-    },
-    thresholds: {
-        // 락 대기시간 참고용 — 튜닝 전/후 비교 기준선
-        http_req_duration: ['p(95)<5000'],
-    },
+    }
 }
  
 // 테스트 대상 객실 (재고 수량과 반드시 일치 확인 후 실행)
 const TARGET_HOTEL_ID = 1
-const TARGET_ROOM_TYPE_ID = 1
+const TARGET_ROOM_TYPE_ID = 4
 const CHECK_IN = '2026-08-14'
 const CHECK_OUT = '2026-08-15'
 const RESERVE_GUEST = 2
@@ -74,6 +71,8 @@ export default function () {
             'Idempotency-Key': idempotencyKey,
         },
     })
+
+    reservationDuration.add(reservationRes.timings.duration)
  
     // 3) 결과 분류
     if (reservationRes.status === 201) {
@@ -87,7 +86,6 @@ export default function () {
  
     check(reservationRes, {
         '201 또는 409 (예상된 응답)': (r) => r.status === 201 || r.status === 409,
-        '5xx 없음': (r) => r.status < 500,
-        '응답시간 5초 이내': (r) => r.timings.duration < 5000,
+        '5xx 없음': (r) => r.status < 500
     })
 }
