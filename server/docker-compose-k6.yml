@@ -9,6 +9,20 @@ services:
       - K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM=true
       - BASE_URL=http://host.docker.internal:8080/api/v1
     command: run -o experimental-prometheus-rw /scripts/reservation-script.js
+    networks:
+      - server-network
+  k6-filter:
+    image: grafana/k6
+    container_name: k6-filter
+    volumes:
+      - ../k6:/scripts
+    environment:
+      - K6_PROMETHEUS_RW_SERVER_URL=http://prometheus:9090/api/v1/write
+      - K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM=true
+      - BASE_URL=http://host.docker.internal:8080/api/v1
+    command: run -o experimental-prometheus-rw /scripts/filter-hotel-script.js
+    networks:
+      - server-network
 
 networks:
   server-network:

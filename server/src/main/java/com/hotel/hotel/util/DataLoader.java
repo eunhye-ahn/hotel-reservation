@@ -53,7 +53,7 @@ public class DataLoader implements CommandLineRunner {
         List<Hotel> hotels;
 
         if(rdbEmpty) {
-            InputStream inputStream = new ClassPathResource("hotels.json").getInputStream();
+            InputStream inputStream = new ClassPathResource("hotels_generated.json").getInputStream();
             JsonNode root = objectMapper.readTree(inputStream);
 
 
