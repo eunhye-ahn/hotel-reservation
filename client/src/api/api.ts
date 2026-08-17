@@ -60,12 +60,6 @@ export const createReservation = (request: ReservationRequest, reservationKey: s
     })
 }
 
-export const getRoomTypeForReservation = (hotelId: number, roomTypeId: number, startDate: string, endDate: string, numberOfRooms: number) => {
-    return api.get<RoomTypeReservationResponse>(`/hotels/${hotelId}/roomTypes/${roomTypeId}/reservation`, {
-        params: { startDate, endDate, numberOfRooms }
-    })
-}
-
 export const reservationConfirm = (reservationKey: string) => {
     return api.get<ReservationDetailResponse>(`/reservations/${reservationKey}`)
 }

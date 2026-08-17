@@ -17,7 +17,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/v1/admin/reservation")
+@RequestMapping("/api/v1/admin/reservation")
 public class AdminReservationController {
     private final AdminReservationService adminReservationService;
 

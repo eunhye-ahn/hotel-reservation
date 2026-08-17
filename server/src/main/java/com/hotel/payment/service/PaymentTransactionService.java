@@ -2,7 +2,6 @@ package com.hotel.payment.service;
 
 import com.hotel.common.exception.CustomException;
 import com.hotel.common.exception.ErrorCode;
-import com.hotel.payment.client.TossPaymentClient;
 import com.hotel.payment.domain.*;
 import com.hotel.payment.repository.LedgerRepository;
 import com.hotel.payment.repository.PaymentEventRepository;
@@ -34,7 +33,7 @@ public class PaymentTransactionService {
             return;
         }
 
-        //판매자
+        //호텔
         ledgerRepository.save(Ledger.builder()
                 .paymentOrderId(orderId)
                 .account(paymentOrder.getSellerAccount())
@@ -43,11 +42,11 @@ public class PaymentTransactionService {
                 .credit(paymentOrder.getAmount())
                 .build()
         );
-        //구매자
+        //플랫폼
         ledgerRepository.save(Ledger.builder()
                 .paymentOrderId(orderId)
                 .account(paymentEvent.getUserId().toString())
-                .accountType(AccountType.BUYER)
+                .accountType(AccountType.PLATFORM)
                 .debit(paymentOrder.getAmount())
                 .credit(null)
                 .build()
@@ -80,8 +79,8 @@ public class PaymentTransactionService {
         ledgerRepository.save(Ledger.builder()
                 .paymentOrderId(paymentOrderId)
                 .account(reservation.getUser().getId().toString())
-                .accountType(AccountType.BUYER)
-                .debit(0)
+                .accountType(AccountType.PLATFORM)
+                .debit(null)
                 .credit(amount)
                 .build());
         ledgerRepository.save(Ledger.builder()
@@ -89,7 +88,7 @@ public class PaymentTransactionService {
                 .account(reservation.getHotel().getSellerAccount())
                 .accountType(AccountType.SELLER)
                 .debit(amount)
-                .credit(0)
+                .credit(null)
                 .build());
 
         Wallet wallet = walletRepository.findBySellerAccount(reservation.getHotel().getSellerAccount())
@@ -104,5 +103,25 @@ public class PaymentTransactionService {
     @Transactional
     public void completeCancelStatus(Reservation reservation){
         reservation.completeCancel();
+    }
+
+    //결제취소 실패 트랜잭션
+    @Transactional
+    public void failedCancelStatus(Reservation reservation){
+        PaymentEvent paymentEvent = paymentEventRepository.findByReservationId(reservation.getId())
+                .orElseThrow(()->new CustomException(ErrorCode.PAYMENT_NOT_FOUND));
+        PaymentOrder paymentOrder = paymentOrderRepository.findByCheckoutId(paymentEvent.getCheckoutId())
+                .orElseThrow(()->new CustomException(ErrorCode.PAYMENT_NOT_FOUND));
+        paymentOrder.fail();
+    }
+
+    //결제취소 조정 트랜잭션
+    @Transactional
+    public void markNeedsReconciliation(Reservation reservation){
+        PaymentEvent paymentEvent = paymentEventRepository.findByReservationId(reservation.getId())
+                .orElseThrow(()->new CustomException(ErrorCode.PAYMENT_NOT_FOUND));
+        PaymentOrder paymentOrder = paymentOrderRepository.findByCheckoutId(paymentEvent.getCheckoutId())
+                .orElseThrow(()->new CustomException(ErrorCode.PAYMENT_NOT_FOUND));
+        paymentOrder.needsReconciliation();
     }
 }

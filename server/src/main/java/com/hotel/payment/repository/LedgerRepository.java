@@ -10,8 +10,6 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface LedgerRepository extends JpaRepository<Ledger, Long> {
-    Optional<Ledger> findByPaymentOrderId(String paymentOrderId);
-
     @Query("SELECT COALESCE(SUM(credit),0) - COALESCE(SUM(debit), 0) " +
             "FROM Ledger " +
             "WHERE account = :sellerAccount " +

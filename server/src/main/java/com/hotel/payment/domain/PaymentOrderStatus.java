@@ -4,5 +4,6 @@ public enum PaymentOrderStatus {
     NOT_STARTED,
     SUCCESS,
     FAILED,
-    CANCELED
+    CANCELED,
+    NEEDS_RECONCILIATION
 }

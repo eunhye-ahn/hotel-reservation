@@ -64,7 +64,6 @@ public class AdminSettlementService {
                                                                 LocalDate startDate,
                                                                 LocalDate endDate,
                                                                 SettlementStatus status,
-
                                                                 Pageable pageable){
         Hotel hotel = hotelRepository.findById(hotelId)
                 .orElseThrow(() -> new CustomException(ErrorCode.HOTEL_NOT_FOUND));

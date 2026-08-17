@@ -35,7 +35,7 @@ public class Ledger extends BaseTime{
     private String account;
 
     @Enumerated(EnumType.STRING)
-    private AccountType accountType; // BUYER, SELLER
+    private AccountType accountType; // PLATFORM, SELLER
 
     private Integer debit;  //차감
 

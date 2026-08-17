@@ -17,7 +17,7 @@ public class AdminReservationCancelService {
 
     //재고 복구,예약상태변경, 방배정 철회
     @Transactional
-    public void cancelAndRestoreInventory(@Nonnull Reservation reservation, String reason){
+    public void cancelAndRestoreInventory(Reservation reservation, String reason){
 
         reservation.cancelByAdmin(reason);
 

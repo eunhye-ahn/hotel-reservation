@@ -7,13 +7,11 @@ import lombok.Getter;
 
 import java.util.List;
 
-@Getter
-@AllArgsConstructor
-@Builder
-public class RoomFilterOptionResponse {
-    private List<Integer> floors;
-    private List<RoomTypeOption> roomTypes;
 
+public record RoomFilterOptionResponse (
+     List<Integer> floors,
+     List<RoomTypeOption> roomTypes
+){
     @Getter
     @AllArgsConstructor
     public static class RoomTypeOption {

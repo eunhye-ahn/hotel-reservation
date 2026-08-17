@@ -28,6 +28,7 @@ public class ReservationService {
     private final IdempotencyRedisService idempotencyRedisService;
     private final ReservationProcessor reservationProcessor;
     private final RoomTypeInventoryRepository roomTypeInventoryRepository;
+    private final IdempotencyRedisService redisService;
 
     //예약생성
     public ReservationCreateResponse createReservation(ReservationRequest request, Long userId, String reservationKey) {
@@ -106,6 +107,7 @@ public class ReservationService {
                 .findByRoomTypeIdAndDateBetweenOrderByDateAsc(reservation.getRoomType().getId(), reservation.getStartDate(), reservation.getEndDate().minusDays(1));
         //재고복구
         inventories.forEach(i -> i.restore(reservation.getNumberOfRooms()));
+        redisService.complete(IdempotencyDomain.RESERVATION_CANCEL_USER, reservationKey);
     }
 
 

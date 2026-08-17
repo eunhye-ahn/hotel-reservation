@@ -141,7 +141,7 @@ public class HotelService {
         return hotelSearchQueryRepository.autocomplete(q);
     }
 
-    //최근 호텔
+    //최근 본 호텔과 비슷한 호텔 조회
     public List<HotelResponse> getSimilarHotel(Long hotelId){
         Hotel hotel = hotelRepository.findById(hotelId)
                 .orElseThrow(()->new CustomException(ErrorCode.HOTEL_NOT_FOUND));

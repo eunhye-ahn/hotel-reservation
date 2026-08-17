@@ -49,7 +49,10 @@ public class AdminInventoryController {
     }
 
     @GetMapping("/{hotelId}/room")
-    public ResponseEntity<Page<AdminRoomInfoResponse>> searchByRoomInfo(@PathVariable Long hotelId, @RequestParam(required = false) Long roomTypeId, @RequestParam(required = false) Integer floor,@RequestParam(required = false,defaultValue = "0") int page){
+    public ResponseEntity<Page<AdminRoomInfoResponse>> searchByRoomInfo(@PathVariable Long hotelId,
+                                                                        @RequestParam(required = false) Long roomTypeId,
+                                                                        @RequestParam(required = false) Integer floor,
+                                                                        @RequestParam(required = false,defaultValue = "0") int page){
         Pageable pageable = PageRequest.of(page, 10);
         Page<AdminRoomInfoResponse> result = adminInventoryService.searchByRoomInfo(hotelId, roomTypeId, floor, pageable);
 

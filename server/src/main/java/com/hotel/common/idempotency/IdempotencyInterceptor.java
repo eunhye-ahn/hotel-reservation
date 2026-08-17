@@ -20,20 +20,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-/**
- * 멱등성 인터셉터
- * [WHAT] 중복결제요청 방지
- * []
- *
- * [흐름]
- * 클라이언트 → Idempotency-Key 헤더 전송
- * → DB에서 checkout_id 조회
- *    → 있으면 → 기존 응답 반환 (컨트롤러 진입 차단)
- *    → 없으면 → 통과
- *
- * 2차 안전장치: PAYMENT_EVENT.checkout_id PK 제약
- */
 
 @Component
 @RequiredArgsConstructor
@@ -48,14 +37,34 @@ public class IdempotencyInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request,
                              HttpServletResponse response,
                              Object handler) throws Exception{
+
+        String uri = request.getRequestURI();
+        //우회-관리자취소
+        if(uri.startsWith("/api/v1/admin/reservation")){
+            String reservationId = extractReservationId(uri, response, RESERVATION_CANCEL_PATTERN);
+            if(reservationId == null){
+                return false;
+            }
+            String cancelKey = "cancel:admin:" + reservationId;
+            return handleReservationCancelByAdmin(cancelKey, request, response);
+        }
+        //우회-사용자취소
+        if("DELETE".equalsIgnoreCase(request.getMethod()) && uri.startsWith("/api/v1/reservations/")){
+            String reservationKey = extractReservationId(uri, response, USER_RESERVATION_CANCEL_PATTERN);
+            if(reservationKey == null){
+                return false;
+            }
+            String cancelKey = "cancel:user:" + reservationKey;
+            return handleReservationCancelByUser(cancelKey, request, response);
+        }
+
         //Idempotency-Key 헤더 확인 (없으면 통과)
         String idempotencyKey = request.getHeader("Idempotency-Key");
-
         if(idempotencyKey == null){
             return true;
         }
 
-        String uri = request.getRequestURI();
+
 
         if (uri.startsWith("/api/v1/payments")) {
             return handlePayment(idempotencyKey, request, response);
@@ -66,6 +75,7 @@ public class IdempotencyInterceptor implements HandlerInterceptor {
         if(uri.startsWith("/api/v1/settlements")) {
             return handleSettlement(idempotencyKey, request, response);
         }
+
         //다른도메인이면 통과
         return true;
     }
@@ -181,6 +191,56 @@ public class IdempotencyInterceptor implements HandlerInterceptor {
         return false;
     }
 
+    private boolean handleReservationCancelByAdmin(String cancelKey, HttpServletRequest request, HttpServletResponse response) throws Exception{
+        Long userId = resolveUserId(request);
+        String requestHash = null;
+
+        //선점시도
+        boolean acquired = redisService.tryProcessing(IdempotencyDomain.RESERVATION_CANCEL_ADMIN, cancelKey, userId, requestHash);
+        if(acquired){
+            return true;
+        }
+        //이미 선점된 상태 -> 기존 값 조회
+        Optional<IdempotencyValue> existing = redisService.get(IdempotencyDomain.RESERVATION_CANCEL_ADMIN, cancelKey);
+        String status = existing.map(IdempotencyValue::getStatus).orElse("processing");
+
+        if ("processing".equals(status)) {
+            response.setStatus(HttpServletResponse.SC_CONFLICT);
+            return false;
+        }
+        if("failed".equals(status)){
+            return true;
+        }
+        //db검사 생략
+        response.setStatus(HttpServletResponse.SC_OK);
+        return false;
+    }
+
+    private boolean handleReservationCancelByUser(String cancelKey, HttpServletRequest request, HttpServletResponse response){
+        Long userId = resolveUserId(request);
+        String requestHash = null;
+
+        //선점시도
+        boolean acquired = redisService.tryProcessing(IdempotencyDomain.RESERVATION_CANCEL_USER, cancelKey, userId, requestHash);
+        if(acquired){
+            return true;
+        }
+        //이미 선점된 상태 -> 기존 값 조회
+        Optional<IdempotencyValue> existing = redisService.get(IdempotencyDomain.RESERVATION_CANCEL_USER, cancelKey);
+        String status = existing.map(IdempotencyValue::getStatus).orElse("processing");
+
+        if ("processing".equals(status)) {
+            response.setStatus(HttpServletResponse.SC_CONFLICT);
+            return false;
+        }
+        if("failed".equals(status)){
+            return true;
+        }
+        //db검사 생략
+        response.setStatus(HttpServletResponse.SC_OK);
+        return false;
+    }
+
     //캐시된 응담을 JSON으로 감싸주는 공통로직
     private void writeCachedResponse(HttpServletResponse response, Object body) throws Exception{
         response.setStatus(HttpServletResponse.SC_OK);
@@ -196,4 +256,22 @@ public class IdempotencyInterceptor implements HandlerInterceptor {
         Object principal = authentication.getPrincipal();
         return (principal instanceof Long ? (Long) principal : null);
     }
+
+    //예약취소용 - 예약ID 추출
+    private static final Pattern RESERVATION_CANCEL_PATTERN =
+            Pattern.compile("/api/v1/admin/reservation/(\\d+)/cancel");
+    private static final Pattern USER_RESERVATION_CANCEL_PATTERN =
+            Pattern.compile("/api/v1/reservations/([^/]+)");
+
+
+    private String extractReservationId(String uri, HttpServletResponse response, Pattern pattern) {
+        Matcher matcher = pattern.matcher(uri);
+        if (matcher.matches()) {
+            return matcher.group(1);
+        }
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        return null;
+    }
+
+
 }

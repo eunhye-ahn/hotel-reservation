@@ -5,6 +5,8 @@ import com.hotel.admin.dto.reservation.AdminReservationSearchResponse;
 import com.hotel.admin.dto.reservation.AdminRoomResponse;
 import com.hotel.common.exception.CustomException;
 import com.hotel.common.exception.ErrorCode;
+import com.hotel.common.idempotency.IdempotencyDomain;
+import com.hotel.common.idempotency.IdempotencyRedisService;
 import com.hotel.hotel.domain.Room;
 import com.hotel.hotel.repository.RoomRepository;
 import com.hotel.payment.service.PaymentService;
@@ -14,6 +16,7 @@ import com.hotel.reservation.domain.ReservationSearchType;
 import com.hotel.reservation.domain.Reservation;
 import com.hotel.reservation.domain.ReservationStatus;
 import com.hotel.reservation.repository.ReservationRepository;
+import com.hotel.reservation.service.ReservationTransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,8 +32,9 @@ public class AdminReservationService {
     private final ReservationRepository reservationRepository;
     private final RoomRepository roomRepository;
     private final PaymentService paymentService;
-    private final AdminReservationCancelService cancelService;
-    private final PaymentTransactionService transactionService;
+    private final ReservationTransactionService reservationTransactionService;
+    private final PaymentTransactionService paymentTransactionService;
+    private final IdempotencyRedisService redisService;
 
     public Page<AdminReservationSearchResponse> getReservations(LocalDate startDate, LocalDate endDate, ReservationSearchType searchType, String keyword, ReservationStatus status, Boolean roomAssigned, Pageable pageable) {
 
@@ -97,20 +101,32 @@ public class AdminReservationService {
                 .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
 
         //1. CANCEL_PENDING 전환 + room=null + 재고복구 (cancelAndRestoreInventory 내부)
-        cancelService.cancelAndRestoreInventory(reservation, reason);
+        reservationTransactionService.cancelAndRestoreInventory(reservation, reason);
         boolean wasPaid = reservation.getPaymentStatus() == PaymentStatus.PAID;
         if(wasPaid) {
             try {
                 //결제된 건 -> 토스 결제취소 API 호출
                 paymentService.cancel(reservationId, reason);
+            } catch (CustomException e) {
+                if(e.getErrorCode() == ErrorCode.PAYMENT_CANCEL_FAILED){
+                    paymentTransactionService.failedCancelStatus(reservation);
+                    //redis 실패 상태반영
+                    redisService.fail(IdempotencyDomain.RESERVATION_CANCEL_ADMIN, reservationId.toString());
+                }else{
+                    paymentTransactionService.markNeedsReconciliation(reservation);
+                }
+                return;
             } catch (Exception e) {
-                throw new CustomException(ErrorCode.PAYMENT_CANCEL_FAILED);
+                //조정필요
+                paymentTransactionService.markNeedsReconciliation(reservation);
+                return;
             }
             //2. paymentOrder=CANCELED, 원장기록+지갑차감, paymentStatus=REFUNDED
-            transactionService.confirmPaymentCancellation(reservation);
+            paymentTransactionService.confirmPaymentCancellation(reservation);
         }
-        //3.예약취소확정 before_use => canceled
-        transactionService.completeCancelStatus(reservation);
+        //3.예약취소확정 canceled_pending => canceled
+        paymentTransactionService.completeCancelStatus(reservation);
+        redisService.complete(IdempotencyDomain.RESERVATION_CANCEL_ADMIN, reservationId.toString());
     }
 
     private void validateSameRoomType(Reservation reservation, Room room){

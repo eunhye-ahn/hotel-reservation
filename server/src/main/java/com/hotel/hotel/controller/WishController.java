@@ -63,7 +63,6 @@ public class WishController {
                                                            @CookieValue(value = "wish-collection", required = false) Long collectionId) {
         AddWishListResponse result = wishService.addWishList(userId, hotelId, collectionId);
 
-        //쿠키저장 (이전 쿠키가 로그아웃 또는 자동로그아웃되고도 남아있어서 에러 발생) => 수정필요
         ResponseCookie cookie = cookieUtil.createWishCollectionCookie(result.collectionId());
 
         return ResponseEntity

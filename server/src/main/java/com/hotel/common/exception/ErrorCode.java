@@ -10,6 +10,9 @@ public enum ErrorCode {
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다"),
     LOGOUT_TOKEN(HttpStatus.UNAUTHORIZED, "로그아웃된 토큰입니다."),
 
+    //정산
+    SETTLEMENT_REJECTED(HttpStatus.BAD_GATEWAY, "정산 대행사가 요청을 거부했습니다"),
+
     //wish
     COLLECTION_ALREADY_EXISTS(HttpStatus.CONFLICT, "같은 이름의 콜렉션이 존재합니다"),
     COLLECTION_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "위시리스트를 조회하는데 오류가 발생했습니다"),

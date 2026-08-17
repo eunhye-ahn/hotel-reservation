@@ -138,4 +138,17 @@ public class ReservationTransactionService {
             inventory.restore(reservation.getNumberOfRooms());
         }
     }
+
+    //재고 복구,예약상태변경, 방배정 철회
+    @Transactional
+    public void cancelAndRestoreInventory(Reservation reservation, String reason){
+
+        reservation.cancelByAdmin(reason);
+
+        //재고복구(중복코드) - 룸타입서비스로 리팩토링 예정
+        List<RoomTypeInventory> inventories = roomTypeInventoryRepository
+                .findByRoomTypeIdAndDateBetweenOrderByDateAsc(reservation.getRoomType().getId(), reservation.getStartDate(), reservation.getEndDate().minusDays(1));
+
+        inventories.forEach(i -> i.restore(reservation.getNumberOfRooms()));
+    }
 }

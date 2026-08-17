@@ -56,4 +56,6 @@ public class Settlement extends BaseTime{
     public void fail(){
         this.status = SettlementStatus.FAILED;
     }
+
+    public void needsReconciliation() {this.status = SettlementStatus.NEEDS_RECONCILIATION;}
 }

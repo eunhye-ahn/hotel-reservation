@@ -55,9 +55,6 @@ public class AdminInventoryService {
                         .map(RoomFilterOptionResponse.RoomTypeOption::from)
                         .toList();
 
-        return RoomFilterOptionResponse.builder()
-                .floors(floors)
-                .roomTypes(roomTypes)
-                .build();
+        return new RoomFilterOptionResponse(floors, roomTypes);
     }
 }

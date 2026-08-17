@@ -5,7 +5,9 @@ import java.time.Duration;
 public enum IdempotencyDomain {
     RESERVATION(Duration.ofMinutes(1),Duration.ofMinutes(10),Duration.ofMinutes(1)),
     PAYMENT(Duration.ofMinutes(1),Duration.ofMinutes(30),Duration.ofMinutes(1)),
-    SETTLEMENT(Duration.ofMinutes(1),Duration.ofHours(1),Duration.ofMinutes(1));
+    SETTLEMENT(Duration.ofMinutes(1),Duration.ofHours(1),Duration.ofMinutes(1)),
+    RESERVATION_CANCEL_ADMIN(Duration.ofMinutes(2),Duration.ofMinutes(30),Duration.ofMinutes(1)),
+    RESERVATION_CANCEL_USER(Duration.ofMinutes(1),Duration.ofMinutes(3),Duration.ofMinutes(1));
 
     private final Duration processingTtl;
     private final Duration completedTtl;

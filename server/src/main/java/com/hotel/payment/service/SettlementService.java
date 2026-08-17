@@ -55,6 +55,7 @@ public class SettlementService {
             return;
         }
 
+        //TX1: PENDING 상태로 저장
         Long settlementId = settlementTransactionService.createPendingSettlement(
                 wallet.getSellerAccount(),
                 periodAmount,
@@ -64,15 +65,22 @@ public class SettlementService {
         );
 
         try {
+            //외부 정산 대행사 API 호출 클라이언트를 통해
+
+            //TX2: 성공확정
             settlementTransactionService.completedSettlement(settlementId, wallet.getSellerAccount(), periodAmount);
-            if(settlementId != null){
-                redisService.complete(IdempotencyDomain.SETTLEMENT, settlementKey);
+            redisService.complete(IdempotencyDomain.SETTLEMENT, settlementKey);
+        }catch(CustomException e){
+            if(e.getErrorCode() == ErrorCode.SETTLEMENT_REJECTED){
+                settlementTransactionService.failedSettlement(settlementId);
+                redisService.fail(IdempotencyDomain.SETTLEMENT, settlementKey);
+            }else {
+                settlementTransactionService.markNeedsReconciliation(settlementId);
             }
         } catch (Exception e) {
-            settlementTransactionService.failedSettlement(settlementId);
-            if(settlementId != null) {
-                redisService.fail(IdempotencyDomain.SETTLEMENT, settlementKey);
-            }
+            //타임아웃 등 성공/실패를 알 수 없는 경우 - FAILED로 단정 X
+            settlementTransactionService.markNeedsReconciliation(settlementId);
+
         }
     }
 }

@@ -41,6 +41,4 @@ public class RedisService {
 
     //로그인 있는지없는지여부 확인-bl조회
     public boolean isBlackList(String accessToken) { return redisTemplate.hasKey("BL:"+accessToken);}
-
-    //
 }
