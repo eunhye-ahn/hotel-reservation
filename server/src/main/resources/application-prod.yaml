@@ -1,0 +1,9 @@
+spring:
+  config:
+    import: "aws-parameterstore:/hotel/prod/"
+  cloud:
+    aws:
+      parameterstore:
+        enabled: true
+      region:
+        static: ap-northeast-2

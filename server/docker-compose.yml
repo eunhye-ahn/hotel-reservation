@@ -1,5 +1,6 @@
 services:
   hotel-postgresql:
+    profiles: ["local"]
     image: postgres:17
     container_name: hotel-postgresql
     environment:

@@ -5,18 +5,10 @@ services:
       dockerfile: Dockerfile
     container_name: hotel-app
     environment:
-      SPRING_DB_URL: ${SPRING_DB_URL}
-      SPRING_DB_USERNAME: ${SPRING_DB_USERNAME}
-      SPRING_DB_PASSWORD: ${SPRING_DB_PASSWORD}
-      JWT_SECRET: ${JWT_SECRET}
-      TOSS_SECRET_KEY: ${TOSS_SECRET_KEY}
-      REDIS_HOST: ${REDIS_HOST}
-      REDIS_PORT: ${REDIS_PORT}
-      ELASTICSEARCH_URIS: ${ELASTICSEARCH_URIS}
+      SPRING_PROFILES_ACTIVE: prod
     ports:
       - "8080:8080"
     depends_on:
-      - hotel-postgresql
       - redis
       - elasticsearch
     networks:

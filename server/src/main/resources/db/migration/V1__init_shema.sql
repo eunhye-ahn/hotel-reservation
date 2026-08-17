@@ -102,7 +102,6 @@ CREATE TABLE reservation (
                              cancel_reason           VARCHAR(1000),
                              created_at              TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                              updated_at              TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                             CONSTRAINT chk_reservation_date_range CHECK (start_date < end_date)
 );
 
 -- ---------- wallet ----------
