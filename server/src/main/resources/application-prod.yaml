@@ -1,4 +1,5 @@
 spring:
+  forward-headers-strategy: framework
   config:
     import: "aws-parameterstore:/hotel/prod/"
   cloud:
