@@ -1,7 +1,7 @@
 import type { AccessTokenResponse, LoginRequest, SignUpRequest } from "@/api/types/auth";
 import axios from "axios";
 import type { AddWishListResponse, AdminInventorySummaryResponse, HotelDetailResponse, HotelListFilter, hotelResponse, MoveWishRequest, MoveWishResponse, Page, searchInventorySummaryRequest, SettlementHistoryResponse, WishCollectionsRequest, WishListCollectionResponse } from "@/api/types/hotel";
-import type { ReservationCreateResponse, ReservationDetailResponse, ReservationInfoResponse, ReservationRequest, ReservationResponse, RoomTypeReservationResponse } from "@/api/types/reservation";
+import type { ReservationCreateResponse, ReservationDetailResponse, ReservationInfoResponse, ReservationRequest, ReservationResponse } from "@/api/types/reservation";
 import type { UserInfoResponse } from "./types/user";
 import { api } from "./axios";
 import type { PaymentConfirmRequest, PaymentConfirmResponse, PaymentPrepareResponse } from "@/api/types/payment";
@@ -17,7 +17,7 @@ export const logout = () => {
 
 //새로고침,at만료 시(401반환 시 -인증실패) 호출 - 무한루프 방지
 export const reissue = () => {
-    return axios.post<AccessTokenResponse>("http://localhost:8080/api/v1/auth/reissue", null, {
+    return axios.post<AccessTokenResponse>(`${import.meta.env.VITE_API_BASE_URL}/auth/reissue`, null, {
         withCredentials: true
     });
 }

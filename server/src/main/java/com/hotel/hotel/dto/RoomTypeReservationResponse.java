@@ -3,8 +3,6 @@ package com.hotel.hotel.dto;
 import com.hotel.common.exception.CustomException;
 import com.hotel.common.exception.ErrorCode;
 import com.hotel.hotel.domain.RoomTypeInventory;
-import lombok.Builder;
-import lombok.Getter;
 
 import java.util.List;
 
