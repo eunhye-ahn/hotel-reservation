@@ -1,4 +1,10 @@
 spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            redirect-uri: https://api.stayn.store/login/oauth2/code/google
   forward-headers-strategy: framework
   config:
     import: "aws-parameterstore:/hotel/prod/"
