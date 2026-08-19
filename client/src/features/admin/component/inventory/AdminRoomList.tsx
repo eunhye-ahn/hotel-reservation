@@ -4,12 +4,26 @@ import { useRoomList } from "../../hooks/inventory/useRoomList"
 import { ErrorMessage } from "@/common/component/ErrorMessage"
 import { Pagination } from "@/common/component/Pagination"
 import { useRoomFilterOptions } from "../../hooks/inventory/useRoomFilterOption"
+import { useEffect } from "react"
 
+interface AdminRoomListProps {
+    hotelId: number,
+    inventorySelected: {roomTypeId: number|null, dateStr: string}
+}
 
-export const AdminRoomList = ({ hotelId }: { hotelId: number }) => {
+export const AdminRoomList = ({ hotelId, inventorySelected }: AdminRoomListProps) => {
     const { filter, setFloor, setRoomTypeId, setPage } = useRoomFilter()
     const { roomListData, isRoomListError, isRoomListLoading } = useRoomList(hotelId, filter)
     const { optionData, isOptionError, isOptionLoading } = useRoomFilterOptions(hotelId)
+
+    console.log(roomListData)
+
+    useEffect(()=>{
+        if(inventorySelected.roomTypeId != null){
+            setRoomTypeId(inventorySelected.roomTypeId)
+        }
+    },[inventorySelected.roomTypeId])
+
 
     if(isOptionLoading) return <Spinner/>
     if(isOptionError) return <ErrorMessage/>
@@ -19,30 +33,32 @@ export const AdminRoomList = ({ hotelId }: { hotelId: number }) => {
             <div className="flex items-center justify-between px-5 py-3 bg-gray-50 border-b border-gray-200">
                 <span className="font-semibold text-sm">객실 목록</span>
             </div>
-            <div className="flex justify-end items-center gap-4 px-5 py-3 text-xs ">
-                <select
-                    className="border border-gray-300 rounded-md px-2 py-1.5 text-sm"
-                    value={filter.floor ?? ""}
-                    onChange={(e) => setFloor(e.target.value ? Number(e.target.value) : undefined)}
-                >
-                    <option value="">전체층</option>
-                    {
-                        optionData?.floors.map(floor => (
-                            <option key={floor} value={floor}>{floor}층</option>
-                        ))
-                    }
-                </select>
-                <select
-                    className="border border-gray-300 rounded-md px-2 py-1.5 text-sm"
-                    value={filter.roomTypeId ?? ""}
-                    onChange={(e) => setRoomTypeId(e.target.value ? Number(e.target.value) : undefined)}
-                >
-                    <option value="">전체타입</option>
-                    {optionData?.roomTypes.map(rt => (
-                        <option key={rt.id} value={rt.id}>{rt.name}</option>
-                    ))}
-                </select>
-
+            <div className="flex justify-between items-center gap-4 px-5 py-3 text-xs ">
+                <p className="font-bold">{inventorySelected.dateStr ?? ""}</p>
+                <div className="flex gap-2">
+                    <select
+                        className="border border-gray-300 rounded-md px-2 py-1.5 text-sm"
+                        value={filter.floor ?? ""}
+                        onChange={(e) => setFloor(e.target.value ? Number(e.target.value) : undefined)}
+                    >
+                        <option value="">전체층</option>
+                        {
+                            optionData?.floors.map(floor => (
+                                <option key={floor} value={floor}>{floor}층</option>
+                            ))
+                        }
+                    </select>
+                    <select
+                        className="border border-gray-300 rounded-md px-2 py-1.5 text-sm"
+                        value={filter.roomTypeId ?? ""}
+                        onChange={(e) => setRoomTypeId(e.target.value ? Number(e.target.value) : undefined)}
+                    >
+                        <option value="">전체타입</option>
+                        {optionData?.roomTypes.map(rt => (
+                            <option key={rt.id} value={rt.id}>{rt.name}</option>
+                        ))}
+                    </select>
+                </div>
             </div>
 
             {isRoomListLoading ? (
@@ -55,11 +71,11 @@ export const AdminRoomList = ({ hotelId }: { hotelId: number }) => {
                         <thead className="bg-gray-100">
                             <tr>
                                 <th className="px-3 py-2 font-medium">연번</th>
-                                <th className="px-3 py-2 font-medium">객실명</th>
                                 <th className="px-3 py-2 font-medium">층</th>
                                 <th className="px-3 py-2 font-medium">호수</th>
                                 <th className="px-3 py-2 font-medium">객실타입</th>
-                                <th className="px-3 py-2 font-medium">상태</th>
+                                <th className="px-3 py-2 font-medium">점검상태</th>
+                                <th className="px-3 py-2 font-medium">배정상태</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100 bg-white">
@@ -68,13 +84,16 @@ export const AdminRoomList = ({ hotelId }: { hotelId: number }) => {
                                     className="hover:bg-gray-50 cursor-pointer"
                                 >
                                     <td className="px-3 py-2 text-center">{i + 1}</td>
-                                    <td className="px-3 py-2 text-center">{r.roomName}</td>
-                                    <td className="px-3 py-2">{r.floor}</td>
+                                    <td className="px-3 py-2 text-center">{r.floor}</td>
                                     <td className="px-3 py-2 text-center">{r.roomNumber}</td>
                                     <td className="px-3 py-2 text-center">{r.roomTypeName}</td>
                                     <td className="px-3 py-2 text-center">
                                         {r.usable ? <span className="font-semibold text-gray-500">사용가능</span>
                                             : <span className="font-semibold text-red-500">점검중</span>}
+                                    </td>
+                                    <td className="px-3 py-2 text-center">
+                                        {r.assignable ? <span className="font-semibold text-gray-500">미배정</span>
+                                            : <span className="font-semibold text-red-500">배정완료</span>}
                                     </td>
                                 </tr>
                             ))}

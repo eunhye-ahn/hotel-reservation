@@ -42,28 +42,45 @@ export const SettlementModal = ({ hotelId, hotelName, pendingBalance, lastSettle
     }
 
     return (
-        <div>
-            <p>{hotelName} - 미정산 잔액: {pendingBalance.toLocaleString()}원</p>
-
-            <div>
-                <label>정산 시작일</label>
-                <input type="date" value={periodStart ?? ""}
-                    onChange={(e) => setPeriodStart(e.target.value || undefined)} />
-            </div>
-            <div>
-                <label>정산 종료일</label>
-                <input type="date" value={periodEnd ?? ""}
-                    onChange={(e) => setPeriodEnd(e.target.value || undefined)} />
-            </div>
-            {isLoading ? <Spinner />
-                : isError ? <ErrorMessage />
-                    : (
-                        <p>예상정산액 : {data?.toLocaleString()}원</p>
-                    )}
-            <button onClick={handleExecute}
-                disabled={isExecuting || !periodStart || !periodEnd}>
-                {isExecuting ? "Loading..." : "정산하기"}
-            </button>
+        <div className="mx-10 my-10">
+            <strong>{hotelName}</strong> 
+            <br></br>미정산 잔액: <strong>{pendingBalance.toLocaleString()}원</strong>
+            <table className="w-full mt-3 text-sm border border-gray-200 overflow-hidden">
+                <tbody>
+                    <tr>
+                        <th className="px-3 py-2 font-medium w-30%">정산 시작일</th>
+                        <td className="px-3 py-2">
+                            <input type="date" value={periodStart ?? ""}
+                                onChange={(e) => setPeriodStart(e.target.value || undefined)} />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th className="px-3 py-2 font-medium w-30%">정산 종료일</th>
+                        <td className="px-3 py-2">
+                            <input type="date" value={periodEnd ?? ""}
+                                onChange={(e) => setPeriodEnd(e.target.value || undefined)} />
+                        </td>
+                    </tr>
+                    <tr>
+                       <th className="px-3 py-2 font-medium w-30%">예상 정산액</th>
+                        <td className="px-3 py-2 text-right">
+                            {isLoading ? <Spinner />
+                                : isError ? <ErrorMessage />
+                                    : (<p><strong>{data?.toLocaleString()}원</strong></p>)
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td className="px-3 py-2 text-center " colSpan={2}>
+                            <button onClick={handleExecute}
+                                className="px-4 py-2 text-sm bg-gray-900 text-white cursor-pointer hover:bg-gray-500"
+                                disabled={isExecuting || !periodStart || !periodEnd}>
+                                {isExecuting ? "Loading..." : "정산하기"}
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     )
 }

@@ -32,7 +32,7 @@ export const DashBoardSummary = () => {
                 </div>
                 <div className="border border-gray-500 p-5 bg-white">
                     <p className="text-sm text-gray-500 mb-2">누적 미정산액</p>
-                    <p className="text-2xl font-bold text-gray-500">{summaryData?.totalPendingBalance}</p>
+                    <p className="text-2xl font-bold text-gray-500">{summaryData?.totalPendingBalance.toLocaleString()}</p>
                     <p className="text-sm text-gray-500 mb-2">호텔 {summaryData?.pendingHotelCount}곳</p>
                 </div>
                 <div className="border border-gray-500 p-5 bg-white">

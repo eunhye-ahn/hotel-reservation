@@ -4,9 +4,14 @@ import { useInventoryCalendar } from "../../hooks/inventory/useInventoryCalendar
 import { Spinner } from "@/common/component/Spinner"
 import { ErrorMessage } from "@/common/component/ErrorMessage"
 
-export const InventoryCalendar = ({ hotelId }: { hotelId: number }) => {
+interface InventoryCalendarProps {
+    hotelId: number,
+    onSelected: (value: {roomTypeId: number, dateStr: string})=>void
+}
 
-    const [weekStart, setWeekStart] = useState(subDays(new Date(), 7))
+export const InventoryCalendar = ({ hotelId, onSelected }: InventoryCalendarProps) => {
+
+    const [weekStart, setWeekStart] = useState(subDays(new Date(), 6))
     const startDate = format(weekStart, 'yyyy-MM-dd')
     const endDate = format(addDays(weekStart, 6), 'yyyy-MM-dd')
 
@@ -84,7 +89,11 @@ export const InventoryCalendar = ({ hotelId }: { hotelId: number }) => {
                                 const available = cell.totalInventory - cell.totalReserved
 
                                 return (
-                                    <td key={dateStr} className="px-2 py-2">
+                                    <td key={dateStr} className="px-2 py-2" 
+                                        onClick={()=>onSelected({
+                                        roomTypeId: roomType.roomTypeId, 
+                                        dateStr: dateStr
+                                    })}>
                                         <button
                                             className={`w-full border py-4 flex gap-1 justify-center  items-baseline  text-center cursor-pointer ${getCellStyle(available)}`}
                                         >

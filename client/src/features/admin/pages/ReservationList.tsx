@@ -95,6 +95,7 @@ export const ReservationList = () => {
                     <table className="w-full text-sm border border-gray-200 overflow-hidden">
                         <thead className="bg-gray-100">
                             <tr>
+                                <th className="px-3 py-2 font-medium">연번</th>
                                 <th className="px-3 py-2 font-medium">예약ID</th>
                                 <th className="px-3 py-2 font-medium">예약자</th>
                                 <th className="px-3 py-2 font-medium">호텔명</th>
@@ -106,11 +107,12 @@ export const ReservationList = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100 bg-white">
-                            {data?.content.map(r => (
+                            {data?.content.map((r,idx) => (
                                 <tr key={r.id}
                                     onClick={() => navigate(`/admin/reservations/${r.id}`)}
                                     className="hover:bg-gray-50 cursor-pointer"
                                 >
+                                    <td className="px-3 py-2 text-center">{idx+1}</td>
                                     <td className="px-3 py-2 text-center">{r.displayReservationNO}</td>
                                     <td className="px-3 py-2 text-center">{r.username}</td>
                                     <td className="px-3 py-2">{r.hotelName}</td>

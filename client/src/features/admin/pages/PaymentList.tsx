@@ -4,6 +4,7 @@ import { Spinner } from "@/common/component/Spinner"
 import { ErrorMessage } from "@/common/component/ErrorMessage"
 import { Pagination } from "@/common/component/Pagination"
 import { PaymentStatusBadge } from "../component/payment/PaymentStatusBadge"
+import { format } from "date-fns"
 
 export const PaymentList = () => {
     const { filter, setSearchType, setKeyword, setStartDate, setEndDate, setPage, setStatus } = usePaymentFilter()
@@ -63,6 +64,7 @@ export const PaymentList = () => {
                     <table className="w-full text-sm border border-gray-200 overflow-hidden">
                         <thead className="bg-gray-100">
                             <tr>
+                                <th className="px-3 py-2 font-medium">연번</th>
                                 <th className="px-3 py-2 font-medium">결제ID</th>
                                 <th className="px-3 py-2 font-medium">호텔명</th>
                                 <th className="px-3 py-2 font-medium">결제자명</th>
@@ -72,8 +74,9 @@ export const PaymentList = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100 bg-white">
-                            {data?.content?.map(payment =>
+                            {data?.content?.map((payment,idx) =>
                                 <tr key={payment.displayOrderNO} className="hover:bg-gray-50">
+                                    <td className="px-3 py-2 text-center">{idx+1}</td>
                                     <td className="px-3 py-2 text-center">{payment.displayOrderNO}</td>
                                     <td className="px-3 py-2">{payment.hotelName}</td>
                                     <td className="px-3 py-2 text-center">{payment.userName}</td>
@@ -83,7 +86,7 @@ export const PaymentList = () => {
                                             status={payment.status}
                                         />
                                     </td>
-                                    <td className="px-3 py-2 text-center">{payment.createdAt}</td>
+                                    <td className="px-3 py-2 text-center">{format(new Date(payment.createdAt), "yyyy-MM-dd HH:mm")}</td>
                                 </tr>
                             )}
                         </tbody>

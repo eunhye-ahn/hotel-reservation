@@ -39,25 +39,31 @@ public class SettlementTransactionService {
 
     @Transactional
     public void completedSettlement (Long settlementId, String sellerAccount, int amount) {
-        Settlement settlement = settlementRepository.findById(settlementId)
-                .orElseThrow(() -> new CustomException(ErrorCode.SETTLEMENT_NOT_FOUND));
-        settlement.complete();
-        Wallet wallet = walletRepository.findBySellerAccount(sellerAccount)
-                        .orElseThrow(() -> new CustomException(ErrorCode.WALLET_NOT_FOUND));
-        wallet.updateBalance(-amount);
+        try {
+            Settlement settlement = settlementRepository.findById(settlementId)
+                    .orElseThrow(() -> new CustomException(ErrorCode.SETTLEMENT_NOT_FOUND));
+            settlement.complete();
+            Wallet wallet = walletRepository.findBySellerAccount(sellerAccount)
+                    .orElseThrow(() -> new CustomException(ErrorCode.WALLET_NOT_FOUND));
+            wallet.updateBalance(-amount);
 
-        ledgerRepository.save(Ledger.builder()
-                        .account(sellerAccount)
-                        .accountType(AccountType.SELLER)
-                        .debit(amount)
-                        .credit(null)
-                .build());
-        ledgerRepository.save(Ledger.builder()
-                .account("PLATFORM")
-                .accountType(AccountType.PLATFORM)
-                .debit(null)
-                .credit(amount)
-                .build());
+            ledgerRepository.save(Ledger.builder()
+                    .account(sellerAccount)
+                    .accountType(AccountType.SELLER)
+                    .debit(amount)
+                    .credit(0)
+                    .paymentOrderId(settlementId.toString())
+                    .build());
+            ledgerRepository.save(Ledger.builder()
+                    .account("PLATFORM")
+                    .accountType(AccountType.PLATFORM)
+                    .debit(0)
+                    .credit(amount)
+                    .paymentOrderId(settlementId.toString())
+                    .build());
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Transactional

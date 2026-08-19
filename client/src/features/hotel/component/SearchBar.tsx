@@ -1,7 +1,7 @@
 import { getSearchAutocomplete } from "@/api/api";
 import { Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react"
-import { useLocation, useNavigate } from "react-router";
+import { useLocation, useNavigate, useSearchParams } from "react-router";
 import styles from '@/layout/Header.module.css'
 
 export const SearchBar = () => {
@@ -11,18 +11,13 @@ export const SearchBar = () => {
     const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined)
     const [open, setOpen] = useState<boolean>(false)
     const location = useLocation()
+    const [searchParams, setSearchParams] = useSearchParams()
 
     useEffect(() => {
         return () => clearTimeout(timerRef.current)
     }, [])
 
-    useEffect(() => {
-        if (!location.pathname.startsWith("/hotels")) {
-            setQ("")
-            setSuggestions([])
-            setOpen(false)
-        }
-    }, [location.pathname])
+
 
     const handleSearch = (keyword?: string) => {
         const target = keyword ?? q
@@ -30,7 +25,16 @@ export const SearchBar = () => {
         clearTimeout(timerRef.current)
         setOpen(false)
         setSuggestions([])
-        navigate(`/hotels/list?q=${target}`)
+        //이미있는 검색어에 q만 추가하기
+
+         if (location.pathname.startsWith("/hotels/list")) {
+            const next = new URLSearchParams(searchParams)
+            console.log(searchParams)
+            next.set("q",target)
+            setSearchParams(next)
+        }else{
+            navigate(`/hotels/list?q=${target}`)
+        }
     }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

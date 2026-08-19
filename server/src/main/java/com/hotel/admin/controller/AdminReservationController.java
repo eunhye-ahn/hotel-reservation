@@ -66,7 +66,7 @@ public class AdminReservationController {
     public ResponseEntity<Void> assignRoom(
             @PathVariable Long reservationId,
             @RequestBody AssignmentRoomRequest request) {
-        adminReservationService.assignRoom(reservationId, request.getRoomId());
+        adminReservationService.assignRoom(reservationId, request.roomId());
 
         return ResponseEntity
                 .status(HttpStatus.OK)

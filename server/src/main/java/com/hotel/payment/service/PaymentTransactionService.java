@@ -38,7 +38,7 @@ public class PaymentTransactionService {
                 .paymentOrderId(orderId)
                 .account(paymentOrder.getSellerAccount())
                 .accountType(AccountType.SELLER)
-                .debit(null)
+                .debit(0)
                 .credit(paymentOrder.getAmount())
                 .build()
         );
@@ -48,7 +48,7 @@ public class PaymentTransactionService {
                 .account(paymentEvent.getUserId().toString())
                 .accountType(AccountType.PLATFORM)
                 .debit(paymentOrder.getAmount())
-                .credit(null)
+                .credit(0)
                 .build()
         );
 
@@ -80,7 +80,7 @@ public class PaymentTransactionService {
                 .paymentOrderId(paymentOrderId)
                 .account(reservation.getUser().getId().toString())
                 .accountType(AccountType.PLATFORM)
-                .debit(null)
+                .debit(0)
                 .credit(amount)
                 .build());
         ledgerRepository.save(Ledger.builder()
@@ -88,7 +88,7 @@ public class PaymentTransactionService {
                 .account(reservation.getHotel().getSellerAccount())
                 .accountType(AccountType.SELLER)
                 .debit(amount)
-                .credit(null)
+                .credit(0)
                 .build());
 
         Wallet wallet = walletRepository.findBySellerAccount(reservation.getHotel().getSellerAccount())

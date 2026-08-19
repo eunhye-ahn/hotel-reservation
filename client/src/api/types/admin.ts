@@ -128,6 +128,7 @@ export interface InventoryCalendarCellResponse {
 export interface searchRoomInfoRequest {
     roomTypeId?: number,
     floor?: number,
+    targetDate?: string,
     page: number
 }
 
@@ -137,7 +138,8 @@ export interface AdminRoomInfoResponse {
     floor: number,
     roomNumber: number,
     roomTypeName: string,
-    usable: boolean
+    usable: boolean,
+    assignable: boolean
 }
 
 export interface RoomFilterOptionResponse {

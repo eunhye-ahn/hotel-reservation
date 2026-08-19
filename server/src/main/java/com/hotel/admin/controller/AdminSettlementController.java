@@ -76,6 +76,7 @@ public ResponseEntity<Page<AdminSettlementSearchResponse>> getSettlements(@Model
                 request.status(),
                 pageable
         );
+
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(result);

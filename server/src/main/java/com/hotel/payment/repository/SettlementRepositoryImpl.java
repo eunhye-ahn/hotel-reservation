@@ -45,8 +45,8 @@ public class SettlementRepositoryImpl implements SettlementRepositoryCustom{
                         settlement.periodEndDate,
                         settlement.amount,
                         settlement.status,
-                        settlement.createdAt,
-                        settlement.settledAt
+                        settlement.settledAt,
+                        settlement.createdAt
                 ))
                         .from(settlement)
                         .where(builder)

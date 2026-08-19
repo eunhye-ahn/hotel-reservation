@@ -20,7 +20,7 @@ export const ReservationConfirmPage = () => {
     if (isLoading) return <Spinner />
     if (isError) {
         toast.error(getErrorMessage(error))
-        navigate(-1)
+        navigate("/mypage")
         return null;
     }
 

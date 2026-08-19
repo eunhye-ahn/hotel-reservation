@@ -42,8 +42,8 @@ public class AdminInventoryService {
     }
 
     //호텔의 객실정보
-    public Page<AdminRoomInfoResponse> searchByRoomInfo(Long hotelId, Long roomTypeId, Integer floor, Pageable pageable) {
-        return roomRepository.searchByRoomInfo(hotelId, roomTypeId, floor, pageable);
+    public Page<AdminRoomInfoResponse> searchByRoomInfo(Long hotelId, Long roomTypeId, Integer floor, LocalDate targetDate, Pageable pageable) {
+        return roomRepository.searchByRoomInfo(hotelId, roomTypeId, floor, targetDate, pageable);
     }
 
     //객실필터옵션

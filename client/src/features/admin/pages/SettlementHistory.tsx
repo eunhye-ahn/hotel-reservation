@@ -14,8 +14,6 @@ export const SettlementHistory = () => {
     const { hotelId } = useParams<{ hotelId: string }>()
     const location = useLocation()
     const state = location.state
-
-    console.log(state)
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const { filter, setEndDate, setStartDate, setStatus, setPage } = useSettlementHistoryFilter()
     const { data, isLoading, isError } = useSettlementHistory(Number(hotelId), filter)
