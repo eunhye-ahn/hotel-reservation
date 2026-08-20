@@ -39,20 +39,3 @@ sequenceDiagram
 | **TX 2**<br>*(환불 처리)* | • PG 응답 성공 확인<br>• 결제 상태 변경<br>• 사용자 지갑 차감 및 원장 기록 | **Payment**:<br>`PAID` &rarr; `REFUNDED` | PG사 환불 성공 응답 수신 후 결제 데이터 및 금융 원장/지갑 상태를 안전하게 갱신 |
 | **TX 3**<br>*(취소 확정)* | • 최종 예약 상태 확정 | **Reservation**:<br>`CANCEL_PENDING` &rarr; `CANCELED` | 환불 절차가 최종 완료된 후 예약을 취소 상태로 변경하여 **시스템 간 데이터 원자성(Atomicity) 달성** |
 
-
-
----
-## 2. 예약 취소처리 흐름 -사용자
-```mermaid
-sequenceDiagram
-		participant Client as Client
-		participant RC as ReservationController
-		participant RS as ReservationService
-    participant DB as Database
-
-    Client->>RC: 예약취소 요청
-    RC->>RS: 예약취소 메서드 호출
-    RS->>DB: 예약상태변경(BEFORE_USE->CANCELED)
-	note over RS: 트랜잭션 커밋
-    RS-->>Client: 200 OK  
-```
