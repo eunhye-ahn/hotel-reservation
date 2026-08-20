@@ -7,15 +7,13 @@ import { useReservationConfirm } from '../hooks/useReservationConfirm';
 import { Spinner } from "@/common/component/Spinner";
 import { getPaymentStatus } from "@/features/mypage/util/getPaymentStatus";
 import { getCancelType } from "@/features/mypage/util/getCancelType";
-import { PrevBtn } from "@/common/component/PrevBtn"
 
 export const ReservationConfirmPage = () => {
+    const navigate = useNavigate()
     const { reservationKey } = useParams();
     if (!reservationKey) return;
-    const navigate = useNavigate()
 
     const { data, error, isLoading, isError } = useReservationConfirm({ reservationKey })
-
 
     if (isLoading) return <Spinner />
     if (isError) {
