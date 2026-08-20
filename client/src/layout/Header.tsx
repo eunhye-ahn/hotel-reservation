@@ -24,7 +24,7 @@ export const Header = () => {
         <header className={`${styles.header} ${isMainPage ? '' : styles.headerSolid}`}>
             <div className={styles.inner}>
                 <span className={styles.logo} onClick={() => navigate("/")}>
-                    STAY N
+                    STAY N 테스트
                 </span>
                 <div className={styles.searchWrap}>
                     <SearchBar />
