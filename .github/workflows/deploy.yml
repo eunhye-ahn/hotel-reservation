@@ -49,5 +49,3 @@ jobs:
               "docker compose -f docker-compose.yml -f docker-compose-deploy.yml build app --no-cache",
               "docker compose -f docker-compose.yml -f docker-compose-deploy.yml up -d --force-recreate app"
             ]'
-
-이제뭘해야해
