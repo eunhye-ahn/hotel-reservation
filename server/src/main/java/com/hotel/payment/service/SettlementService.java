@@ -80,7 +80,6 @@ public class SettlementService {
         } catch (Exception e) {
             //타임아웃 등 성공/실패를 알 수 없는 경우 - FAILED로 단정 X
             settlementTransactionService.markNeedsReconciliation(settlementId);
-
         }
     }
 }

@@ -20,7 +20,7 @@ export const ReservationConfirmPage = () => {
     if (isLoading) return <Spinner />
     if (isError) {
         toast.error(getErrorMessage(error))
-        navigate("/mypage")
+        navigate(-1)
         return null;
     }
 
@@ -28,13 +28,19 @@ export const ReservationConfirmPage = () => {
 
     return (
         <div className="detail-container">
-            <PrevBtn />
+            <div className="text-left mt-5">
+                <button className="px-3 py-1 rounded-lg bg-gray-200"
+                    onClick={() => navigate("/mypage")}
+                >
+                    &laquo;
+                </button>
+            </div>
             <div className="text-xl font-bold mb-6 mt-10">예약 확인서</div>
 
             <div className="mb-5">
                 <div className="flex justify-between text-sm py-1">
                     <span className="text-gray-500">예약번호</span>
-                    <span>{data?.reservationKey}</span>
+                    <span>{data?.displayReservationNO}</span>
                 </div>
                 <div className="flex justify-between text-sm py-1">
                     <span className="text-gray-500">거래 일시</span>

@@ -35,7 +35,7 @@ public class IdempotencyRedisService {
     }
 
     /**
-     * 멱등키 선점 시도
+     * 멱등키 선점
      * - setIfAbsent(SETNX) : key가 없을때만 저장 성공 -> 원자적 연산이라 동시요청에도 안전
      * - 선점 성공 시 status = "processing" 기록, TTL은 도메인의 processing TTL 사용
      * - 반환값 true -> 내가 선점 성공 -> 컨트롤러/서비스 로직 진행해도 됨

@@ -17,7 +17,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns(
                         "/api/v1/reservations/**",
                         "/api/v1/payments/prepare/**",
-                        "/api/v1/settlements/**"
+                        "/api/v1/admin/settlement/**"
                 );
     }
 }

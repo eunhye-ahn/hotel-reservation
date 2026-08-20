@@ -19,6 +19,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
@@ -77,6 +79,9 @@ public class IdempotencyConcurrencyTest {
     @Autowired
     LedgerRepository ledgerRepository;
 
+    @Autowired
+    RedisTemplate<String,Object> objectRedisTemplate;
+
 
     String testToken;
 
@@ -110,7 +115,7 @@ public class IdempotencyConcurrencyTest {
         String key = "concurrent-test-key";
         String body = """
                 {"reservationKey":"%s","hotelId":1,"roomTypeId":1,
-                 "startDate":"2026-08-09","endDate":"2026-08-11",
+                 "startDate":"2026-08-20","endDate":"2026-08-21",
                  "numberOfGuests":2,"numberOfRooms":1}
                 """.formatted(key);
 
@@ -217,7 +222,7 @@ public class IdempotencyConcurrencyTest {
 
     @Test
     void 정산멱등키() throws Exception {
-        String settlementKey = "concurrent-settlement-key";
+        String settlementKey = "test";
         String body = """
                 {"periodStart":"%s","periodEnd":"%s"}
                 """.formatted(LocalDate.now(), LocalDate.now());
@@ -259,7 +264,25 @@ public class IdempotencyConcurrencyTest {
                 .filter(s -> settlementKey.equals(s.getSettlementKey()))
                 .count();
 
-        log.info("생성된 Settlement 수: {}", settlementCount);
+        long successCount = statusCodes.stream().filter(c -> c == 200).count();
+        long conflictCount = statusCodes.stream().filter(c -> c == 409).count();
+
+        log.info("========== 정산 멱등성 동시성 테스트 결과 ==========");
+        log.info("동시 요청 수      : {}", threadCount);
+        log.info("응답 상태코드      : {}", statusCodes);
+        log.info("200 OK 응답 수     : {}", successCount);
+        log.info("409 CONFLICT 응답 수 : {}", conflictCount);
+        log.info("생성된 Settlement 수 : {} (기대값: 1)", settlementCount);
+        log.info("검증 결과          : {}", settlementCount == 1 ? "성공" : "실패");
+        log.info("===================================================");
+
         assertThat(settlementCount).isEqualTo(1);
+
+        latch.await();
+        executor.shutdown();
+
+        Object redisValue = objectRedisTemplate.opsForValue().get("idempotency:settlement:" + settlementKey);
+        log.info("=== 테스트 DB(1번)에서 조회한 값: {} ===", redisValue);
+
     }
 }

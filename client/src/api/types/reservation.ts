@@ -36,7 +36,7 @@ export interface ReservationDetailResponse {
     createdAt: string,
     cancelType: string,
     cancelReason: string,
-    reservationStatus: string
+    reservationStatus: string,
 }
 
 export interface ReservationResponse {

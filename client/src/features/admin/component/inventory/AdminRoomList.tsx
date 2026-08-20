@@ -5,25 +5,27 @@ import { ErrorMessage } from "@/common/component/ErrorMessage"
 import { Pagination } from "@/common/component/Pagination"
 import { useRoomFilterOptions } from "../../hooks/inventory/useRoomFilterOption"
 import { useEffect } from "react"
+import { useQueryClient } from "@tanstack/react-query"
 
 interface AdminRoomListProps {
     hotelId: number,
-    inventorySelected: {roomTypeId: number|null, dateStr: string}
+    inventorySelected: {roomTypeId: number|null, dateStr: string, totalInventory: number|null, totalReserved: number|null},
 }
 
 export const AdminRoomList = ({ hotelId, inventorySelected }: AdminRoomListProps) => {
-    const { filter, setFloor, setRoomTypeId, setPage } = useRoomFilter()
-    const { roomListData, isRoomListError, isRoomListLoading } = useRoomList(hotelId, filter)
+    const { filter, setFloor, setRoomTypeId, setPage, setTargetDate } = useRoomFilter()
     const { optionData, isOptionError, isOptionLoading } = useRoomFilterOptions(hotelId)
 
-    console.log(roomListData)
 
     useEffect(()=>{
         if(inventorySelected.roomTypeId != null){
             setRoomTypeId(inventorySelected.roomTypeId)
+            setTargetDate(inventorySelected.dateStr)
         }
-    },[inventorySelected.roomTypeId])
+    },[inventorySelected])
+    const { roomListData, isRoomListError, isRoomListLoading } = useRoomList(hotelId, filter)
 
+    const assginCount = roomListData?.content.filter(r=>r.assignable === false).length ?? 0
 
     if(isOptionLoading) return <Spinner/>
     if(isOptionError) return <ErrorMessage/>
@@ -33,8 +35,8 @@ export const AdminRoomList = ({ hotelId, inventorySelected }: AdminRoomListProps
             <div className="flex items-center justify-between px-5 py-3 bg-gray-50 border-b border-gray-200">
                 <span className="font-semibold text-sm">객실 목록</span>
             </div>
-            <div className="flex justify-between items-center gap-4 px-5 py-3 text-xs ">
-                <p className="font-bold">{inventorySelected.dateStr ?? ""}</p>
+            <div className="flex justify-between mt-5 items-center gap-4 px-5 py-3 text-xs ">
+                <p className="font-bold text-lg">{inventorySelected.dateStr ?? ""} 기준</p>
                 <div className="flex gap-2">
                     <select
                         className="border border-gray-300 rounded-md px-2 py-1.5 text-sm"
@@ -59,6 +61,10 @@ export const AdminRoomList = ({ hotelId, inventorySelected }: AdminRoomListProps
                         ))}
                     </select>
                 </div>
+            </div>
+            <div className="flex mb-2 items-center">
+                <span className="mx-3 w-3 h-3 rounded-lg bg-orange-500"></span>
+                <p>배정 대기: <strong>{inventorySelected.totalReserved-assginCount}건</strong></p>
             </div>
 
             {isRoomListLoading ? (

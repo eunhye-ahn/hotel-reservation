@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { adminReservationKeys } from "./adminReservationKeys"
 import { adminDashboardKeys } from "../dashboard/adminDashboardKeys"
 import { handleDefenseError } from "@/api/errorHelpers"
+import { adminInventoryKeys } from "../inventory/adminInventorykey"
 
 
 export const useAssignRoom = (reservationId: number) => {
@@ -13,6 +14,7 @@ export const useAssignRoom = (reservationId: number) => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: adminReservationKeys.all })
             queryClient.invalidateQueries({ queryKey: adminDashboardKeys.all })
+            queryClient.invalidateQueries({queryKey: adminInventoryKeys.all})
         },
         onError: (err) => {
             handleDefenseError(err, () => queryClient.invalidateQueries({

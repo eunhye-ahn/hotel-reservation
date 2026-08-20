@@ -72,7 +72,7 @@ public class IdempotencyInterceptor implements HandlerInterceptor {
         if (uri.startsWith("/api/v1/reservations")) {
             return handleReservation(idempotencyKey, request, response);
         }
-        if(uri.startsWith("/api/v1/settlements")) {
+        if(uri.startsWith("/api/v1/admin/settlement")) {
             return handleSettlement(idempotencyKey, request, response);
         }
 
@@ -184,7 +184,8 @@ public class IdempotencyInterceptor implements HandlerInterceptor {
         }
         Optional<Settlement> settlement = settlementRepository.findBySettlementKey(settlementKey);
         if (settlement.isEmpty()) {
-            return true;
+            response.setStatus(HttpServletResponse.SC_CONFLICT);
+            return false;
         }
 
         response.setStatus(HttpServletResponse.SC_OK);

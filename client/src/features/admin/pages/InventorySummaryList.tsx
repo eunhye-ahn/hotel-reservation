@@ -52,7 +52,9 @@ export const InventorySummaryList = () => {
                         </thead>
                         <tbody className="divide-y divide-gray-100">
                             {data?.content.map((h, i) => (
-                                <tr key={h.hotelId} onClick={() => navigate(`/admin/inventory/${h.hotelId}`)}>
+                                <tr key={h.hotelId} onClick={() => navigate(`/admin/inventory/${h.hotelId}`,{
+                                    state: {hotelName: h.hotelName}
+                                })}>
                                     <td className="px-3 py-2.5 text-center">{i + 1}</td>
                                     <td className="px-3 py-2.5">{h.hotelName}</td>
                                     <td className="px-3 py-2.5 text-center font-semibold">{h.roomTypeCount}</td>

@@ -6,7 +6,12 @@ import { ErrorMessage } from "@/common/component/ErrorMessage"
 
 interface InventoryCalendarProps {
     hotelId: number,
-    onSelected: (value: {roomTypeId: number, dateStr: string})=>void
+    onSelected: (value: {
+        roomTypeId: number, 
+        dateStr: string,
+        totalInventory: number,
+        totalReserved: number
+    })=>void
 }
 
 export const InventoryCalendar = ({ hotelId, onSelected }: InventoryCalendarProps) => {
@@ -92,7 +97,9 @@ export const InventoryCalendar = ({ hotelId, onSelected }: InventoryCalendarProp
                                     <td key={dateStr} className="px-2 py-2" 
                                         onClick={()=>onSelected({
                                         roomTypeId: roomType.roomTypeId, 
-                                        dateStr: dateStr
+                                        dateStr: dateStr,
+                                        totalInventory: cell.totalInventory,
+                                        totalReserved: cell.totalReserved
                                     })}>
                                         <button
                                             className={`w-full border py-4 flex gap-1 justify-center  items-baseline  text-center cursor-pointer ${getCellStyle(available)}`}

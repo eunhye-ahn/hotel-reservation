@@ -5,7 +5,7 @@ export const useRoomFilter = () => {
     const [roomTypeId, setRoomTypeId] = useState<number | undefined>(undefined)
     const [floor, setFloor] = useState<number|undefined>(undefined)
     const [page, setPage] = useState<number>(0)
-    const [targetDate, setTargetDate] = useState<string>(format(new Date(), "yyyy-MM-hh"))
+    const [targetDate, setTargetDate] = useState<string>(format(new Date(), "yyyy-MM-dd"))
 
     const filter = {roomTypeId, floor, targetDate, page}
 

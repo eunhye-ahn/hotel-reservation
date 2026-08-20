@@ -30,7 +30,7 @@ public class ReservationDetailResponse {
     private CancelType cancelType;
     private String cancelReason;
 
-    @JsonFormat(pattern = "yyyy.MM.dd HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime createdAt;
     private String roomTypeImageUrl;
     private  String hotelImageUrl;

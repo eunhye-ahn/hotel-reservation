@@ -45,6 +45,8 @@ export const HotelDetailPage = () => {
         return null
     }
 
+    
+
     return (
         <>
             <div className="detail-container">
@@ -58,6 +60,7 @@ export const HotelDetailPage = () => {
                     onEndDateChange={setEndDate}
                     onRoomsChange={setNumberOfRooms}
                     onGuestsChange={setNumberOfGuests}
+                    today={today}
                 />
                 <HotelDetailInfo
                     imageUrl={data?.imageUrl}

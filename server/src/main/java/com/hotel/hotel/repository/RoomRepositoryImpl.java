@@ -45,14 +45,15 @@ public class RoomRepositoryImpl implements RoomRepositoryCustom {
                         room.usable,
                         //예약생성일/룸id의 해당하는 룸 반환
                         //true / false 여부인데... => 8.18
+                        // loe: <= gt >
+                        //   startDate <= targetDate
                         //start 8.15 ~ end 8. 19 =>
                         new CaseBuilder()
                                 .when(JPAExpressions.selectOne().from(reservation)
                                         .where(
                                                 reservation.room.id.eq(room.id),
                                                 reservation.startDate.loe(targetDate),
-                                                reservation.endDate.gt(targetDate),
-                                                reservation.reservationStatus.eq(ReservationStatus.BEFORE_USE)
+                                                reservation.endDate.gt(targetDate)
                                         )
                                         .exists())
                                 .then(false)
