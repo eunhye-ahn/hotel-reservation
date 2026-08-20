@@ -5,7 +5,6 @@ import { ErrorMessage } from "@/common/component/ErrorMessage"
 import { Pagination } from "@/common/component/Pagination"
 import { useRoomFilterOptions } from "../../hooks/inventory/useRoomFilterOption"
 import { useEffect } from "react"
-import { useQueryClient } from "@tanstack/react-query"
 
 interface AdminRoomListProps {
     hotelId: number,
@@ -64,7 +63,9 @@ export const AdminRoomList = ({ hotelId, inventorySelected }: AdminRoomListProps
             </div>
             <div className="flex mb-2 items-center">
                 <span className="mx-3 w-3 h-3 rounded-lg bg-orange-500"></span>
-                <p>배정 대기: <strong>{inventorySelected.totalReserved-assginCount}건</strong></p>
+                {inventorySelected.totalReserved !== null && (
+                    <p>배정 대기: <strong>{inventorySelected.totalReserved - assginCount}건</strong></p>
+                )}
             </div>
 
             {isRoomListLoading ? (
