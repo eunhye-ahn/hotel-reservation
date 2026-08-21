@@ -47,3 +47,56 @@ docker compose -f docker-compose.yml --profile local up -d
 ```powershell
 npm run dev
 ```
+
+# 패키지 구조
+## 백엔드
+```
+com.hotel.hotelreservation/src
+├── common/                              # 공유계층
+│   ├── domain/                          # 생성일/수정일 공유 도메인
+│   ├── config/                          # SecurityConfig, RedisConfig, (ESConfig), QueryDSL Config 등
+│   ├── exception/                       # 공통 예외
+│   ├── idempotency/                     # 멱등키
+│   ├── auth/                            # JWT 필터
+│   └── util/                            # 쿠키(저장/삭제)
+│
+├── user/
+│   ├── controller/
+│   ├── service/
+│   ├── repository/
+│   ├── domain/
+│   └── dto/
+│
+├── hotel/
+│   ├── controller/
+│   ├── service/
+│   ├── repository/
+│   ├── domain/
+│   ├── dto/
+│   ├── mapper/
+│   └── (search)/                        # HotelDocument, ES 관련 (인덱싱, nori)
+│
+├── reservation/
+│   ├── controller/
+│   ├── service/
+│   ├── repository/
+│   ├── domain/
+│   ├── dto/
+│   └── mapper/
+│
+├── payment/
+│   ├── controller/
+│   ├── service/
+│   ├── repository/
+│   ├── domain/
+│   ├── mapper/
+│   ├── dto/
+│   └── client/                          # Toss Payments 결제 승인/취소 요청 API
+│
+└── admin/
+    ├── controller/
+    ├── mapper/
+    ├── service/                         # 여러 도메인 조회/집계
+    └── dto/
+```
+
