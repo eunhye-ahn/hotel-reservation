@@ -24,7 +24,8 @@ export const RoomSearchBar = ({
     onGuestsChange
 }: RoomSearchBarProps) => {
     return (
-        <div className="flex items-center gap-3 p-4 border border-gray-200 rounded-xl my-6">
+        <div className="sticky top-18
+         bg-white z-30 flex items-center gap-3 p-4 border border-gray-200 rounded-xl my-6">
             <input
                 type="date"
                 className="border-none outline-none text-sm font-semibold"

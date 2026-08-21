@@ -29,12 +29,14 @@
     font-size: 1.5rem;
     letter-spacing: 0.15em;
     cursor: pointer;
+    min-width: 0;
 }
 
 .searchWrap {
     flex: 1;
     max-width: 500px;
     margin-inline: 2rem;
+    min-width: 0;
 }
 
 .btn {

@@ -17,7 +17,7 @@ import java.time.LocalDate;
 public class BeforeUseReservationCompleteScheduler {
     private final ReservationRepository reservationRepository;
 
-    @Scheduled(cron = "0 0 3 * * *")
+    @Scheduled(fixedDelay = 10_000)
     @Transactional
     public void completeReservations(){
         int updatedCount = reservationRepository.markCompletedAfterCheckOut(
@@ -26,6 +26,6 @@ public class BeforeUseReservationCompleteScheduler {
                 LocalDate.now()
         );
 
-        log.info("이용완료 처리된 예약 건수 : {}",updatedCount);
+        log.info("update=====count : {}",updatedCount);
     }
 }
