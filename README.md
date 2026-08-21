@@ -100,3 +100,64 @@ com.hotel.hotelreservation/src
     └── dto/
 ```
 
+## 프론트엔드
+```
+src/
+├── api/                              # axios 인스턴스, 인터셉터 (전역 설정), api
+│   ├── types/
+│   ├── api.ts
+│   ├── axiosInstance.ts
+│   ├── CustomSeverityLevel.tsx       # Sentry 모니터링
+│   ├── SentryNetworkError.tsx        # Sentry 모니터링
+│   └── errorHelpers.ts
+│
+├── asset/                            # 이미지, 폰트 등 정적 리소스
+│
+├── common/
+│   ├── components/                   # 공통 컴포넌트 (Button, Modal 등)
+│   └── pages/                        # 404페이지
+│
+├── features/                         # 도메인별 기능 단위
+│   ├── admin/
+│   │   ├── hooks/
+│   │   ├── components/
+│   │   └── pages/
+│   │
+│   ├── auth/
+│   │   ├── hooks/
+│   │   ├── components/
+│   │   └── pages/
+│   │
+│   ├── hotel/
+│   │   ├── hooks/
+│   │   ├── components/
+│   │   └── pages/
+│   │
+│   ├── mypage/
+│   │   ├── hooks/
+│   │   ├── components/
+│   │   └── pages/
+│   │
+│   └── reservation/
+│       ├── hooks/
+│       ├── components/
+│       └── pages/
+│
+├── layout/                           # Header, Footer, Sidebar 등 레이아웃 컴포넌트
+│
+├── store/                            # Zustand 스토어
+│   ├── authStore.ts
+│   ├── recentHotelStore.ts
+│   ├── wishModalStore.ts
+│   └── regionStore.ts
+│
+├── ui/                                # 순수 UI 프리미티브 (디자인 시스템 컴포넌트)
+│   ├── button.tsx
+│   ├── utils.tsx
+│   └── dialog.tsx
+│
+│
+├── App.tsx
+├── index.css
+└── main.tsx
+```
