@@ -1,5 +1,6 @@
 package com.hotel.reservation.scheduler;
 
+import com.hotel.reservation.domain.PaymentStatus;
 import com.hotel.reservation.domain.ReservationStatus;
 import com.hotel.reservation.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ public class BeforeUseReservationCompleteScheduler {
     public void completeReservations(){
         int updatedCount = reservationRepository.markCompletedAfterCheckOut(
                 ReservationStatus.BEFORE_USE,
+                PaymentStatus.PAID,
                 ReservationStatus.AFTER_USE,
                 LocalDate.now()
         );

@@ -2,6 +2,7 @@ package com.hotel.reservation.scheduler;
 
 import com.hotel.reservation.domain.PaymentStatus;
 import com.hotel.reservation.domain.Reservation;
+import com.hotel.reservation.domain.ReservationStatus;
 import com.hotel.reservation.repository.ReservationRepository;
 import com.hotel.reservation.service.process.ReservationExpireProcessor;
 import lombok.RequiredArgsConstructor;
@@ -32,12 +33,13 @@ public class PendingReservationExpireScheduler {
 
         List<Reservation> expiredReservations = reservationRepository.findByPaymentStatusAndCreatedAtBefore(PaymentStatus.PENDING,limitTime);
 
-        for(Reservation reservation : expiredReservations){
-            try{
-                expireProcessor.expireReservation(reservation.getReservationKey());
-            }catch (Exception e){
-                log.error("예약 만료 실패 : {}",reservation.getReservationKey());
-            }
+        for(Reservation reservation : expiredReservations) {
+            if (!reservation.getReservationStatus().equals(ReservationStatus.EXPIRED))
+                try {
+                    expireProcessor.expireReservation(reservation.getReservationKey());
+                } catch (Exception e) {
+                    log.error("예약 만료 실패 : {}", reservation.getReservationKey());
+                }
         }
     }
 

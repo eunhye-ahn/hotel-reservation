@@ -64,9 +64,11 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long>,
     @Query("UPDATE Reservation r " +
             "SET r.reservationStatus = :newStatus " +
             "WHERE r.reservationStatus = :oldStatus " +
+            "AND r.paymentStatus = :paymentStatus "+
             "AND r.startDate < :today")
     int markCompletedAfterCheckOut(
             @Param("oldStatus") ReservationStatus oldStatus,
+            @Param("paymentStatus") PaymentStatus paymentStatus,
             @Param("newStatus") ReservationStatus newStatus,
             @Param("today") LocalDate today
     );
