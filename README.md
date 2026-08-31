@@ -9,25 +9,17 @@
 
 # 사용한 기술
 
-## 백엔드
-![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white) ![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
-
-## 프론트엔드
-![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB) ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
-
-## 데이터베이스
-![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white) ![Redis](https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white)
-
-## 검색
-![Elasticsearch](https://img.shields.io/badge/elasticsearch-%230377CC.svg?style=for-the-badge&logo=elasticsearch&logoColor=white)
-
-## 인프라
-![Nginx](https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white) ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)   ![AWS](https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white) 
-
-## CI/CD
-![GithubActions](https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white)
+| 구분 | 기술/버전 |
+|---|---|
+| Backend | Spring Boot 3.5.14, Java 21, Spring Data JPA, MyBatis Spring Boot Starter 3.0.3, QueryDSL 5.0.0, Spring Security, JWT, OAuth2 |
+| Database | PostgreSQL 17, Redis 7.4, Elasticsearch 8.19 |
+| Frontend | React 19.2.5, TypeScript 6.0.2, TanStack Query, Vite |
+| Infra | Docker, AWS (EC2), Nginx |
+| CI/CD | GitHub Actions |
+| Monitoring | Actuator + Prometheus, Sentry |
 
 # 주요 실행화면
+<img width="1917" height="1017" alt="image (14)" src="https://github.com/user-attachments/assets/8e57c2d8-b5e7-4653-a0ab-24e5521fd058" />
 <img width="1896" height="1026" alt="image" src="https://github.com/user-attachments/assets/d481d87b-2f42-459e-8747-09ab9346e608" />
 <img width="1902" height="1028" alt="image (1)" src="https://github.com/user-attachments/assets/5099de0a-c6b2-4a85-bfec-3d0cb2545d6f" />
 <img width="1894" height="1031" alt="image (2)" src="https://github.com/user-attachments/assets/7a153edd-6e02-46c8-9c60-8d1170993a9f" />
