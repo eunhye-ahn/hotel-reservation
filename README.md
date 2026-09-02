@@ -38,6 +38,7 @@ docker compose -f docker-compose.yml --profile local up -d
 ```
 ## 프론트엔드
 ```powershell
+npm install
 npm run dev
 ```
 
