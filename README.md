@@ -20,12 +20,44 @@
 | Monitoring | Actuator + Prometheus, Sentry |
 
 # 주요 실행화면
-<img width="1917" height="1017" alt="image (14)" src="https://github.com/user-attachments/assets/8e57c2d8-b5e7-4653-a0ab-24e5521fd058" />
-<img width="1896" height="1026" alt="image" src="https://github.com/user-attachments/assets/d481d87b-2f42-459e-8747-09ab9346e608" />
-<img width="1902" height="1028" alt="image (1)" src="https://github.com/user-attachments/assets/5099de0a-c6b2-4a85-bfec-3d0cb2545d6f" />
-<img width="1894" height="1031" alt="image (2)" src="https://github.com/user-attachments/assets/7a153edd-6e02-46c8-9c60-8d1170993a9f" />
-<img width="1904" height="1032" alt="image (3)" src="https://github.com/user-attachments/assets/67bd9aa1-502f-498b-a427-e1bd80e4c5bf" />
-<img width="1899" height="1028" alt="image (4)" src="https://github.com/user-attachments/assets/641e756b-021c-4463-9290-1c4c0aca1939" />
+<table>
+  <tr>
+    <th align="center">메인</th>
+    <th align="center">객실 조회</th>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="https://github.com/user-attachments/assets/8e57c2d8-b5e7-4653-a0ab-24e5521fd058" width="400">
+    </td>
+    <td align="center">
+      <img src="https://github.com/user-attachments/assets/d481d87b-2f42-459e-8747-09ab9346e608" width="400">
+    </td>
+  </tr>
+  <tr>
+    <th align="center">관리자 대시보드</th>
+    <th align="center">예약 관리 및 객실 배정</th>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="https://github.com/user-attachments/assets/5099de0a-c6b2-4a85-bfec-3d0cb2545d6f" width="400">
+    </td>
+    <td align="center">
+      <img src="https://github.com/user-attachments/assets/7a153edd-6e02-46c8-9c60-8d1170993a9f" width="400">
+    </td>
+  </tr>
+  <tr>
+    <th align="center">수동 정산</th>
+    <th align="center">전체 예약 조회</th>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="https://github.com/user-attachments/assets/67bd9aa1-502f-498b-a427-e1bd80e4c5bf" width="400">
+    </td>
+    <td align="center">
+      <img src="https://github.com/user-attachments/assets/641e756b-021c-4463-9290-1c4c0aca1939" width="400">
+    </td>
+  </tr>
+</table>
 
 # 인프라 아키텍처
 <img width="3796" height="2697" alt="AWS cloud diagram (Community)" src="https://github.com/user-attachments/assets/8b2b9e75-bc9c-4683-bd04-3353f1ee2d6d" />
