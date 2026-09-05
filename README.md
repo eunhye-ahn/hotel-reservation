@@ -15,7 +15,7 @@
 | Backend | Spring Boot 3.5.14, Java 21, Spring Data JPA, MyBatis Spring Boot Starter 3.0.3, QueryDSL 5.0.0, Spring Security, JWT, OAuth2 |
 | Database | PostgreSQL 17, Redis 7.4, Elasticsearch 8.19 |
 | Frontend | React 19.2.5, TypeScript 6.0.2, TanStack Query, Vite |
-| Infra | Docker, AWS (EC2), Nginx |
+| Infra | Docker, AWS (EC2, RDS, ARM, SSM, CludFront, S3, Route53), Nginx |
 | CI/CD | GitHub Actions |
 | Monitoring | Actuator + Prometheus, Sentry |
 
