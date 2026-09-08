@@ -19,6 +19,24 @@
 | CI/CD | GitHub Actions |
 | Monitoring | Actuator + Prometheus, Sentry |
 
+# 주요 기능
+## 유저
+- 숙박시설 검색/조회
+- 임시 예약 홀드
+- 예약 취소
+- 예약 조회
+- 북마크
+- 최근 본 숙박시설 조회
+
+## 관리자
+- 예약/결제/정산 조회
+- 예약 취소(결제 취소 연동)
+- 수동 정산
+
+## 시스템 (자동화)
+- 정산 스케줄러: 새벽 자동 정산 처리
+- 예약 상태 처리: 체크아웃 완료 기준 이용전->이용후 일괄 전환
+
 # 주요 실행화면
 <table>
   <tr>
@@ -80,10 +98,10 @@ npm run dev
 com.hotel.hotelreservation/src
 ├── common/                              # 공유계층
 │   ├── domain/                          # 생성일/수정일 공유 도메인
-│   ├── config/                          # SecurityConfig, RedisConfig, (ESConfig), QueryDSL Config 등
+│   ├── config/                         
 │   ├── exception/                       # 공통 예외
 │   ├── idempotency/                     # 멱등키
-│   ├── auth/                            # JWT 필터
+│   ├── auth/                            # JWT 
 │   └── util/                            # 쿠키(저장/삭제)
 │
 ├── user/
@@ -100,7 +118,6 @@ com.hotel.hotelreservation/src
 │   ├── domain/
 │   ├── dto/
 │   ├── mapper/
-│   └── (search)/                        # HotelDocument, ES 관련 (인덱싱, nori)
 │
 ├── reservation/
 │   ├── controller/
@@ -117,27 +134,27 @@ com.hotel.hotelreservation/src
 │   ├── domain/
 │   ├── mapper/
 │   ├── dto/
-│   └── client/                          # Toss Payments 결제 승인/취소 요청 API
+│   └── client/                          # Feign 기반 Toss Payments 결제 승인/취소 요청 연동
 │
 └── admin/
     ├── controller/
     ├── mapper/
-    ├── service/                         # 여러 도메인 조회/집계
+    ├── service/                        
     └── dto/
 ```
 
 ## 프론트엔드
 ```
 src/
-├── api/                              # axios 인스턴스, 인터셉터 (전역 설정), api
-│   ├── types/
-│   ├── api.ts
-│   ├── axiosInstance.ts
+├── api/                             
+│   ├── types/                        # api response request 타입 정의
+│   ├── api.ts                        # axios를 통한 api모음
+│   ├── axiosInstance.ts              # axios 인스턴스, 인터셉터
 │   ├── CustomSeverityLevel.tsx       # Sentry 모니터링
 │   ├── SentryNetworkError.tsx        # Sentry 모니터링
 │   └── errorHelpers.ts
 │
-├── asset/                            # 이미지, 폰트 등 정적 리소스
+├── asset/                            # 이미지
 │
 ├── common/
 │   ├── components/                   # 공통 컴포넌트 (Button, Modal 등)
@@ -169,7 +186,7 @@ src/
 │       ├── components/
 │       └── pages/
 │
-├── layout/                           # Header, Footer, Sidebar 등 레이아웃 컴포넌트
+├── layout/                           # Header, Footer 등 레이아웃 컴포넌트
 │
 ├── store/                            # Zustand 스토어
 │   ├── authStore.ts
@@ -177,7 +194,7 @@ src/
 │   ├── wishModalStore.ts
 │   └── regionStore.ts
 │
-├── ui/                                # 순수 UI 프리미티브 (디자인 시스템 컴포넌트)
+├── ui/                                
 │   ├── button.tsx
 │   ├── utils.tsx
 │   └── dialog.tsx
