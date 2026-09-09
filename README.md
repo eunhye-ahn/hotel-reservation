@@ -9,7 +9,6 @@
 | 배포 URL | https://stayn.store |
 
 # 사용한 기술
-
 | 구분 | 기술/버전 |
 |---|---|
 | Backend | Spring Boot 3.5.14, Java 21, Spring Data JPA, MyBatis Spring Boot Starter 3.0.3, QueryDSL 5.0.0, Spring Security, JWT, OAuth2 |
