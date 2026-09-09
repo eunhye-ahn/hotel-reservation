@@ -80,6 +80,10 @@
 # 인프라 아키텍처
 <img width="3796" height="2697" alt="AWS cloud diagram (Community)" src="https://github.com/user-attachments/assets/8b2b9e75-bc9c-4683-bd04-3353f1ee2d6d" />
 
+# ERD
+<img width="3607" height="2002" alt="Untitled" src="https://github.com/user-attachments/assets/845982c2-1810-477f-9fc1-8855558f6445" />
+
+
 # 실행 방법
 ## 백엔드
 ```powershell
