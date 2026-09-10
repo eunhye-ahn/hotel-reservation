@@ -17,12 +17,14 @@ export const HotelCardList = ({ data, onRemove }: HotelCardListProps) => {
             ? data
             : data.content
         : []
+    console.log(hotels)
 
     return (
         <div className="page-container">
             {hotels?.length === 0 && <p>호텔이 없습니다</p>}
             <div className="grid grid-cols-4 gap-2">
                 {hotels?.map((hotel) => (
+                
                     <HotelCard
                         key={hotel.hotelId}
                         hotel={hotel}

@@ -160,9 +160,11 @@ public class PaymentService {
                     paymentKey,
                     new TossCancelRequest(cancelReason)
             );
-        }catch(Exception e){
-            log.error("토스 결제취소 실패 - reservationId: {}", reservationId, e);
-            throw new CustomException(ErrorCode.REFUND_FAILED);
+        } catch (FeignException e){
+            if(e.status() == 400 || e.status() == 422){
+                log.error("토스 결제취소 실패 - reservationId: {}", reservationId, e);
+                throw new CustomException(ErrorCode.PAYMENT_CANCEL_FAILED);
+            }
         }
     }
 

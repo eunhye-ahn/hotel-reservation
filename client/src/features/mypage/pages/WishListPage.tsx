@@ -40,7 +40,7 @@ export function WishListPage() {
                             onClick={() => navigate(`/hotels/${item.hotelId}`)}
                         >
                             <img
-                                className="w-full object-cover"
+                                className="w-full h-[300px] object-cover"
                                 src={item.hotelImageUrl}
                             />
                             <div className="p-3">

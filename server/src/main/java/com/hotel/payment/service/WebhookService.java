@@ -65,7 +65,11 @@ public class WebhookService {
                 paymentOrderRepository.save(paymentOrder);
                 log.info("payment failed processed- orderId : {}", request.data().orderId());
             }
-            default -> log.warn("unknown payment status : {}", status);
+            default ->{
+                paymentOrder.needsReconciliation();
+                paymentOrderRepository.save(paymentOrder);
+                log.warn("unknown payment status : {}", status);
+            }
         }
         return new TossWebhookResponse(paymentEvent.getReservationKey());
     }
